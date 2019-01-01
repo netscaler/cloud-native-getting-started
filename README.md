@@ -1,5 +1,4 @@
-### microservices-example
-##Learn how to use Citrix ADC in two tier microservices architecture
+## Learn how to use Citrix ADC in two tier microservices architecture
 
 * Get three virtual machines running with minimum following specifications:
   - VM type – Ubuntu 16.04
