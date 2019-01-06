@@ -16,3 +16,5 @@
 * Login to VPX box and check for the dynamically pushed ADC configuration.
 
 * Goto browser and access the applications over SSL. e.g hotdrink.beverages.com for monitoring and visibility graphs – grafana.beverages.com
+
+--
