@@ -1,0 +1,197 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cpx-ingress-hotdrinks
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-hotdrinks
+      annotations:
+        NETSCALER_AS_APP: "True"
+      labels:
+        app: cpx-ingress-hotdrinks
+        app1: exporter
+    spec:
+      serviceAccountName: cpx
+      containers:
+      - name: cpx-ingress-hotdrinks
+        image: quay.io/citrix-duke/citrix-k8s-cpx-ingress:latest 
+        ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+        securityContext:
+           privileged: true
+        env:
+         - name: "EULA"
+           value: "yes"
+        args:
+          - --ingress-classes
+            hotdrink         
+          - --ingress-default-secret
+            hotdrink-secret
+        imagePullPolicy: Always
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-hotdrinks
+  labels:
+    app: lb-service-hotdrinks
+spec:
+  clusterIP: None
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+    targetPort: 80
+  - port: 443
+    protocol: TCP
+    name: https
+    targetPort: 443
+  selector:
+    app: cpx-ingress-hotdrinks
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cpx-ingress-colddrinks
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-colddrinks
+      annotations:
+        NETSCALER_AS_APP: "True"
+      labels:
+        app: cpx-ingress-colddrinks
+        app1: exporter
+    spec:
+      serviceAccountName: cpx
+      containers:
+      - name: cpx-ingress-colddrinks
+        image: quay.io/citrix-duke/citrix-k8s-cpx-ingress:latest
+        ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+        securityContext:
+           privileged: true
+        env:
+         - name: "EULA"
+           value: "yes"
+        args:
+          - --ingress-classes
+            colddrink         
+        imagePullPolicy: Always
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-colddrinks
+  labels:
+    app: lb-service-colddrinks
+spec:
+  clusterIP: None
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+    targetPort: 80
+  - port: 443
+    protocol: TCP
+    name: https
+    targetPort: 443
+  selector:
+    app: cpx-ingress-colddrinks
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cpx-ingress-guestbook
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-guestbook
+      annotations:
+        NETSCALER_AS_APP: "True"
+      labels:
+        app: cpx-ingress-guestbook
+        app1: exporter
+    spec:
+      serviceAccountName: cpx
+      containers:
+      - name: cpx-ingress-guestbook
+        image: quay.io/citrix-duke/citrix-k8s-cpx-ingress:latest
+        ports:
+        - name: frontend
+          containerPort: 80
+        - name: guestbook
+          containerPort: 6379
+        securityContext:
+           privileged: true
+        env:
+         - name: "EULA"
+           value: "yes"
+        args:
+          - --ingress-classes
+            guestbook      
+        imagePullPolicy: Always
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-guestbook
+  labels:
+    app: lb-service-guestbook
+spec:
+  clusterIP: None
+  ports:
+  - port: 80
+    protocol: TCP
+    name: frontend
+    targetPort: 80
+  - port: 6379
+    protocol: TCP
+    name: guestbook
+    targetPort: 6379
+  selector:
+    app: cpx-ingress-guestbook
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus
+spec:
+  type: ExternalName
+  externalName: prometheus.monitoring.svc.cluster.local
+  ports:
+  - name: http
+    port: 9090
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: grafana
+spec:
+  type: ExternalName
+  externalName: grafana.monitoring.svc.cluster.local
+  ports:
+  - name: http
+    port: 3000
+
