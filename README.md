@@ -42,7 +42,7 @@ cmd: kubectl get namespaces
 ```
 ![getnamespace](https://user-images.githubusercontent.com/42699135/50677390-97e66480-101f-11e9-9a69-cc132407bd1e.png)
 
-4.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/yamlFiles`` to master node in ``/root/yamls directory``
+4.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/config/`` to master node in ``/root/yamls directory``
 
 5.	Go to Kubenetes dashboard and deploy the ``rbac.yaml`` in the default namespace
 ```
@@ -120,7 +120,7 @@ Click on Add data source and select the Prometheus data source. Do the settings 
  
  ![grafana_webpage](https://user-images.githubusercontent.com/42699135/50677392-987efb00-101f-11e9-993a-cb1b65dd96cf.png)
  
-From the left panel, select import option and upload the json file provided in folder yamlFiles ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/yamlFiles``
+From the left panel, select import option and upload the json file provided in folder yamlFiles ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/config/grafana_config.json``
 Now you can see the Grafana dashboard with basic ADC stats listed.
  
  ![grafana_stats](https://user-images.githubusercontent.com/42699135/50677391-97e66480-101f-11e9-8d42-87c4a2504a96.png)
