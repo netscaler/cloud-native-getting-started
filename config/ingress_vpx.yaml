@@ -32,10 +32,3 @@ spec:
         backend:
           serviceName: lb-service-colddrinks
           servicePort: 443
-  - host:  colddrink.beverages.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: lb-service-colddrinks
-          servicePort: 443
