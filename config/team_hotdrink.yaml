@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: tea-beverage
-        image: quay.io/citrix-duke/hotdrinks:latest 
+        image: quay.io/sample-apps/hotdrinks:v1
         ports:
         - name: tea-80
           containerPort: 80
@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
       - name: coffee-beverage
-        image: quay.io/citrix-duke/hotdrinks:latest 
+        image: quay.io/sample-apps/hotdrinks:v1
         ports:
         - name: coffee-80
           containerPort: 80
@@ -93,7 +93,7 @@ spec:
     spec:
       containers:
       - name: frontend-hotdrinks
-        image: quay.io/citrix-duke/hotdrinks:latest
+        image: quay.io/sample-apps/hotdrinks:v1
         ports:
         - name: hotdrinks-80
           containerPort: 80

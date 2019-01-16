@@ -8,11 +8,11 @@ spec:
       serviceAccountName: cpx
       containers:
       - name: cic-vpx
-        image: "in-docker-reg.eng.citrite.net/cpx-dev/citrix-ingress-controller:kamet_48_125_duke_727415"
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:latest"
         env:
          # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
          - name: "NS_IP"
-           value: "10.105.158.148"
+           value: "X.X.X.X"
          # Set username for Nitro
          # Set log level
          - name: "NS_ENABLE_MONITORING"

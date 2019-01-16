@@ -5,7 +5,7 @@ metadata:
   annotations:
    kubernetes.io/ingress.class: "vpx"
 #   ingress.citrix.com/insecure-termination: "allow"
-   ingress.citrix.com/frontend-ip: "10.105.158.161"
+   ingress.citrix.com/frontend-ip: "X.X.X.X"
 spec:
   rules:
   - host:  grafana.beverages.com
