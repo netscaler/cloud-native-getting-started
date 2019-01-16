@@ -16,7 +16,7 @@ spec:
       serviceAccountName: cpx
       containers:
       - name: cpx-ingress-hotdrinks
-        image: "quay.io/citrix/citrix-k8s-ingress-controller:latest"
+        image: "quay.io/citrix/citrix-k8s-cpx-ingress:latest"
         ports:
         - name: http
           containerPort: 80
@@ -75,7 +75,7 @@ spec:
       serviceAccountName: cpx
       containers:
       - name: cpx-ingress-colddrinks
-        image: "quay.io/citrix/citrix-k8s-ingress-controller:latest"
+        image: "quay.io/citrix/citrix-k8s-cpx-ingress:latest"
         ports:
         - name: http
           containerPort: 80
@@ -132,7 +132,7 @@ spec:
       serviceAccountName: cpx
       containers:
       - name: cpx-ingress-guestbook
-        image: "quay.io/citrix/citrix-k8s-ingress-controller:latest"
+        image: "quay.io/citrix/citrix-k8s-cpx-ingress:latest"
         ports:
         - name: frontend
           containerPort: 80

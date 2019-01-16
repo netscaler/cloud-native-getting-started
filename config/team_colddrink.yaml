@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: frontend-colddrinks
-        image: quay.io/citrix-duke/colddrinks:latest
+        image: "quay.io/sample-apps/colddrinks:v1"
         ports:
         - name: colddrinks-80
           containerPort: 80
