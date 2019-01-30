@@ -33,6 +33,9 @@ spec:
           - --ingress-default-secret
             hotdrink-secret
         imagePullPolicy: Always
+      imagePullSecrets:
+      - name: citrix-readonly-pull-secret
+
 ---
 
 apiVersion: v1
@@ -90,6 +93,8 @@ spec:
           - --ingress-classes
             colddrink         
         imagePullPolicy: Always
+      imagePullSecrets:
+      - name: citrix-readonly-pull-secret
 ---
 
 apiVersion: v1
@@ -147,6 +152,8 @@ spec:
           - --ingress-classes
             guestbook      
         imagePullPolicy: Always
+      imagePullSecrets:
+      - name: citrix-readonly-pull-secret
 ---
 
 apiVersion: v1
