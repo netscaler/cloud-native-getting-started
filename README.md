@@ -51,13 +51,13 @@ cmd: kubectl create -f /root/yamls/rbac.yaml
 
 6.	Deploy the CPX for hotdrink, colddrink and guestbook microservices using following commands,
 ```
-Prereusites: 
+Pre-Requsites: 
 Get the imagePullSecrets 
 citrix cpx images requires "image pull secrets" to download the image.
-For secret, raise a query. 
+For secret, raise a request to Citrix Slack. 
 
 Update the Secret 
-Update the ".dockerconfigjson" field under secret in citrix-k8s-cpx-ingress.yml 
+Update the ".dockerconfigjson" field under secret in cpx.yml 
 ```
 
 ```
