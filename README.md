@@ -1,7 +1,7 @@
 ## Learn how to use Citrix ADC in two tier microservices architecture
 
 
-Citrix ADC offers the two-tier architecture deployment solution to load balance the enterprise grade applications deployed in microservices and access through internet. Tier 1 has heavy load balancers such as VPX/SDX/MPX to load balance north-south traffic and tier 2 has CPX deployment for managing microservices and load balances the east-west traffic.
+Citrix ADC offers the two-tier architecture deployment solution to load balance the enterprise grade applications deployed in microservices and access those through internet. Tier 1 can have traditional load balancers such as VPX/SDX/MPX, or CPX (containerized Citrix ADC) to manage high scale north-south traffic. Tier 2 has CPX deployment for managing microservices and load balances the east-west traffic.
 
 ![2tierarchitecture](https://user-images.githubusercontent.com/5059506/52114542-518e2080-2632-11e9-8d17-eb0b5623b74f.png)
 
