@@ -26,4 +26,6 @@ spec:
         args:
           - --ingress-classes
             vpx
+          - --feature-node-watch
+            true
         imagePullPolicy: IfNotPresent
