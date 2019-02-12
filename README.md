@@ -18,10 +18,10 @@ Recommended OS: Ubuntu 16.04 desktop/server OS.
 Visit: https://kubernetes.io/docs/setup/scratch/ for Kubernetes cluster deployment guide.
 Once Kubernetes cluster is up and running, execute the below command on master node to get the node status.
 ``` 
-cmd: kubectl get nodes
+kubectl get nodes
 ```
  ![getnodes](https://user-images.githubusercontent.com/42699135/50677393-987efb00-101f-11e9-8580-4d27746bb96a.png)
-(Screenshot above has Kubernetes cluster with one master and two worker node).
+ (Screenshot above has Kubernetes cluster with one master and two worker node).
 
 2.	Set up a Kubernetes dashboard for deploying containerized applications.
 Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/ and follow the steps mentioned to bring the Kubernetes dashboard up as shown below.
@@ -30,7 +30,6 @@ Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-
  
 3.	Create a namespaces using Kubernetes master CLI console.
 ```
-cmd: 
 kubectl create namespace tier-2-adc
 kubectl create namespace team-hotdrink
 kubectl create namespace team-colddrink
@@ -39,7 +38,7 @@ kubectl create namespace monitoring
 ```
 Once you execute above commands, you should see the output given in below screenshot using command: 
 ```
-cmd: kubectl get namespaces
+kubectl get namespaces
 ```
 ![getnamespace](https://user-images.githubusercontent.com/42699135/50677390-97e66480-101f-11e9-9a69-cc132407bd1e.png)
 
@@ -47,84 +46,88 @@ cmd: kubectl get namespaces
 
 5.	Go to Kubenetes dashboard and deploy the ``rbac.yaml`` in the default namespace
 ```
-cmd: kubectl create -f /root/yamls/rbac.yaml 
+kubectl create -f /root/yamls/rbac.yaml 
 ```
 
 6.	Deploy the CPX for hotdrink, colddrink and guestbook microservices using following commands,
-```
-Pre-Requsites: 
-Get the imagePullSecrets 
-citrix cpx images requires "image pull secrets" to download the image.
-For secret, raise a request to Citrix Slack. 
 
-Update the Secret 
-Update the ".dockerconfigjson" field under secret in cpx.yml 
-```
+**Pre-Requsites:** 
+Citrix CPX deployment requires "image pull secrets" to download the CPX image.
+For generating new imagePullsecret, please raise a request to Citrix Slack. 
+
+Update the Secret provided by Citrix: 
+Update the ".dockerconfigjson" field under secret in CPX.yaml
+
 
 ```
-cmd: kubectl create -f /root/yamls/cpx-svcacct.yaml -n tier-2-adc
-cmd: kubectl create -f /root/yamls/cpx.yaml -n tier-2-adc
-cmd: kubectl create -f /root/yamls/hotdrink-secret.yaml -n tier-2-adc
+kubectl create -f /root/yamls/cpx-svcacct.yaml -n tier-2-adc
+kubectl create -f /root/yamls/cpx.yaml -n tier-2-adc
+kubectl create -f /root/yamls/hotdrink-secret.yaml -n tier-2-adc
 ```
 
-7.	Deploy the three hotdrink beverage microservices using following commands
+7.	Deploy the three types of hotdrink beverage microservices using following commands
 ```
-cmd: kubectl create -f /root/yamls/team_hotdrink.yaml -n team-hotdrink
-cmd: kubectl create -f /root/yamls/hotdrink-secret.yaml -n team-hotdrink
+kubectl create -f /root/yamls/team_hotdrink.yaml -n team-hotdrink
+kubectl create -f /root/yamls/hotdrink-secret.yaml -n team-hotdrink
 ```
 
 8.	Deploy the colddrink beverage microservice using following commands
 ```
-cmd: kubectl create -f /root/yamls/team_colddrink.yaml -n team-colddrink
-cmd: kubectl create -f /root/yamls/colddrink-secret.yaml -n team-colddrink
+kubectl create -f /root/yamls/team_colddrink.yaml -n team-colddrink
+kubectl create -f /root/yamls/colddrink-secret.yaml -n team-colddrink
 ```
 
 9.	Deploy the guestbook no sql type microservice using following commands
 ```
-cmd: kubectl create -f /root/yamls/team_guestbook.yaml -n team-guestbook
+kubectl create -f /root/yamls/team_guestbook.yaml -n team-guestbook
 ```
-10.	Login to empty VPX box to verify no config present before we automate the configuration of VPX.
+10.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is present before we automate the Tier 1 ADC.
 
-11.	Deploy the VPX ingress and ingress controller to tier-2-adc namespace which configures VPX automatically.
-```
-cmd: kubectl create -f /root/yamls/ingress_vpx.yaml -n tier-2-adc
-cmd: kubectl create -f /root/yamls/cic_vpx.yaml -n tier-2-adc
-```
-Note: 
+11.	Deploy the VPX ingress and ingress controller to push the CPX configuration into the tier 1 ADC automatically.
+**Note:-** 
 Go to ``ingress_vpx.yaml`` and change the IP address of ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver for accessing microservices.
 e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.160"``
 Go to ``cic_vpx.yaml`` and change the NS_IP value to your VPX NS_IP.         
 ``- name: "NS_IP"
   value: "x.x.x.x"``
+Now execute the following commands after the above change.
+```
+kubectl create -f /root/yamls/ingress_vpx.yaml -n tier-2-adc
+kubectl create -f /root/yamls/cic_vpx.yaml -n tier-2-adc
+```
+
   
 12.	Add the DNS entries in your local machine host files for accessing microservices though internet.
 Path for host file: ``C:\Windows\System32\drivers\etc\hosts``
-Add below entries in hosts file and save the file,
+Add below entries in hosts file and save the file
 
+```
 <frontend-ip from ingress_vpx.yaml> hotdrink.beverages.com
 <frontend-ip from ingress_vpx.yaml> colddrink.beverages.com
 <frontend-ip from ingress_vpx.yaml> guestbook.beverages.com
+```
   
-13.	Now you can access each application over the internet.
+13.	Now you can access your microservices over the internet.
 e.g. ``https://hotdrink.beverages.com``
 
 ![hotbeverage_webpage](https://user-images.githubusercontent.com/42699135/50677394-987efb00-101f-11e9-87d1-6523b7fbe95a.png)
  
-14.	Deploy the CNCF monitoring tools such as Prometheus and Grafana to collect ADC proxies’ stats. Using the ingress yaml VPX config will be pushed automatically.
-``
-cmd: kubectl create -f /root/yamls/monitoring.yaml -n monitoring
-cmd: kubectl create -f /root/yamls/ingress_vpx_monitoring.yaml -n monitoring
-``
-Note:   Go to ``ingress_vpx_monitoring.yaml`` and change the frontend-ip address from ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver Prometheus and Grafana portal.
+14.	Deploy the CNCF monitoring tools such as Prometheus and Grafana to collect ADC proxies’ stats. Monitoring ingress yaml will push the configuration automatically to Tier 1 ADC.
+**Note:-**
+Go to ``ingress_vpx_monitoring.yaml`` and change the frontend-ip address from ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver Prometheus and Grafana portal or you can use the same frontend-IP used in Step 11. 
 e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.161"``
+```
+kubectl create -f /root/yamls/monitoring.yaml -n monitoring
+kubectl create -f /root/yamls/ingress_vpx_monitoring.yaml -n monitoring
+```
 
 15.	Add the DNS entries in your local machine host files for accessing monitoring portals though internet.
 Path for host file: ``C:\Windows\System32\drivers\etc\hosts``
-Add below entries in hosts file and save the file,
-
+Add below entries in hosts file and save the file
+```
 <frontend-ip from ingress_vpx_monitoring.yaml> grafana.beverages.com
 <frontend-ip from ingress_vpx_monitoring.yaml> prometheus.beverages.com
-
+```
 16.	Login to ``http://grafana.beverages.com`` and do the following one time setup
 Login to portal using admin/admin credentials.
 Click on Add data source and select the Prometheus data source. Do the settings as shown below and click on save & test button.
