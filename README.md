@@ -1,12 +1,10 @@
 
-#### Use Citrix ADC in two tier microservices architecture
+Use Citrix ADC in two tier microservices architecture
+=====================================================
 
 
-
-
-## Step by step demo
-
-
+Step by step demo
+-----------------
 
 Citrix ADC works in the two-tier architecture deployment solution to load balance the enterprise grade applications deployed in microservices and access those through internet. Tier 1 can have traditional load balancers such as VPX/SDX/MPX, or CPX (containerized Citrix ADC) to manage high scale north-south traffic. Tier 2 has CPX deployment for managing microservices and load balances the north-south & east-west traffic.
 
@@ -146,16 +144,18 @@ Now you can see the Grafana dashboard with basic ADC stats listed.
  
  ![grafana_stats](https://user-images.githubusercontent.com/42699135/50677391-97e66480-101f-11e9-8d42-87c4a2504a96.png)
 
-## Packet Flow Diagrams
+Packet Flow Diagrams
+--------------------
 
 Citrix ADC solution supports the load balancing of various protocol layer traffic such as SSL,  SSL_TCP, HTTP, TCP. Below screenshot has listed different flavours of traffic supported by this demo.
 ![traffic_flow](https://user-images.githubusercontent.com/42699135/50677397-99179180-101f-11e9-8a40-26ba7d0d54e0.png)
 
 
-# How client traffic reaches hotdrink-beverage microservices?
+# How user traffic reaches hotdrink-beverage microservices?
+
 Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where hotdrink beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
 ![hotdrink-packetflow-gif](https://user-images.githubusercontent.com/42699135/53620442-fd6a6200-3c18-11e9-833c-704375c7b0be.gif)
  
-# How client traffic reaches guestbook-beverage microservices?
+# How user traffic reaches guestbook-beverage microservices?
 Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where guestbook beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
 ![guestbook-app](https://user-images.githubusercontent.com/42699135/53620445-01967f80-3c19-11e9-838f-1d2c4bbe4d06.gif)
