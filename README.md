@@ -142,3 +142,11 @@ Now you can see the Grafana dashboard with basic ADC stats listed.
 Citrix ADC solution supports the load balancing of various protocol layer traffic such as SSL,  SSL_TCP, HTTP, TCP. Below screenshot has listed different flavours of traffic supported by this demo.
 ![traffic_flow](https://user-images.githubusercontent.com/42699135/50677397-99179180-101f-11e9-8a40-26ba7d0d54e0.png)
  
+ #### How does client traffic reaches to hotdrink-beverage microservices?
+Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where hotdrink beverage  microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
+![hotdrink-packetflow-gif](https://user-images.githubusercontent.com/42699135/53619149-55529a00-3c14-11e9-816b-120fe80b99b1.gif)
+
+ #### How does client traffic reaches to guestbook-beverage microservices?
+Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where guestbook beverage  microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
+![guestbook-app](https://user-images.githubusercontent.com/42699135/53619174-6bf8f100-3c14-11e9-8573-26effa6b28f5.gif)
+
