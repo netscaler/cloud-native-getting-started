@@ -154,8 +154,8 @@ Citrix ADC solution supports the load balancing of various protocol layer traffi
 # How user traffic reaches hotdrink-beverage microservices?
 
 Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where hotdrink beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
-![hotdrink-packetflow-gif](https://user-images.githubusercontent.com/42699135/53620442-fd6a6200-3c18-11e9-833c-704375c7b0be.gif)
+![hotdrink-packetflow-gif](https://user-images.githubusercontent.com/42699135/53723239-4a566e80-3e8d-11e9-99d1-dd9bd53dea53.gif)
  
 # How user traffic reaches guestbook-beverage microservices?
 Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where guestbook beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
-![guestbook-app](https://user-images.githubusercontent.com/42699135/53620445-01967f80-3c19-11e9-838f-1d2c4bbe4d06.gif)
+![guestbook-app](https://user-images.githubusercontent.com/42699135/53723248-50e4e600-3e8d-11e9-8036-c27c9af22bf7.gif)
