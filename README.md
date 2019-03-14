@@ -32,6 +32,9 @@ kubectl get nodes
 Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/ and follow the steps mentioned to bring the Kubernetes dashboard up as shown below.
 
 ![k8sdashboard](https://user-images.githubusercontent.com/42699135/50677396-99179180-101f-11e9-95a4-1d9aa1b9051b.png)
+
+**Pre-Requsites:**
+Make sure that route configuraton is present in Tier 1 ADC so that Ingress NetScaler should be able to reach kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network-config.md for Network configuration.
  
 3.	Create a namespaces using Kubernetes master CLI console.
 ```
@@ -56,14 +59,6 @@ kubectl create -f /root/yamls/rbac.yaml
 
 6.	Deploy the CPX for hotdrink, colddrink and guestbook microservices using following commands,
 
-**Pre-Requsites:** 
-Citrix CPX deployment requires "image pull secrets" to download the CPX image.
-For generating new imagePullsecret, please raise a request to Citrix Slack. 
-
-Update the Secret provided by Citrix: 
-Update the ".dockerconfigjson" field under secret in CPX.yaml
-
-
 ```
 kubectl create -f /root/yamls/cpx-svcacct.yaml -n tier-2-adc
 kubectl create -f /root/yamls/cpx.yaml -n tier-2-adc
@@ -86,7 +81,7 @@ kubectl create -f /root/yamls/colddrink-secret.yaml -n team-colddrink
 ```
 kubectl create -f /root/yamls/team_guestbook.yaml -n team-guestbook
 ```
-10.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is present before we automate the Tier 1 ADC.
+10.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC.
 
 11.	Deploy the VPX ingress and ingress controller to push the CPX configuration into the tier 1 ADC automatically.
 **Note:-** 
@@ -158,4 +153,7 @@ Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server a
  
 # How user traffic reaches guestbook-beverage microservices?
 Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where guestbook beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
+
 ![guestbook-app](https://user-images.githubusercontent.com/42699135/53723248-50e4e600-3e8d-11e9-8036-c27c9af22bf7.gif)
+
+Please refer to Citrix ingress controller for more information, present at- https://github.com/citrix/citrix-k8s-ingress-controller
