@@ -11,14 +11,14 @@ spec:
   - host:  grafana.beverages.com
     http:
       paths:
-      - path: /
+      - path: 
         backend:
           serviceName: grafana
           servicePort: 3000
   - host:  prometheus.beverages.com
     http:
       paths:
-      - path: /
+      - path: 
         backend:
           serviceName: prometheus
           servicePort: 9090
