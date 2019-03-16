@@ -14,21 +14,21 @@ spec:
   - host:  hotdrink.beverages.com
     http:
       paths:
-      - path: /
+      - path: 
         backend:
           serviceName: lb-service-hotdrinks
           servicePort: 443
   - host:  guestbook.beverages.com
     http:
       paths:
-      - path: /
+      - path: 
         backend:
           serviceName: lb-service-guestbook
           servicePort: 80
   - host:  colddrink.beverages.com
     http:
       paths:
-      - path: /
+      - path: 
         backend:
           serviceName: lb-service-colddrinks
           servicePort: 443
