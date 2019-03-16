@@ -1,12 +1,3 @@
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: citrix-readonly-pull-secret
-data:
-  .dockerconfigjson: ewogICJhdXRocyI6IHsKICAgICJxdWF5LmlvIjogewogICAgICAiYXV0aCI6ICJZMmwwY21sNEszQnRZM1Z6ZEc5dFpYSTZOVVJWU0VrMlRFWTNSazB5UlVnNFJUQkpUVXhNVlROSVVWWXpUMDlCUTBjelJqZ3dOMDlVVGsxRFZVWlFRakpLUWpkUVNVa3dOa05DU0VoUVdVSTBPUT09IiwKICAgICAgImVtYWlsIjogIiIKICAgIH0KICB9Cn0=
-type: kubernetes.io/dockerconfigjson
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -16,34 +7,55 @@ spec:
   template:
     metadata:
       name: cpx-ingress-hotdrinks
-      annotations:
-        NETSCALER_AS_APP: "True"
       labels:
         app: cpx-ingress-hotdrinks
         app1: exporter
+      annotations:
     spec:
       serviceAccountName: cpx
       containers:
-      - name: cpx-ingress-hotdrinks
-        image: "quay.io/citrix/citrix-k8s-cpx-ingress:latest"
-        ports:
-        - name: http
-          containerPort: 80
-        - name: https
-          containerPort: 443
-        securityContext:
-           privileged: true
-        env:
-         - name: "EULA"
-           value: "yes"
-        args:
-          - --ingress-classes
-            hotdrink         
-          - --ingress-default-secret
-            hotdrink-secret
-        imagePullPolicy: Always
-      imagePullSecrets:
-      - name: citrix-readonly-pull-secret
+        - name: cpx-ingress-hotdrinks
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:12.1-51.16"
+          securityContext: 
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.1"
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          args:
+            - --ingress-classes
+              hotdrink
+            - --default-ssl-certificate
+              $(POD_NAMESPACE)/hotdrink-secret
+          imagePullPolicy: Always
 
 ---
 
@@ -68,7 +80,6 @@ spec:
     app: cpx-ingress-hotdrinks
 
 ---
-
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -78,32 +89,54 @@ spec:
   template:
     metadata:
       name: cpx-ingress-colddrinks
-      annotations:
-        NETSCALER_AS_APP: "True"
       labels:
         app: cpx-ingress-colddrinks
         app1: exporter
+      annotations:
     spec:
       serviceAccountName: cpx
       containers:
-      - name: cpx-ingress-colddrinks
-        image: "quay.io/citrix/citrix-k8s-cpx-ingress:latest"
-        ports:
-        - name: http
-          containerPort: 80
-        - name: https
-          containerPort: 443
-        securityContext:
-           privileged: true
-        env:
-         - name: "EULA"
-           value: "yes"
-        args:
-          - --ingress-classes
-            colddrink         
-        imagePullPolicy: Always
-      imagePullSecrets:
-      - name: citrix-readonly-pull-secret
+        - name: cpx-ingress-colddrinks
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:12.1-51.16"
+          securityContext: 
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.1"
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          args:
+            - --ingress-classes
+              colddrink
+          imagePullPolicy: Always
+
 ---
 
 apiVersion: v1
@@ -127,7 +160,6 @@ spec:
     app: cpx-ingress-colddrinks
 
 ---
-
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -137,32 +169,54 @@ spec:
   template:
     metadata:
       name: cpx-ingress-guestbook
-      annotations:
-        NETSCALER_AS_APP: "True"
       labels:
         app: cpx-ingress-guestbook
         app1: exporter
+      annotations:
     spec:
       serviceAccountName: cpx
       containers:
-      - name: cpx-ingress-guestbook
-        image: "quay.io/citrix/citrix-k8s-cpx-ingress:latest"
-        ports:
-        - name: frontend
-          containerPort: 80
-        - name: guestbook
-          containerPort: 6379
-        securityContext:
-           privileged: true
-        env:
-         - name: "EULA"
-           value: "yes"
-        args:
-          - --ingress-classes
-            guestbook      
-        imagePullPolicy: Always
-      imagePullSecrets:
-      - name: citrix-readonly-pull-secret
+        - name: cpx-ingress-guestbook
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:12.1-51.16"
+          securityContext: 
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.1"
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          args:
+            - --ingress-classes
+              guestbook
+          imagePullPolicy: Always
+
 ---
 
 apiVersion: v1
@@ -210,4 +264,3 @@ spec:
   ports:
   - name: http
     port: 3000
-
