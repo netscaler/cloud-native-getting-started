@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tier-2-adc
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-hotdrink
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-colddrink
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-guestbook
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
