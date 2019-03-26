@@ -64,13 +64,13 @@ One can deploy Citrix ADC by using anyone of the two ways
    
 Now we are going to deploy Citrix VPX (tier-1-adc) using 3-NIC GDM template.
 
-**Prerequisites**
+**Prerequisites(Mandatory)**
 
-1. Install the “gcloud” utility on your device. You can find the utility at this link: https://cloud.google.com/sdk/install
-
-2. Download the NSVPX-GCP image from the Citrix download site.
-
-3. Upload the file(for example, NSVPX-GCP-12.1-50.9_nc_64.tar.gz) to a storage bucket on Google by following the steps given at https://cloud.google.com/storage/docs/uploading-objects
+1. Create GCP account using your Citrix mail id only http://console.cloud.google.com
+2. Create same project name on GCP console as shown below : cnn-selab-atl
+   
+   ![GCP](./media/cpx-ingress-image1-2.png)
+3. Install the “gcloud” utility on your device. You can find the utility at this link: https://cloud.google.com/sdk/install
 
 4. Run the following command on the gcloud utility to create an image.
 
@@ -78,6 +78,9 @@ Now we are going to deploy Citrix VPX (tier-1-adc) using 3-NIC GDM template.
     gcloud compute images create netscaler12-1 --source-uri=gs://tme-cpx-storage/NSVPX-GCP-12.1-50.28_nc.tar.gz --guest-os-features=MULTI_IP_SUBNET
     ```
     It might take a moment for the image to be created. After the image is created, it appears under Compute > Compute Engine in the GCP console.
+
+5. Download or Clone the files which consists of tier-1-adc automated files and application yaml files from below URL
+   https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/gcp/config-files 
 
 ## Deploy a Citrix VPX (tier-1-adc) on GCP
 
@@ -133,7 +136,17 @@ Now we are going to deploy Citrix VPX (tier-1-adc) using 3-NIC GDM template.
 
 ---
 
-## Deploy a Kubernetes cluster using GKE
+## Deploy a Kubernetes cluster using GKE 
+
+One can deploy Kubernetes cluster either by ***Google Cloud SDK or through Google Cloud Platform GUI console***.
+
+### GcloudSDK Command to create k8s cluster
+
+```
+gcloud beta container --project "cnn-selab-atl" clusters create "k8s-cluster-with-cpx" --zone "us-east1-b" --username "admin" --cluster-version "1.11.7-gke.12" --machine-type "n1-standard-1" --image-type "COS" --disk-type "pd-standard" --disk-size "100" --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --enable-cloud-logging --enable-cloud-monitoring --no-enable-ip-alias --network "projects/cnn-selab-atl/global/networks/vpx-snet-snip" --subnetwork "projects/cnn-selab-atl/regions/us-east1/subnetworks/vpx-snet-snip" --addons HorizontalPodAutoscaling,HttpLoadBalancing --enable-autoupgrade --enable-autorepair
+```
+
+### Google Cloud Platform GUI Steps
 
 1. Search for a Kubernetes Engine on GCP Console and click **Create Cluster**.
 
@@ -317,7 +330,7 @@ Now it's time to push rewrite responder policies on VPX through CRD (Custon Reso
 
     ![GCP](./media/cpx-ingress-image15.png)
 
-    ***Grafana Visaul Dashboard***
+    ***Grafana Visual Dashboard***
 1. From the left panel, select the **Import** option and upload the `grafana_config.json` file provided in the `yamlFiles` folder. Now you can see the Grafana dashboard with basic ADC stats listed.
 
     ![GCP](./media/cpx-ingress-image16.png)
