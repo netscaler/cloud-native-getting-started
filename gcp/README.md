@@ -70,6 +70,7 @@ Now we are going to deploy Citrix VPX (tier-1-adc) using 3-NIC GDM template.
 2. Create **cnn-selab-atl** as project name on GCP console as shown below : 
 
 ![GCP](./media/cpx-ingress-image1-2.png)
+
 3. Install the “gcloud” utility on your device. You can find the utility at this link: https://cloud.google.com/sdk/install
 
 4. Run the following command on the gcloud utility to create an image.
