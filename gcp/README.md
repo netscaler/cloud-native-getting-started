@@ -74,12 +74,13 @@ Prerequisites (mandatory):
 
     ![GCP](./media/cpx-ingress-image-20.png)
 
-1. Clone the config files repoistory required for deployment and validate the same by giving **ls** to check the folder
+1. Clone the config files repoistory required for deployment on cloud shell and validate the same by giving **ls** to check the folder
 
       ```cloudshell
      git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
       ```
 
+    ![GCP](./media/cpx-ingress-image-28.png)
 1. Open the config files directory
 
     ```cloudshell
@@ -204,7 +205,7 @@ gcloud beta container --project "<project-name>" clusters create "k8s-cluster-wi
 
     ![GCP](./media/cpx-ingress-image9.png)
 
-1. To access this cluster from the cloud SDK, search for **Kubernetes Engine > Clusters** and click **Connect to the cluster** button on right side of cluster **"Run in Cloud Shell"** and hit enter to access to GKE Cluster.
+1. To access this cluster from the cloud shell, search for **Kubernetes Engine > Clusters** and click **Connect to the cluster** button on right side of cluster and copy paste it on cloud shell
 
      ![GCP](./media/cpx-ingress-image-26.png)
 
