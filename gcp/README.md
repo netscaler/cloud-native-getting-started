@@ -1,8 +1,8 @@
-# Citrix ADC CPX, Citrix Ingress Controller, and Application Delivery Management on Google Cloud
+# Two-Tier deployment with Citrix ADC VPX, Citrix Ingress Controller and Citrix ADC CPX on Google Cloud
 
 ## Citrix product overview for GCP K8's architecture and components
 
-## The five major Citrix components of GCP
+## The four major Citrix components of GCP
 
 1. **Citrix ADC VPX as tier 1 ADC for ingress-based internet client traffic.**
 
@@ -58,39 +58,45 @@ The tier 1 VPX/MPX automatically load balances the tier 2 CPXs. Citrix ingress c
 
 ## Install and configure the tier 1 Citrix ADC on GCP
 
-You can deploy Citrix ADC using one of the following:
-
-- **Google Cloud Platform GUI:** For information on configuring the tier 1 Citrix ADC on Google Cloud Platform through GUI, see [Deploy a Citrix ADC VPX instance](https://docs.citrix.com/en-us/netscaler/12-1/deploying-vpx/deploy-vpx-google-cloud.html).
-
-- **Google Deployment Manager:** For information on configuring the tier 1 Citrix ADC on Google Cloud Platform through GDM templates, see [Deploy a Citrix ADC VPX instance using GDM templates](https://github.com/citrix/citrix-adc-gdm-templates).
-
-Now you need to deploy Citrix VPX (tier-1-adc) using 3-NIC GDM template.
-
 Prerequisites (mandatory):
 
-1. Create GCP account using your Citrix mail id only <http://console.cloud.google.com>
+1. Create a GCP account <http://console.cloud.google.com>
 
-1. Create cnn-selab-atl as project name on GCP console:
+1. Download the NSVPX-GCP image from the Citrix download site.
 
-     ![GCP](./media/cpx-ingress-image1-2.png)
+1. Upload the file(for example, NSVPX-GCP-12.1-50.9_nc_64.tar.gz) to a storage bucket on Google by following the steps given at <https://cloud.google.com/storage/docs/uploading-objects>
 
-1. Install the `gcloud` utility on your device. Follow the link to find the utility: <https://cloud.google.com/sdk/install>
+1. Create **"cnn-selab-atl"** as project name on GCP console but **"Project ID"** which is unique for every GCP account will be your project name
 
-1. Authenticate to your Google account using gcloud API **gcloud auth login**
+     ![GCP](./media/cpx-ingress-image-19.png)
 
-1. Install kubectl on your client: <https://kubernetes.io/docs/tasks/tools/install-kubectl/>
+1. Search for **Compute Engine** on GCP and select above created project on left to search and click on **Activate Cloud Shell** icon on right of search, than you will see cloud shell opened at the bottom of page
 
-1. Run the following command on the `gcloud` utility to create a VPX image in your GCP
+    ![GCP](./media/cpx-ingress-image-20.png)
 
-    ```gcloudsdk
-    gcloud compute images create netscaler12-1 --source-uri=gs://tme-cpx-storage/NSVPX-GCP-12.1-50.28_nc.tar.gz --guest-os-features=MULTI_IP_SUBNET
+1. Clone the config files repoistory required for deployment and validate the same by giving **ls** to check the folder
+
+      ```cloudshell
+     git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
+      ```
+
+1. Open the config files directory
+
+    ```cloudshell
+    cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/config-files/
     ```
 
-    It might take a moment for the image to be created. After the image is created, it appears under **Compute > Compute Engine** in the GCP console.
+1. Change the STORAGE_BUCKET_NAME and FILE_NAME as per your GCP account in below command and run to create a VPX image in your GCP account
+
+    ```cloudshell
+    gcloud compute images create netscaler12-1 --source-uri=gs://<STORAGE_BUCKET_NAME>/<FILE_NAME>.tar.gz --guest-os-features=MULTI_IP_SUBNET
+    ```
+
+    It might take a moment around 10 minutes for the image to be created. After the image is created, it appears under **Compute > Compute Engine > Images** in the GCP console. We will proceed to next steps by clicking on **Add Cloud Shell Sesssion** beside cloud shell session
 
 ## Deploy a Citrix VPX (tier-1-adc) on GCP
 
-1. **GCP VPC instances:**
+1. **GCP VPC Instances:**
      To address the separation of the External, Internal, and DMZ networks for security purposes. We must create three NICs as shown in the following table:
 
      |Network|Comments|
@@ -103,36 +109,36 @@ Prerequisites (mandatory):
      >
      > Build the three-arm network VPCs before you deploy any VM instances.
 
-     A VPC can be created by SDK by using gcloud APIs or through Google Cloud Platform Console
+     A VPC can be created by cloud shell or Google Cloud Platform Console
   
-     **VPC by gcloud API**
+     **VPC by Cloud Shell**
 
      Create a VPC for Management or NSIP Traffic
 
-     ```gcloudsdk
-     gcloud compute --project=cnn-selab-atl networks create vpx-snet-mgmt --subnet-mode=custom
-     gcloud compute --project=cnn-selab-atl networks subnets create vpx-snet-mgmt --network=vpx-snet-mgmt --region=us-east1 --range=192.168.10.0/24
+     ```cloudshell
+     gcloud compute networks create vpx-snet-mgmt --subnet-mode=custom
+     gcloud compute networks subnets create vpx-snet-mgmt --network=vpx-snet-mgmt --region=us-east1 --range=192.168.10.0/24
      ```
 
      Create a VPC for Client or VIP Traffic
 
      ```gcloudsdk
-     gcloud compute --project=cnn-selab-atl networks create vpx-snet-vip --subnet-mode=custom
-     gcloud compute --project=cnn-selab-atl networks subnets create vpx-snet-vip --network=vpx-snet-vip --region=us-east1 --range=172.16.10.0/24
+     gcloud compute networks create vpx-snet-vip --subnet-mode=custom
+     gcloud compute networks subnets create vpx-snet-vip --network=vpx-snet-vip --region=us-east1 --range=172.16.10.0/24
      ```
 
      Create a VPC for Server or SNIP Traffic where you host your kubernetes Cluster
 
      ```gcloudsdk
-     gcloud compute --project=cnn-selab-atl networks create vpx-snet-snip --subnet-mode=custom
-     gcloud compute --project=cnn-selab-atl networks subnets create vpx-snet-snip --network=vpx-snet-snip --region=us-east1 --range=10.10.10.0/24
+     gcloud compute networks create vpx-snet-snip --subnet-mode=custom
+     gcloud compute networks subnets create vpx-snet-snip --network=vpx-snet-snip --region=us-east1 --range=10.10.10.0/24
      ```
 
      **VPC by GCP GUI Console**
 
      From the Google console, select **Networking > VPC network > Create VPC network** and enter the required fields, as shown below. Then click **Create**.
 
-     ![GCP](./media/cpx-ingress-image1a.png)
+     ![GCP](./media/cpx-ingress-image-21.png)
 
      Similarly, create VPC networks for client and server-side NICs to create three subnets.
 
@@ -142,15 +148,16 @@ Prerequisites (mandatory):
 
      ![GCP](./media/cpx-ingress-image1.png)
 
-1. After you create three networks and three subnets under **VPC Network**, deploy the Citrix ADC VPX instance using the GDM template. Make sure both **configuration.yml** and **template.py** are in same folder or directory. Use the following command from Google SDK to deploy the instance.
+1. After you create three  **VPC Networks**, deploy the Citrix ADC VPX instance using the GDM template.
+    >Note: Ensure you are in config-files directory and change the variable **"image_project_name:"** in **configuration.yml** to your project name by using **vi** or **nano editor** and execute below command  
 
      ```gcloudsdk
      gcloud deployment-manager deployments create tier1-vpx --config configuration.yml
      ```
 
-1. After a successful deployment, go to **Compute Engine** to check the **citrix-adc-tier1-vpx** section, and validate the internal IPs.
+1. After a successful deployment, go to **Compute Engine > VM instances** to check the **citrix-adc-tier1-vpx**  and validate the internal IPs.
 
-    ![GCP](./media/cpx-ingress-image2a.png)
+    ![GCP](./media/cpx-ingress-image-22.png)
 
 1. The Citrix ingress controller can automate the static route configuration in the tier 1 VPX. Configure the subnet IP (SNIP) address that should be of the same subnet/virtual private cloud of the Kubernetes cluster.
 
@@ -158,10 +165,11 @@ Prerequisites (mandatory):
     >
     > The tier 1 VPX/MPX deployed is going to load balance the CPXs inside the Kubernetes cluster. Configure the SNIP in the tier 1 VPX.
 
-     From a PuTTY session on the tier 1 VPX, complete the following commands to add SNIP and enable management access to SNIP:
+   ![GCP](./media/cpx-ingress-image-23.png)
 
-    ```tier-1-adc putty
-    clear config -force full
+    As shown in above image click on SSH "**open in browser window**" for **citrix-adc-tier1-vpx** VM instance and run below commands to add SNIP and enable management access to SNIP
+
+    ```cloudshell
     add ns ip 10.10.10.20 255.255.255.0 -type snip -mgmt enabled
     enable ns mode mbf
     ```
@@ -170,23 +178,25 @@ Prerequisites (mandatory):
 
 ## Deploy a Kubernetes cluster using GKE
 
-You can deploy Kubernetes cluster either by **Google Cloud SDK or through Google Cloud Platform GUI console**.
+You can deploy Kubernetes cluster either by **Cloud shell or Google Cloud Platform GUI console**.
 
-### Google Cloud SDK (gcloud API)
+### Google Cloud Shell
 
-```gcloudsdk
-gcloud beta container --project "cnn-selab-atl" clusters create "k8s-cluster-with-cpx" --zone "us-east1-b" --username "admin" --cluster-version "1.11.7-gke.12" --machine-type "n1-standard-1" --image-type "COS" --disk-type "pd-standard" --disk-size "100" --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --enable-cloud-logging --enable-cloud-monitoring --no-enable-ip-alias --network "projects/cnn-selab-atl/global/networks/vpx-snet-snip" --subnetwork "projects/cnn-selab-atl/regions/us-east1/subnetworks/vpx-snet-snip" --addons HorizontalPodAutoscaling,HttpLoadBalancing --enable-autoupgrade --enable-autorepair
+>Note:  **"project-name"** in below command is present at three places change it to your project name and execute below command
+
+```cloudshell
+gcloud beta container --project "<project-name>" clusters create "k8s-cluster-with-cpx" --zone "us-east1-b" --username "admin" --cluster-version "1.11.7-gke.12" --machine-type "n1-standard-1" --image-type "COS" --disk-type "pd-standard" --disk-size "100" --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --enable-cloud-logging --enable-cloud-monitoring --no-enable-ip-alias --network "projects/<project-name>/global/networks/vpx-snet-snip" --subnetwork "projects/<project-name>/regions/us-east1/subnetworks/vpx-snet-snip" --addons HorizontalPodAutoscaling,HttpLoadBalancing --enable-autoupgrade --enable-autorepair
 ```
 
 ### Google Cloud Platform GUI console steps
 
 1. Search for a Kubernetes Engine on GCP console and click **Create Cluster**.
 
-    ![GCP](./media/cpx-ingress-image6.png)
+    ![GCP](./media/cpx-ingress-image-24.png)
 
 1. Create a cluster in the same subnet where your VPX SNIP is (vpx-snet-snip). This cluster automates the configuration push into the tier 1 ADC from Citrix ingress controller in the K8s cluster.
 
-    ![GCP](./media/cpx-ingress-image7.png)
+    ![GCP](./media/cpx-ingress-image-25.png)
 
     ![GCP](./media/cpx-ingress-image8.png)
 
@@ -194,17 +204,17 @@ gcloud beta container --project "cnn-selab-atl" clusters create "k8s-cluster-wit
 
     ![GCP](./media/cpx-ingress-image9.png)
 
-1. To access this cluster from the cloud SDK, click the Kubernetes **Connect to the cluster** button and paste the command in the cloud SDK.
+1. To access this cluster from the cloud SDK, search for **Kubernetes Engine > Clusters** and click **Connect to the cluster** button on right side of cluster **"Run in Cloud Shell"** and hit enter to access to GKE Cluster.
 
-     ![GCP](./media/cpx-ingress-image10.png)
+     ![GCP](./media/cpx-ingress-image-26.png)
 
-1. Validate the GKE Cluster deployment by running the following command:
+1. Validate the GKE Cluster deployment by running the following command and open the config-files directory as given in prerequisites
 
     ```gcloudsdkkubectl
     kubectl get nodes
     ```
 
-    ![GCP](./media/cpx-ingress-image13.png)
+    ![GCP](./media/cpx-ingress-image-27.png)
 
 ---
 
@@ -274,21 +284,23 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
      ```
 
 1. Validate the CPX deployed for above three applications. First, obtain the CPX pods deployed as tier-2-adc and then get the CLI access to CPX.
+   * To get CPX pods in tier-2-adc namespace  
 
-     ```gcloudsdkkubectl
-     To get CPX pods in tier-2-adc namespace, enter: kubectl get pods -n tier-2-adc
+     ```cloudshellkubectl
+     kubectl get pods -n tier-2-adc
+     ```
 
-     To get CLI access (bash) to the CPX pod (hotdrinks-cpx pod), enter: `kubectl exec -it "copy and paste hotdrink CPX pod name from the above step" bash -n tier-2-adc`.
+   * To get CLI access (bash) to the CPX pod (hotdrinks-cpx pod)
 
-     For example,
+     ```cloudshellkubectl
+     kubectl exec -it "copy and paste hotdrink CPX pod name from the above step" bash -n tier-2-adc
+     ```
 
-     `kubectl exec -it cpx-ingress-hotdrinks-768b674f76-pcnw4 bash -n tier-2-adc`
+   * To check whether the CS vserver is running in the hotdrink-cpx, enter the following command after the root access to CPX and give **"exit"** after validation.
 
-     To check whether the CS vserver is running in the hotdrink-cpx, enter the following command after the root access to CPX: `cli-script"sh csvs"`.
-
-     For example,
-
-     `root@cpx-ingress-hotdrinks-768b674f76-pcnw4:/# cli_script.sh "sh csvs"`
+        ```cloudshellkubectl
+        cli-script"sh csvs"
+        ```
 
 1. Deploy the VPX ingress and ingress controller to the tier 2 namespace, which configures VPX automatically. Citrix Ingress Controller (CIC) automates the tier-1-adc (VPX).
 
@@ -301,16 +313,16 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
      For Windows Clients, go to: **C:\Windows\System32\drivers\etc\hosts**
 
-     For macOS Clients, in the Terminal, enter: **sudo nano /etc/hosts`**
+     For macOS Clients, in the Terminal, enter: **sudo nano /etc/hosts**
 
      Add the following entries in the host's file and save the file.
 
      ```gcloudsdkkubectl
-     hotdrink.beverages.com   xxx.xxx.xxx.xxx (static-external-traffic-ip-tier1-vpx)
-     colddrink.beverages.com  xxx.xxx.xxx.xxx (static-external-traffic-ip-tier1-vpx)
-     guestbook.beverages.com  xxx.xxx.xxx.xxx (static-external-traffic-ip-tier1-vpx)
-     grafana.beverages.com    xxx.xxx.xxx.xxx (static-external-traffic-ip-tier1-vpx)
-     prometheus.beverages.com xxx.xxx.xxx.xxx (static-external-traffic-ip-tier1-vpx)
+     xxx.xxx.xxx.xxx (external-traffic-ip-tier1-vpx) hotdrink.beverages.com
+     xxx.xxx.xxx.xxx (external-traffic-ip-tier1-vpx) colddrink.beverages.com  
+     xxx.xxx.xxx.xxx (external-traffic-ip-tier1-vpx) guestbook.beverages.com  
+     xxx.xxx.xxx.xxx (external-traffic-ip-tier1-vpx) grafana.beverages.com
+     xxx.xxx.xxx.xxx (external-traffic-ip-tier1-vpx) prometheus.beverages.com 
      ```
 
 1. Now you can access each application over the Internet. For example, `https://hotdrink.beverages.com`.

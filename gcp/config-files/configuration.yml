@@ -34,7 +34,7 @@ resources:
    #The Citrix ADC image name
    image_name: "netscaler12-1"
    #The project name where the image is hosted
-   image_project_name: "cnn-selab-atl"
+   image_project_name: "<your project name>"
    #The instance type to deploy the Citrix ADC instance Example: n1-standard-4
    instance_type: "n1-standard-4"
    #The public key used for authenticating into the Citrix ADC.
