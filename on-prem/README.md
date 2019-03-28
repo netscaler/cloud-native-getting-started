@@ -26,6 +26,7 @@ Once Kubernetes cluster is up and running, execute the below command on master n
 kubectl get nodes
 ```
  ![getnodes](https://user-images.githubusercontent.com/42699135/50677393-987efb00-101f-11e9-8580-4d27746bb96a.png)
+ 
  (Screenshot above has Kubernetes cluster with one master and two worker node).
 
 2.	Set up a Kubernetes dashboard for deploying containerized applications.
