@@ -139,7 +139,40 @@ Now you can see the Grafana dashboard with basic ADC stats listed.
  
  ![grafana_stats](https://user-images.githubusercontent.com/42699135/50677391-97e66480-101f-11e9-8d42-87c4a2504a96.png)
 
-Packet Flow Diagrams
+
+## Configure Rewrite and Responder policies in Tier 1 ADC using Kubernetes CRD deployment
+
+Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) using the custom resource definition (CRD).
+
+1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
+
+   ```gcloudsdkkubectl
+   kubectl create -f /root/yamls/crd_rewrite_responder.yaml
+   ```
+
+1. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee page.
+
+   ```gcloudsdkkubectl
+   kubectl create -f /root/yamls/responderpolicy_hotdrink.yaml -n tier-2-adc
+   ```
+
+   After you deploy the Responder policy, access the coffee page on `hotdrink.beverages.com`. Then you receive the following message.
+
+   ![GCP](./media/cpx-ingress-image16a.png)
+
+1. **Header insertion** Configure the Rewrite policy on `colddrink.beverages.com` to insert the session ID in the header.
+
+   ```gcloudsdkkubectl
+   kubectl create -f /root/yamls/rewritepolicy_colddrink.yaml -n tier-2-adc
+   ```
+
+   After you deploy the Rewrite policy, access `colddrink.beverages.com` with developer mode enabled on the browser. In Chrome, press F12 and preserve the log in network category to see the session ID, which is inserted by the Rewrite policy on tier-1-adc (VPX).
+
+   ![GCP](./media/cpx-ingress-image16b.png)
+
+---
+
+### Packet Flow Diagrams
 --------------------
 
 Citrix ADC solution supports the load balancing of various protocol layer traffic such as SSL,  SSL_TCP, HTTP, TCP. Below screenshot has listed different flavours of traffic supported by this demo.
