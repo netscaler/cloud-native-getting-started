@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aaad
+spec:
+  selector:
+    matchLabels:
+      app: aaad
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: aaad
+        tier: backend
+    spec:
+      containers:
+      - name: aaad
+        {{ if not .Values.image.repository }}
+        dummy1: {{ required "A valid repository required!" .Values.image.repository }}
+        dummy2: {{ required "A valid tag entry required!" .Values.image.tag }}
+        {{ else }}
+        {{ if eq .Values.image.repository "local"}}
+        image: adm-aaad:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: IfNotPresent
+        {{ else if eq .Values.image.repository "sjc"}}
+        image: adm-local-docker-aaad.sjc-repo.citrite.net/adm-local-docker-aaad:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: Always
+        {{ else if eq .Values.image.repository "blr"}}
+        image: adm-local-docker-aaad.blr-repo.citrite.net/adm-local-docker-aaad:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: Always
+        {{ else if eq .Values.image.repository "quay.io"}}
+        image: quay.io/citrixadmtp/aaad:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: Always
+        {{ end }}
+        {{ end }}
+        env:
+        - name: MGMT_MONIT_HOST
+          value: "mgmt-monit"        
+        ports:
+        - containerPort: 8766
+      {{ if eq .Values.image.repository "quay.io"}}
+      imagePullSecrets:
+      - name: citrixadm-pull-secret
+      {{ end }}

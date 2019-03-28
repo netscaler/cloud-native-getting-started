@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mgmt-monit
+spec:
+  selector:
+    matchLabels:
+      app: mgmt-monit
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mgmt-monit
+        tier: backend
+    spec:
+      containers:
+      - name: mm
+        {{ if not .Values.image.repository }}
+        dummy1: {{ required "A valid repository required!" .Values.image.repository }}
+        dummy2: {{ required "A valid tag entry required!" .Values.image.tag }}
+        {{ else }}
+        {{ if eq .Values.image.repository "local"}}
+        image: adm-management-monitoring:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: IfNotPresent
+        {{ else if eq .Values.image.repository "sjc"}}
+        image: adm-local-docker-mm.sjc-repo.citrite.net/adm-local-docker-mm:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: Always
+        {{ else if eq .Values.image.repository "blr"}}
+        image: adm-local-docker-mm.blr-repo.citrite.net/adm-local-docker-mm:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: Always
+        {{ else if eq .Values.image.repository "quay.io"}}
+        image: quay.io/citrixadmtp/mm:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: Always
+        {{ end }}
+        {{ end }}
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "2"
+        volumeMounts:
+        - name: adm-vol
+          mountPath: /var/app_data
+        env:
+        - name: AAAD_HOST
+          value: "aaad"
+        - name: DEPLOYMENT_TYPE
+          {{ if not .Values.deploymentType }}
+          dummy1: {{ required "A valid deploymentType required!" .Values.deploymentType }}
+          {{ else }}
+          {{ if or (eq .Values.deploymentType "onprem") (eq .Values.deploymentType "service") }}
+          value: {{ .Values.deploymentType }}
+          {{ else }}
+          dummy1: {{ required "value of deploymentType can be onprem or service!" .Values.dummy }}
+          {{ end }}
+          {{ end }}
+        - name: POSTGRES_HOST
+          value: {{ required "A valid postgresHost required!" .Values.postgres.host | quote }}
+        - name: POSTGRES_PORT
+          value: {{ .Values.postgres.port | default "5454" | quote}}
+        - name: REDIS_HOST
+          value: {{ required "A valid redis host required!" .Values.redis.host | quote }}
+        - name: REDIS_PORT
+          value: {{ .Values.redis.port | default "6379" | quote}}
+        - name: STYLEBOOKS_HOST
+          value: "stylebooks"
+        - name: LICENSING_HOST
+          value: "licensing"
+        - name: KAD_HOST
+          value: "k8sadapter"
+        - name: INGRESS_FRONTEND_IP
+          value: {{ required "A valid ingressIP required!" .Values.ingressIP | quote }}
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        - containerPort: 443
+          protocol: TCP
+        - containerPort: 22
+          protocol: TCP
+        - containerPort: 162
+          protocol: UDP
+        - containerPort: 514
+          protocol: UDP
+        - containerPort: 4739
+          protocol: UDP
+        - containerPort: 5557
+          protocol: TCP
+        - containerPort: 5558
+          protocol: TCP
+        - containerPort: 5563
+          protocol: TCP
+        - containerPort: 6565
+          protocol: TCP
+      {{ if eq .Values.image.repository "quay.io"}}
+      imagePullSecrets:
+      - name: citrixadm-pull-secret
+      {{ end }}
+      volumes:
+      - name: adm-vol
+        persistentVolumeClaim:
+          claimName: adm-pvc

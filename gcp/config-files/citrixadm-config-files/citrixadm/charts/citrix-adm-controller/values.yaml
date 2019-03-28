@@ -1,0 +1,35 @@
+# deploymentType can be onprem or service
+deploymentType: "onprem"
+
+image:
+  # repository is the repository from where to pull the images. Valid values are local, blr and sjc
+  repository: "quay.io"
+  # tag is the image tag. Default value is latest
+  tag: "latest"
+  # secret is the image pull secret
+  secret: "ewogICJhdXRocyI6IHsKICAgICJxdWF5LmlvIjogewogICAgICAiYXV0aCI6ICJZMmwwY21sNFlXUnRkSEFyWVdSdFpXNW5hVzVsWlhKcGJtYzZURWd3VlZJMVF6TTJXa0UzTjFBeE1GY3hNbGhDVVZOVE0wNDRVRkZJVWpKTVJsTkhSRlZETURSQlIweElUazVFVkZoVVVERkdXRmRJVlROTU9EVk1SUT09IiwKICAgICAgImVtYWlsIjogIiIKICAgIH0KICB9Cn0="
+
+# ingressIP is the VIP configured in the NetScaler for accessing the application
+ingressIP: "10.102.103.4"
+
+storage:
+  # type can have values as nfs or hostDirectory
+  type: "nfs"
+  # nfsServer is applicable only if storageType is nfs
+  nfsServer: "10.102.103.8"
+  # path is the mount path in case storage type is nfs or is host path in case storage type is hostDirectory
+  path: "/var/honeycomb_nfs/deepak-k8s"
+  # size of the storage
+  size: 10Gi
+
+postgres:
+  # host is the endpoint where postgres db is running
+  host: "statefulset-primary"
+  # port is port for external postgres DB. default value is 5454
+  port: "5432"
+
+redis:
+  # host is the hostname for external redis cache
+  host: "redis-sentinel"
+  # port is port for external redis cache. default value is 6379
+  port: "6379"

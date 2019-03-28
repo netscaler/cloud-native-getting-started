@@ -1,0 +1,54 @@
+# Default values for citrixadm.
+
+# https://
+citrix-adm-controller:
+  # deploymentType can be onprem or service
+  deploymentType: "onprem"
+
+  image:
+    # repository is the repository from where to pull the images. Valid values are local, blr and sjc
+    repository: "quay.io"
+    # tag is the image tag. Default value is latest
+    tag: "latest"
+    # secret is the image pull secret
+    secret: "ewogICJhdXRocyI6IHsKICAgICJxdWF5LmlvIjogewogICAgICAiYXV0aCI6ICJZMmwwY21sNFlXUnRkSEFyWVdSdFkzVnpkRzl0WlhJNlRVeEdSelpVVHpRMVZsUkRPREZNVTFOUlVrTlRSRmRJTTA0MFZGbFFSa05XV2xoSFRsRkdTekJYTTBGUFJVbE9OMWhVVTBveVVrRkZUa3N3VURoU05BPT0iLAogICAgICAiZW1haWwiOiAiIgogICAgfQogIH0KfQ=="
+
+  # ingressIP is the VIP configured in the NetScaler for accessing the application
+  ingressIP: "172.16.10.8"
+
+  storage:
+    # type can have values as nfs or hostDirectory
+    type: "nfs"
+    # nfsServer is applicable only if storageType is nfs
+    nfsServer: "10.10.10.42"
+    # appDataPath is the mount path in case storage type is nfs or is host path in case storage type is hostDirectory
+    path: "/var/citrixadm_nfs/config"
+    # size of the storage
+    size: 10Gi
+
+  postgres:
+    # host is the endpoint where postgres db is running
+    host: "statefulset-primary"
+    # port is port for external postgres DB. default value is 5454
+    port: "5432"
+
+  redis:
+    # host is the hostname for external redis cache
+    host: "redis-sentinel"
+    # port is port for external redis cache. default value is 6379
+    port: "6379"
+
+# https://
+pg-datastore:
+  image:
+    repository: crunchydata
+    container: crunchy-postgres
+    tag: centos7-10.5-2.1.0
+  resources:
+    cpu: 1000m
+    memory: 1048Mi
+  storage:
+     type: "nfs"
+     nfsServer: "10.10.10.42"
+     size: 50Gi
+     path: "/var/citrixadm_nfs/datastore"

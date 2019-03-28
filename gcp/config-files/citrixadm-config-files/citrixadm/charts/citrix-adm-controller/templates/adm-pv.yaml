@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: adm-pv
+spec:
+  capacity:
+    storage: {{ required "A storage size is required!" .Values.storage.size }}
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: adm-storage
+  {{ if not .Values.storage.type }}
+  dummy1: {{ required "A storageType is required!" .Values.storage.type }}
+  {{ else }}
+  {{ if eq .Values.storage.type "nfs"}}
+  nfs: 
+    path: {{ required "A valid mount path is required" .Values.storage.path }}
+    server: {{ required "A valid nfs server host is required" .Values.storage.nfsServer }}
+    readOnly: false
+  {{ else if eq .Values.storage.type "hostDirectory"}}
+  hostPath:
+    path: {{ required "A valid host directory path is required" .Values.storage.path }}
+  {{ else }}
+  dummy1: {{ required "A valid values of storageType are nfs or hostDirectory!" .Values.junk }}
+  {{ end }}
+  {{ end }}
