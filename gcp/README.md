@@ -62,10 +62,6 @@ Prerequisites (mandatory):
 
 1. Create a GCP account <http://console.cloud.google.com>
 
-1. Download the NSVPX-GCP image from the Citrix download site.
-
-1. Upload the file(for example, NSVPX-GCP-12.1-50.9_nc_64.tar.gz) to a storage bucket on Google by following the steps given at <https://cloud.google.com/storage/docs/uploading-objects>
-
 1. Create **"cnn-selab-atl"** as project name on GCP console but **"Project ID"** which is unique for every GCP account will be your project name
 
      ![GCP](./media/cpx-ingress-image-19.png)
@@ -90,7 +86,7 @@ Prerequisites (mandatory):
 1. Change the STORAGE_BUCKET_NAME and FILE_NAME as per your GCP account in below command and run to create a VPX image in your GCP account
 
     ```cloudshell
-    gcloud compute images create netscaler12-1 --source-uri=gs://<STORAGE_BUCKET_NAME>/<FILE_NAME>.tar.gz --guest-os-features=MULTI_IP_SUBNET
+    gcloud compute images create netscaler12-1 --source-uri=gs://tme-cpx-storage/NSVPX-GCP-12.1-50.28_nc.tar.gz --guest-os-features=MULTI_IP_SUBNET
     ```
 
     It might take a moment around 10 minutes for the image to be created. After the image is created, it appears under **Compute > Compute Engine > Images** in the GCP console. We will proceed to next steps by clicking on **Add Cloud Shell Sesssion** beside cloud shell session
