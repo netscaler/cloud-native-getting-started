@@ -4,7 +4,7 @@ metadata:
   name: ingress-vpx
   annotations:
    kubernetes.io/ingress.class: "vpx"
-#   ingress.citrix.com/insecure-termination: "redirect"
+   ingress.citrix.com/insecure-termination: "redirect"
    ingress.citrix.com/frontend-ip: "172.16.10.20"
    ingress.citrix.com/secure_backend: '{"lb-service-hotdrinks": "True","lb-service-colddrinks": "True"}'
 spec:

@@ -27,6 +27,8 @@ my $home_dir = $ENV{'HOME'};
 my $repo_path = $ENV{'HOME'} . "/example-cpx-vpx-for-kubernetes-2-tier-microservices/";
 my $config_dir = $repo_path . "/gcp/config-files/";
 my $vpx_deployment_config_file = $config_dir . "/configuration.yml";
+my $zone = "us-east1-b";
+my $vpx_instance_name = "citrix-adc-tier1-vpx";
 
 my $CLONE_REPO = "TRUE";
 my $CREATE_VPX_IMAGE = "TRUE";
@@ -95,4 +97,12 @@ if ($CREATE_VPX_IMAGE eq "TRUE") {
 if ($CREATE_VPX == "TRUE") {
     print ("\n Creating VPX using GDM Template\n");
     qx#gcloud -q deployment-manager deployments create tier1-vpx --config $vpx_deployment_config_file#;
+}
+
+if ($CONFIG_VPX == "TRUE") {
+    print ("\nDoing basic VPX Configuration\n");
+    qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "show version"#;
+    qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "show version"#;
+    qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "add ns ip 10.10.10.20 255.255.255.0 -type snip -mgmt enabled"#;
+    qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "enable ns mode mbf"#;
 }

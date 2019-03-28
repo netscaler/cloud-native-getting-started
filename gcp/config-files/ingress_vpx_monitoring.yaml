@@ -6,6 +6,7 @@ metadata:
    kubernetes.io/ingress.class: "vpx"
 #   ingress.citrix.com/insecure-termination: "allow"
    ingress.citrix.com/frontend-ip: "172.16.10.20"
+   ingress.citrix.com/insecure-port: "8080"
 spec:
   rules:
   - host:  grafana.beverages.com
