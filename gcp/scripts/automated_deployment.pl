@@ -4,9 +4,23 @@ my $operation = $ARGV[0];
 
 if ($operation eq "delete") {
 
+    print ("\n******************************************************\n");
+    print ("Starting to Delete the entire deployment");
+    print ("\n******************************************************\n");
+
+    print ("\n******************************************************\n");
+    print ("Deleting the VPX");
+    print ("\n******************************************************\n"); 
     qx#gcloud -q deployment-manager deployments delete tier1-vpx#;
+
+    print ("\n******************************************************\n");
+    print ("Deleting the GKE Kubernetes cluster");
+    print ("\n******************************************************\n"); 
     qx#gcloud -q beta container clusters delete "k8s-cluster-with-cpx" --zone "us-east1-b"#;
 
+    print ("\n******************************************************\n");
+    print ("Deleting the VPC and Subnets");
+    print ("\n******************************************************\n"); 
     qx#gcloud -q compute networks subnets delete vpx-snet-mgmt --region=us-east1#;
     qx#gcloud -q compute networks delete vpx-snet-mgmt#;
 
@@ -16,6 +30,9 @@ if ($operation eq "delete") {
     qx#gcloud -q compute networks subnets delete vpx-snet-snip --region=us-east1#;
     qx#gcloud -q compute networks delete vpx-snet-snip#;
 
+    print ("\n******************************************************\n");
+    print ("Deleting the git repository");
+    print ("\n******************************************************\n"); 
     qx#rm -rf ~/example-cpx-vpx-for-kubernetes-2-tier-microservices/#;
 
     exit;
@@ -50,13 +67,18 @@ if ($CREATE_VPX_IMAGE eq "TRUE") {
     }
 }
 
-print ("\nStating Automated Deployment for the training lab\n\n");
+print ("\n******************************************************\n");
+print ("Stating Automated Deployment for the training labn");
+print ("\n******************************************************\n");
 
 if ($CLONE_REPO eq "TRUE") {
-    print ("\nCloning the GIT repo to your home directory\n");
+    print ("\n******************************************************\n");
+    print ("Cloning the GIT repo to your home directory");
+    print ("\n******************************************************\n");
     qx#git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git $repo_path#;
 }
 
+print ("\n******************************************************\n");
 print ("This automated deployment would: \n");
 print ("1. Clone the git repository\n");
 print ("2. Create a Google Image for VPX\n");
@@ -64,49 +86,74 @@ print ("3. Create VPC Networks\n");
 print ("4. Create VPC Subnets\n");
 print ("5. Create GKE Kubernetes cluster\n");
 print ("6. Create a VPX instance\n");
-print ("7. Configure basic configs in VPX instance\n");
+print ("7. Configure basic configs in VPX instance");
+print ("\n******************************************************\n");
 
 
 if ($CREATE_VPC eq "TRUE") {
-    print ("\nCreating VPC for Management Network\n");
+    print ("\n******************************************************\n");
+    print ("Creating VPC for Management Network");
+    print ("\n******************************************************\n");
     qx#gcloud -q compute networks create vpx-snet-mgmt --subnet-mode=custom#;
     qx#gcloud -q compute networks subnets create vpx-snet-mgmt --network=vpx-snet-mgmt --region=us-east1 --range=192.168.10.0/24#;
 
-    print ("\nCreating VPC for Client Network\n");
+    print ("\n******************************************************\n");
+    print ("Creating VPC for Client Network");
+    print ("\n******************************************************\n");
     qx#gcloud -q compute networks create vpx-snet-vip --subnet-mode=custom#;
     qx#gcloud -q compute networks subnets create vpx-snet-vip --network=vpx-snet-vip --region=us-east1 --range=172.16.10.0/24#;
 
-    print ("\nCreating VPC for Server Network\n");
+    print ("\n******************************************************\n");
+    print ("Creating VPC for Server Network");
+    print ("\n******************************************************\n");
     qx#gcloud -q compute networks create vpx-snet-snip --subnet-mode=custom#;
     qx#gcloud -q compute networks subnets create vpx-snet-snip --network=vpx-snet-snip --region=us-east1 --range=10.10.10.0/24#;
 }
 
 if ($CREATE_GKE eq "TRUE") {
-    print ("\nCreating a 3 node GKE Cluster\n");
+    print ("\n******************************************************\n");
+    print ("Creating a 3 node GKE Cluster");
+    print ("\n******************************************************\n");
     qx#gcloud -q beta container --project "$project_id" clusters create "k8s-cluster-with-cpx" --zone "us-east1-b" --username "admin" --cluster-version "1.11.7-gke.12" --machine-type "n1-standard-1" --image-type "COS" --disk-type "pd-standard" --disk-size "100" --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --enable-cloud-logging --enable-cloud-monitoring --no-enable-ip-alias --network "projects/$project_id/global/networks/vpx-snet-snip" --subnetwork "projects/$project_id/regions/us-east1/subnetworks/vpx-snet-snip" --addons HorizontalPodAutoscaling,HttpLoadBalancing --enable-autoupgrade --enable-autorepair#;
 }
 
-if ($CREATE_VPX == "TRUE") {
-    print ("\nEditing the deployment manager configuration file\n");
+if ($CREATE_VPX eq "TRUE") {
+    print ("\n******************************************************\n");
+    print ("Editing the deployment manager configuration file");
+    print ("\n******************************************************\n");
     qx#sed -i "s/<your project name>/$project_id/g" $vpx_deployment_config_file#;
 }
 
 if ($CREATE_VPX_IMAGE eq "TRUE") {
     # Before VPX creation - Image creation should finish. Wait for that to complete
-    print ("\nWaiting for the Image creation to complete\n");
+    print ("\n******************************************************\n");
+    print ("Waiting for the Image creation to complete");
+    print ("\n******************************************************\n");
     my $finished = wait();
-    print ("\nImage creation process for VPX has been completed\n");
+    print ("\n******************************************************\n");
+    print ("Image creation process for VPX has been completed");
+    print ("\n******************************************************\n");
 }
 
-if ($CREATE_VPX == "TRUE") {
-    print ("\n Creating VPX using GDM Template\n");
+if ($CREATE_VPX eq "TRUE") {
+    print ("\n******************************************************\n");
+    print ("Creating VPX using GDM Template");
+    print ("\n******************************************************\n");
     qx#gcloud -q deployment-manager deployments create tier1-vpx --config $vpx_deployment_config_file#;
 }
 
-if ($CONFIG_VPX == "TRUE") {
-    print ("\nDoing basic VPX Configuration\n");
+if ($CONFIG_VPX eq "TRUE") {
+
+    print ("\n******************************************************\n");
+    print ("Waiting for the VPX to boot up");
+    print ("\n******************************************************\n");
+    sleep(60);
+    print ("\n******************************************************\n");
+    print ("Doing basic VPX Configuration");
+    print ("\n******************************************************\n");
     qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "show version"#;
     qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "show version"#;
     qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "add ns ip 10.10.10.20 255.255.255.0 -type snip -mgmt enabled"#;
     qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "enable ns mode mbf"#;
+
 }
