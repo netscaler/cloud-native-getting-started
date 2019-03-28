@@ -31,6 +31,7 @@ resources:
        - "80"
        - "22"
        - "443"
+       - "8080"
    #The Citrix ADC image name
    image_name: "netscaler12-1"
    #The project name where the image is hosted
