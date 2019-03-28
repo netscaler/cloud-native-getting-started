@@ -1,0 +1,23 @@
+apiVersion: citrix.com/v1
+kind: rewritepolicy
+metadata:
+  name: blacklisturls
+  namespace: tier-2-adc
+spec:
+  responder-policies:
+    - servicenames:
+        - lb-service-hotdrinks
+      responder-policy:
+        respondwith: 
+          http-payload-string: '"HTTP/1.1 401 Access denied\r\n Server: nginx/1.8.1\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n<h1>Access Denied by Citrix NetScaler Responder Policy.
+"+"This policy for your network prevents your request from being allowed at this time. Please contact your administrator if you feel this is incorrect.\r\n</h1>"'
+        respond-criteria: 'http.req.url.equals_any("blacklistUrls")'
+        comment: 'Blacklist certain Urls'
+    
+        
+  patset:
+    - name: blacklistUrls 
+      values:
+        - '/coffee.php'
+        - '/app2.php'
+        - '/app3.php'
