@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: licensing
+spec:
+  selector:
+    matchLabels:
+      app: licensing
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: licensing
+        tier: backend
+    spec:
+      containers:
+      - name: lic
+        {{ if not .Values.image.repository }}
+        dummy1: {{ required "A valid repository required!" .Values.image.repository }}
+        dummy2: {{ required "A valid tag entry required!" .Values.image.tag }}
+        {{ else }}
+        {{ if eq .Values.image.repository "local"}}
+        image: adm-licensing:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: IfNotPresent
+        {{ else if eq .Values.image.repository "sjc"}}
+        image: adm-local-docker-lic.sjc-repo.citrite.net/adm-local-docker-lic:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: Always
+        {{ else if eq .Values.image.repository "blr"}}
+        image: adm-local-docker-lic.blr-repo.citrite.net/adm-local-docker-lic:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: Always
+        {{ else if eq .Values.image.repository "quay.io"}}
+        image: quay.io/citrixadmtp/lic:{{ .Values.image.tag | default "latest" }}
+        imagePullPolicy: Always
+        {{ end }}
+        {{ end }}
+        env:
+        - name: MGMT_MONIT_HOST
+          value: "mgmt-monit"        
+        securityContext:
+          capabilities:
+            add:
+             - NET_ADMIN
+        volumeMounts:
+        - name: adm-vol
+          mountPath: /var/app_data
+        ports:
+        - containerPort: 27000
+        - containerPort: 7279
+        - containerPort: 9080
+      volumes:
+      - name: adm-vol
+        persistentVolumeClaim:
+          claimName: adm-pvc
+      {{ if eq .Values.image.repository "quay.io"}}
+      imagePullSecrets:
+      - name: citrixadm-pull-secret
+      {{ end }}

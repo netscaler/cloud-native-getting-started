@@ -1,0 +1,108 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  labels:
+    app: statefulset
+  name: statefulset
+  namespace: {{ .Release.Namespace }}
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 2
+  selector:
+    matchLabels:
+      app: statefulset
+  serviceName: statefulset
+  template:
+    metadata:
+      labels:
+        app: statefulset
+    spec:
+      containers:
+      - env:
+        - name: PG_PRIMARY_USER
+          value: primaryuser
+        - name: PGHOST
+          value: /tmp
+        - name: PG_MODE
+          value: set
+        - name: PG_PRIMARY_HOST
+          value: statefulset-primary
+        - name: PG_REPLICA_HOST
+          value: statefulset-replica
+        - name: PG_PRIMARY_PORT
+          value: "{{.Values.container.port}}"
+        - name: PG_PRIMARY_PASSWORD
+          value: {{.Values.credentials.primary}}
+        - name: PG_USER
+          value: postgres
+        - name: PG_PASSWORD
+          value: {{.Values.credentials.user}}
+        - name: PG_DATABASE
+          value: tmpdb
+        - name: PG_ROOT_PASSWORD
+          value: {{.Values.credentials.root}}
+        - name: postgres
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        image: "{{.Values.image.repository}}/{{.Values.image.container}}:{{.Values.image.tag}}"
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - /opt/cpm/bin/liveness.sh
+          failureThreshold: 3
+          initialDelaySeconds: 40
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: statefulset
+        ports:
+        - containerPort: {{.Values.container.port}}
+          name: postgres
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /opt/cpm/bin/readiness.sh
+          failureThreshold: 3
+          initialDelaySeconds: 40
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: "{{.Values.resources.cpu}}"
+            memory: "{{.Values.resources.memory}}"
+        securityContext:
+          procMount: Default
+        volumeMounts:
+        - mountPath: /pgdata
+          name: pgdata
+        - mountPath: /pgconf
+          name: primary-deployment-pgconf
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: statefulset-sa
+      serviceAccountName: statefulset-sa
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          #defaultMode: 420
+          name: primary-deployment-pgconf
+        name: primary-deployment-pgconf
+  updateStrategy:
+    type: OnDelete
+  volumeClaimTemplates:
+  - metadata:
+      name: pgdata
+    spec:
+      accessModes:
+      - ReadWriteMany
+      resources:
+        requests:
+          storage: "{{.Values.storage.size}}"
