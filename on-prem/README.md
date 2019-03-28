@@ -150,17 +150,17 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
    kubectl create -f /root/yamls/crd_rewrite_responder.yaml
    ```
 
-1. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee page.
+1. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
 
    ```gcloudsdkkubectl
    kubectl create -f /root/yamls/responderpolicy_hotdrink.yaml -n tier-2-adc
    ```
 
-   After you deploy the Responder policy, access the coffee page on `hotdrink.beverages.com`. Then you receive the following message.
+   After you deploy the Responder policy, access the coffee page on `https://hotdrink.beverages.com/coffee.php`. Then you receive the following message.
+   
+   ![cpx-ingress-image16a](https://user-images.githubusercontent.com/48945413/55129538-7f2cad00-513d-11e9-9191-72a385fad377.png)
 
-   ![GCP](./media/cpx-ingress-image16a.png)
-
-1. **Header insertion** Configure the Rewrite policy on `colddrink.beverages.com` to insert the session ID in the header.
+1. **Header insertion** Configure the Rewrite policy on `https://colddrink.beverages.com` to insert the session ID in the header.
 
    ```gcloudsdkkubectl
    kubectl create -f /root/yamls/rewritepolicy_colddrink.yaml -n tier-2-adc
@@ -168,7 +168,7 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 
    After you deploy the Rewrite policy, access `colddrink.beverages.com` with developer mode enabled on the browser. In Chrome, press F12 and preserve the log in network category to see the session ID, which is inserted by the Rewrite policy on tier-1-adc (VPX).
 
-   ![GCP](./media/cpx-ingress-image16b.png)
+   ![cpx-ingress-image16b](https://user-images.githubusercontent.com/48945413/55129567-9075b980-513d-11e9-9926-d1207d7d1e16.png)
 
 ---
 
