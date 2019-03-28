@@ -83,7 +83,7 @@ Prerequisites (mandatory):
     cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/config-files/
     ```
 
-1. Change the STORAGE_BUCKET_NAME and FILE_NAME as per your GCP account in below command and run to create a VPX image in your GCP account
+1. Run below command to create a VPX image in your GCP account
 
     ```cloudshell
     gcloud compute images create netscaler12-1 --source-uri=gs://tme-cpx-storage/NSVPX-GCP-12.1-50.28_nc.tar.gz --guest-os-features=MULTI_IP_SUBNET
