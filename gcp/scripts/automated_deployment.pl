@@ -8,13 +8,13 @@ if ($operation eq "delete") {
     qx#gcloud -q beta container clusters delete "k8s-cluster-with-cpx" --zone "us-east1-b"#;
 
     qx#gcloud -q compute networks subnets delete vpx-snet-mgmt --region=us-east1#;
-    qx#gcloud -q compute --project=netscaler-networking-k8 networks delete vpx-snet-mgmt#;
+    qx#gcloud -q compute networks delete vpx-snet-mgmt#;
 
     qx#gcloud -q compute networks subnets delete vpx-snet-vip --region=us-east1#;
-    qx#gcloud -q compute --project=netscaler-networking-k8 networks delete vpx-snet-vip#;
+    qx#gcloud -q compute networks delete vpx-snet-vip#;
 
     qx#gcloud -q compute networks subnets delete vpx-snet-snip --region=us-east1#;
-    qx#gcloud -q compute --project=netscaler-networking-k8 networks delete vpx-snet-snip#;
+    qx#gcloud -q compute networks delete vpx-snet-snip#;
 
     qx#rm -rf ~/example-cpx-vpx-for-kubernetes-2-tier-microservices/#;
 
@@ -57,10 +57,14 @@ if ($CLONE_REPO eq "TRUE") {
     qx#git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git $repo_path#;
 }
 
-print ("This automated deployment would create: \n");
-print ("1. VPC Networks\n");
-print ("2. VPC Subnets\n");
-print ("3. GKE Kubernetes cluster\n");
+print ("This automated deployment would: \n");
+print ("1. Clone the git repository\n");
+print ("2. Create a Google Image for VPX\n");
+print ("3. Create VPC Networks\n");
+print ("4. Create VPC Subnets\n");
+print ("5. Create GKE Kubernetes cluster\n");
+print ("6. Create a VPX instance\n");
+print ("7. Configure basic configs in VPX instance\n");
 
 
 if ($CREATE_VPC eq "TRUE") {
