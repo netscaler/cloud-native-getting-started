@@ -53,6 +53,11 @@ my $CREATE_GKE = "TRUE";
 my $CREATE_VPC = "TRUE";
 my $CREATE_VPX = "TRUE";
 my $CONFIG_VPX = "TRUE";
+my $ENABLE_APIS = "TRUE";
+
+print ("\n******************************************************\n");
+print ("Stating Automated Deployment for the training labn");
+print ("\n******************************************************\n");
 
 if ($CREATE_VPX_IMAGE eq "TRUE") {
     # Forking a new process for Image creation
@@ -67,9 +72,14 @@ if ($CREATE_VPX_IMAGE eq "TRUE") {
     }
 }
 
-print ("\n******************************************************\n");
-print ("Stating Automated Deployment for the training labn");
-print ("\n******************************************************\n");
+if ($ENABLE_APIS eq "TRUE") {
+    print ("\n******************************************************\n");
+    print ("Enabling necessary Google Cloud APIs");
+    print ("\n******************************************************\n");
+    qx#gcloud -q services enable containerregistry.googleapis.com#;
+    qx#gcloud -q services enable deploymentmanager.googleapis.com#;
+}
+
 
 if ($CLONE_REPO eq "TRUE") {
     print ("\n******************************************************\n");
