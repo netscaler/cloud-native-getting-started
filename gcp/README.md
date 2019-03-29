@@ -60,8 +60,11 @@ The tier 1 VPX/MPX automatically load balances the tier 2 CPXs. Citrix ingress c
 
 Prerequisites (mandatory):
 
-1. Create a GCP account by following steps on url <https://cloud.google.com/free/docs/gcp-free-tier> , please use your credit card to validate and activate **Free Tier**
+1. Create a GCP account by following steps on url <https://cloud.google.com/free/docs/gcp-free-tier> , please use your credit card to validate and activate to paid account. Google will charge only if free-tier resources are exhausted.
+
     ![GCP](./media/gcp-free-tier-image-0.png)
+
+    ![GCP](./media/gcp-free-tier-image-25.png)
 
 1. Now Click **My First Project** on GCP console
 
@@ -89,7 +92,7 @@ Prerequisites (mandatory):
     curl https://raw.githubusercontent.com/christus02/citrix-ingress-gke/master/scripts/automated_deployment.pl | perl
     ```
 
-    > If automation script fails don't create project with same name . Instead Go to **"Delete a deployment Steps"** at page end and retry the script after successful deletion or **"Ask for Trainer help"**
+    > If automation script fails don't create project with same name . Instead Go to **"Delete deployment Steps"** at page end and retry the script after successful deletion and relogin to your GCP account or delete the project using URL <https://cloud.google.com/go/getting-started/delete-tutorial-resources> and relogin to your GCP account.
 
 1. Once GCP Infrastructure is up with automated script. We have to access kubernetes cluster from the cloud shell.
 
@@ -346,7 +349,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 To delete the entire deployment go to your cloud shell and run below commands to start the delete process
 
-1. >`This Step has to be used only if Automation script fails for you otheriwse go to next step`
+1. >`This Step has to be used only if Automation script fails before cloning the config-files for you otheriwse go to next step`
 
     ```cloudshell
     git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
