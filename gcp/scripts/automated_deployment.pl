@@ -56,7 +56,7 @@ my $CONFIG_VPX = "TRUE";
 my $ENABLE_APIS = "TRUE";
 
 print ("\n******************************************************\n");
-print ("Stating Automated Deployment for the training labn");
+print ("Stating Automated Deployment for the training lab");
 print ("\n******************************************************\n");
 
 if ($CREATE_VPX_IMAGE eq "TRUE") {
@@ -167,3 +167,13 @@ if ($CONFIG_VPX eq "TRUE") {
     qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "enable ns mode mbf"#;
 
 }
+
+print ("\n******************************************************\n");
+print ("Deployment Done");
+print ("\n******************************************************\n");
+
+print ("\n******************************************************\n");
+print ("End of Automated Deployment for the training lab");
+print ("\n******************************************************\n");
+
+

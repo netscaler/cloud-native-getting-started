@@ -56,112 +56,50 @@ The tier 1 VPX/MPX automatically load balances the tier 2 CPXs. Citrix ingress c
 
 ## Citrix deployment overview
 
-## Install and configure the tier 1 Citrix ADC on GCP
+### Below prerequisites are mandatory for this GCP lab hands-on
 
 Prerequisites (mandatory):
 
-1. Create a GCP account <https://console.cloud.google.com> , please use your credit card to validate and activate **Free Trial**
+1. Create a GCP account by following steps on url <https://cloud.google.com/free/docs/gcp-free-tier> , please use your credit card to validate and activate **Free Tier**
+    ![GCP](./media/gcp-free-tier-image-0.png)
 
-1. Create **"cnn-selab-atl"** as project name on GCP console
+1. Now Click **My First Project** on GCP console
 
-     ![GCP](./media/cpx-ingress-image-30.png)
+     ![GCP](./media/gcp-free-tier-image-4.png)
+
+    Create **"cnn-selab-atl"** as project name
+
+     ![GCP](./media/gcp-free-tier-image-5.png)
+
+    Now go to **Compute Engine > VM Instances** and wait till Compute Engine is ready 
+
+     ![GCP](./media/gcp-free-tier-image-6.png)
 
      ![GCP](./media/cpx-ingress-image-31.png)
 
-1. Search for **Compute Engine** on GCP and select above created project on left to search and click on **Activate Cloud Shell** icon on right of search, than you will see cloud shell opened at the bottom of page
+1. Select **"cnn-selab-atl"** project and click on **Activate Cloud Shell** icon on right of search, than you will see cloud shell opened at the bottom of page for this project
 
     ![GCP](./media/cpx-ingress-image-20.png)
 
-1. Automated template to bring the entire setup, after successful setup scroll down and proceed from step 4 of **"Deploy a Kubernetes cluster using GKE using GCP"**
+1. Now we will run automated template script to bring GCP Infrastructure components required for hands-on. Script will run on your cloud shell which needs internet access so please make sure your system(laptop) is active.
+
+   > It will take around 15 mins to run script and wait till you get message from cloud shell that script has run successfully
 
     ```gcloudsdk
     curl https://raw.githubusercontent.com/christus02/citrix-ingress-gke/master/scripts/automated_deployment.pl | perl
     ```
 
-## Deploy a Citrix VPX (tier-1-adc) on GCP
+    > If automation script fails don't create project with same name . Instead Go to **"Delete a deployment Steps"** at page end and retry the script after successful deletion or **"Ask for Trainer help"**
 
-1. **GCP VPC Instances:**
-     To address the separation of the External, Internal, and DMZ networks for security purposes. We must create three NICs as shown in the following table:
+1. Once GCP Infrastructure is up with automated script. We have to access kubernetes cluster from the cloud shell.
 
-     |Network|Comments|
-     |:---|:---|
-     |192.168.10.0/24|Management Network (vpx-snet-mgmt)|
-     |172.16.10.0/24|Client Network (vpx-snet-vip)|
-     |10.10.10.0/24|Server Network (vpx-snet-snip)|
+    Go to **Kubernetes Engine > Clusters** and click **Connect** icon
 
-     > Note:
-     >
-     > Build the three-arm network VPCs before you deploy any VM instances.
+     ![GCP](./media/gcp-free-tier-image-7.png)
 
-     ### VPC by GCP GUI Console ###
-
-     From the Google console, select **Networking > VPC network > Create VPC network** and enter the required fields, as shown below. Then click **Create**.
-
-     ![GCP](./media/cpx-ingress-image-21.png)
-
-     Similarly, create VPC networks for client and server-side NICs to create three subnets.
-
-     > Note:
-     >
-     > All three VPC networks should be in the same region, which is us-east1 in this scenario.
-
-     ![GCP](./media/cpx-ingress-image1.png)
-
-2. After you create three  **VPC Networks**, deploy the Citrix ADC VPX instance using the GDM template.
-    >Note: Ensure you are in config-files directory and change the variable **"image_project_name:"** in **configuration.yml** to your project name by using **vi** or **nano editor** and execute below command  
-
-     ```gcloudsdk
-     gcloud deployment-manager deployments create tier1-vpx --config configuration.yml
-     ```
-
-3. After a successful deployment, go to **Compute Engine > VM instances** to check the **citrix-adc-tier1-vpx**  and validate the internal IPs.
-
-    ![GCP](./media/cpx-ingress-image-22.png)
-
-4. The Citrix ingress controller can automate the static route configuration in the tier 1 VPX. Configure the subnet IP (SNIP) address that should be of the same subnet/virtual private cloud of the Kubernetes cluster.
-
-    > Note:
-    >
-    > The tier 1 VPX/MPX deployed is going to load balance the CPXs inside the Kubernetes cluster. Configure the SNIP in the tier 1 VPX.
-
-   ![GCP](./media/cpx-ingress-image-23.png)
-
-    As shown in above image click on SSH "**open in browser window**" for **citrix-adc-tier1-vpx** VM instance and run below commands to add SNIP and enable management access to SNIP
-
-    ```cloudshell
-    add ns ip 10.10.10.20 255.255.255.0 -type snip -mgmt enabled
-    enable ns mode mbf
-    ```
-
----
-
-## Deploy a Kubernetes cluster using GKE using GCP
-
-1. Search for a Kubernetes Engine on GCP console and click **Create Cluster**.
-
-    ![GCP](./media/cpx-ingress-image-24.png)
-
-1. Create a cluster in the same subnet where your VPX SNIP is (vpx-snet-snip). This cluster automates the configuration push into the tier 1 ADC from Citrix ingress controller in the K8s cluster.
-
-    ![GCP](./media/cpx-ingress-image-25.png)
-
-    ![GCP](./media/cpx-ingress-image8.png)
-
-1. Click **Advanced options** to change the subnet to `vpx-snet-snip` and select the following fields.
-
-    ![GCP](./media/cpx-ingress-image9.png)
-
-1. To access this cluster from the cloud shell, search for **Kubernetes Engine > Clusters** and click **Connect to the cluster** button on right side of cluster and copy paste it on cloud shell
+    Copy paste Kubernetes CLI access on your cloud shell
 
      ![GCP](./media/cpx-ingress-image-26.png)
-
-1. Validate the GKE Cluster deployment by running the following command and open the config-files directory as given in prerequisites
-
-    ```gcloudsdkkubectl
-    kubectl get nodes
-    ```
-
-    ![GCP](./media/cpx-ingress-image-27.png)
 
 ---
 
@@ -169,13 +107,9 @@ Prerequisites (mandatory):
 
 Citrix ADC offers the two-tier architecture deployment solution to load balance the enterprise grade applications deployed in microservices and accessed through the Internet. Tier 1 has heavy load balancers such as VPX/SDX/MPX to load balance North-South traffic. Tier 2 has CPX deployment for managing microservices and load balances East-West traffic.
 
-1. If you are running your cluster in GKE, then ensure that you have used cluster role binding to configure a cluster-admin. You can do that using the following command.
+>Run all the following command on **`Cloud Shell`**
 
-     ```gcloudsdkkubectl
-     kubectl create clusterrolebinding citrix-cluster-admin --clusterrole=cluster-admin --user=<email-id of your google account>
-     ```
-
-1. Access the current directory where you have the deployment YAML files. Run the following command to get the node status.
+1. To check the kubernetes nodes are in ready status or not
 
      ```gcloudsdkkubectl
      kubectl get nodes
@@ -183,78 +117,98 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
      ![GCP](./media/cpx-ingress-image13.png)
 
-1. Create the namespaces:
+2. Create Cluster role binding to configure a cluster-admin.
+
+    >Change the **email-id of your GCP account** to your hands-on GCP account  
+
+     ```gcloudsdkkubectl
+     kubectl create clusterrolebinding citrix-cluster-admin --clusterrole=cluster-admin --user=<email-id of your GCP account>
+     ```
+
+3. Access the config files directory which are downloaded as part of automation script to run applications required for two-tier deployment
+
+     ```gcloudsdkkubectl
+    cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/config-files/
+     ```
+
+4. Create namespaces for tier-2-adc, team-hotdrink, team-colddrink, team-guestbook and monitoring where we will deploy micro services or applications
 
      ```gcloudsdkkubectl
      kubectl create -f namespace.yaml
      ```
 
-     Verify the namespace command:
+    ![GCP](./media/gcp-free-tier-image-8.png)
 
-     ```gcloudsdkkubectl
-     kubectl get namespaces
-     ```
-
-    ![GCP](./media/cpx-ingress-image14.png)
-
-1. Deploy the rbac.yaml in the default namespace.
+5. Deploy the rbac.yaml in the default namespace to grant Role-based access control
 
      ```gcloudsdkkubectl
      kubectl create -f rbac.yaml
      ```
 
-1. Deploy the CPX for hotdrink, colddrink, and guestbook microservices using the following commands.
+     ![GCP](./media/gcp-free-tier-image-9.png)
+
+6. Deploy a unqiue CPX for each application hotdrink, colddrink, and guestbook microservices
 
      ```gcloudsdkkubectl
      kubectl create -f cpx.yaml -n tier-2-adc
      kubectl create -f hotdrink-secret.yaml -n tier-2-adc
      ```
 
-    Run below command to check CPX pods status, if they are in running status go to next step
+    To check CPX pods status, if they are in `running status` go to next step, otherwise delete above files by `replacing create with delete in above commands` and redploy them
 
      ```gcloudsdkkubectl
      kubectl get pods -n tier-2-adc
      ```
 
-1. Deploy the three-hotdrink beverage microservices--the SSL type microservice with the hair-pin architecture.
+    ![GCP](./media/gcp-free-tier-image-11.png)
+
+7. Deploy the three-hotdrink beverage microservices-- SSL type microservice with hair-pin architecture
 
      ```gcloudsdkkubectl
      kubectl create -f team_hotdrink.yaml -n team-hotdrink
      kubectl create -f hotdrink-secret.yaml -n team-hotdrink
      ```
 
-     Run below command to check hotdrink application pods status ,if they are in running status go to next step
+     To check CPX pods status, if they are in `running status` go to next step otherwise delete above files by `replacing create with delete in above commands` and redploy them
 
      ```gcloudsdkkubectl
      kubectl get pods -n team-hotdrink
      ```
 
-1. Deploy the colddrink beverage microservice--the SSL_TCP type microservice.
+    ![GCP](./media/gcp-free-tier-image-13.png)
+
+8. Deploy the colddrink beverage microservice-- SSL_TCP type microservice
 
      ```gcloudsdkkubectl
      kubectl create -f team_colddrink.yaml -n team-colddrink
      kubectl create -f colddrink-secret.yaml -n team-colddrink
      ```
 
-     Run below command to check colddrink application pods status ,if they are in running status go to next step
+    To check CPX pods status, if they are in `running status` go to next step otherwise delete above files by `replacing create with delete in above commands` and redploy them
 
      ```gcloudsdkkubectl
      kubectl get pods -n team-colddrink
      ```
 
-1. Deploy the guestbook--a NoSQL type microservice.
+    ![GCP](./media/gcp-free-tier-image-15.png)
+
+9. Deploy the guestbook-- NoSQL type microservice
 
      ```gcloudsdkkubectl
      kubectl create -f team_guestbook.yaml -n team-guestbook
      ```
 
-     Run below command to check guestbook application pods status ,if they are in running status go to next step
+    ![GCP](./media/gcp-free-tier-image-16.png)
+
+     To check CPX pods status, if they are in `running status` go to next step otherwise delete above files by `replacing create with delete in above commands` and redploy them
 
      ```gcloudsdkkubectl
      kubectl get pods -n team-guestbook
      ```
 
-1. Validate the CPX deployed for above three applications. First, obtain the CPX pods deployed as tier-2-adc and then get the CLI access to CPX.
+    ![GCP](./media/gcp-free-tier-image-17.png)
+
+10. Validate the CPX deployed for above three applications. First, obtain the CPX pods deployed as tier-2-adc and than get the CLI access to CPX.
   
     To get CPX pods in tier-2-adc namespace  
 
@@ -263,27 +217,34 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
      ```
 
     To get CLI access (bash) to the CPX pod (hotdrinks-cpx pod)
+    >Change the CPX pod name in double quotes "" for below command and than execute
 
      ```cloudshellkubectl
-     kubectl exec -it "copy and paste hotdrink CPX pod name from the above step" bash -n tier-2-adc
+     kubectl exec -it "copy and paste hotdrink CPX pod name here from the above step" bash -n tier-2-adc
      ```
 
-    To check whether the CS vserver is running in the hotdrink-cpx, enter the following command after the root access to CPX and give **"exit"** after validation.
+    To check whether the `CS vserver is in UP state` in the hotdrink-cpx, enter the following command after the root access to CPX and give **`exit`** after validation.
 
     ```cloudshellkubectl
-    cli-script "sh csvs"
+    cli_script.sh "show cs vserver"
     ```
 
-1. Deploy the VPX ingress and ingress controller to the tier 2 namespace, which configures VPX automatically. Citrix Ingress Controller (CIC) automates the tier-1-adc (VPX).
+    ![GCP](./media/gcp-free-tier-image-18.png)
+
+11. Deploy the VPX ingress and ingress controller in tier-2-adc namespace, which configures tier-1-adc (VPX) automatically.
+
+    > `Citrix Ingress Controller (CIC) pushes the configuration to tier-1-adc (VPX) in an automated fashion by using smart annotations and Custom Resource Definitions (CRD)`
 
      ```gcloudsdkkubectl
      kubectl create -f ingress_vpx.yaml -n tier-2-adc
      kubectl create -f cic_vpx.yaml -n tier-2-adc
      ```
 
-1. Add the DNS entries in your local machine's host files for accessing microservices through the Internet.
+     ![GCP](./media/gcp-free-tier-image-19.png)
 
-     For Windows Clients, go to: **C:\Windows\System32\drivers\etc\hosts**
+12. Add DNS entries in your local machine's host files to access microservices from Internet.
+
+     For Windows Clients, go to: **C:\Windows\System32\drivers\etc\hosts** and edit in `Notepad++` with administrator access
 
      For macOS Clients, in the Terminal, enter: **sudo nano /etc/hosts**
 
@@ -297,13 +258,17 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
      xxx.xxx.xxx.xxx    prometheus.beverages.com
      ```
 
-    Replace above **"xxx.xxx.xxx.xxx"** with VIP or Client traffic public IP of tier-1-adc(VPX) , To get IPs go to Compute Engine > VM instances and double click on **"citrix-adc-tier1-vpx"** scroll down to for nics as shown below
+    Replace above **"xxx.xxx.xxx.xxx"** with VIP or Client traffic public IP of tier-1-adc(VPX) , To get IPs go to Compute Engine > VM instances and double click on **"citrix-adc-tier1-vpx"** scroll down for nics as shown below
 
     ![GCP](./media/cpx-ingress-image-34.png)
 
+    Copy Client/VIP traffic External IP and replace all **"XXX.XXX.XXX.XXX"** with IP in your host file
+
     ![GCP](./media/cpx-ingress-image-35.png)
 
-1. Now you can access each application over the Internet. For example, `https://hotdrink.beverages.com`.
+13. Now you can access each application over the Internet. For example, `https://hotdrink.beverages.com` or `http://hotdrink.beverages.com`
+
+    >Here HTTP to HTTPS redirect is enabled using smart annotations, so you can acess url from either https(443) or http(80)
 
      ![GCP](./media/cpx-ingress-image14a.png)
 
@@ -319,23 +284,23 @@ Now it's time to push the Rewrite and Responder policies on VPX through the cust
    kubectl create -f crd_rewrite_responder.yaml
    ```
 
-1. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee page.
+2. **Blacklist URLs :** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee page.
 
    ```gcloudsdkkubectl
    kubectl create -f responderpolicy_hotdrink.yaml -n tier-2-adc
    ```
 
-   After you deploy the Responder policy, access the coffee page on `hotdrink.beverages.com`. Then you receive the following message.
+   >After you deploy the Responder policy, `click on coffee image` on `hotdrink.beverages.com` to see following message.
 
    ![GCP](./media/cpx-ingress-image16a.png)
 
-1. **Header insertion** Configure the Rewrite policy on `colddrink.beverages.com` to insert the session ID in the header.
+3. **Header insertion:** Configure the Rewrite policy on `colddrink.beverages.com` to insert the session ID in the header.
 
    ```gcloudsdkkubectl
    kubectl create -f rewritepolicy_colddrink.yaml -n tier-2-adc
    ```
 
-   After you deploy the Rewrite policy, access `colddrink.beverages.com` with developer mode enabled on the browser. In Chrome, press F12 and preserve the log in network category to see the session ID, which is inserted by the Rewrite policy on tier-1-adc (VPX).
+   After you deploy the Rewrite policy, access `https://colddrink.beverages.com` with developer mode enabled on the browser. In Chrome, press F12 and preserve the log in network category to see the session ID, which is inserted by the Rewrite policy on tier-1-adc (VPX).
 
    ![GCP](./media/cpx-ingress-image16b.png)
 
@@ -350,30 +315,53 @@ Now it's time to push the Rewrite and Responder policies on VPX through the cust
      kubectl create -f ingress_vpx_monitoring.yaml -n monitoring
      ```
 
-### Prometheus log aggregator
+    ![GCP](./media/gcp-free-tier-image-21.png)
 
-1. Log in to `http://grafana.beverages.com:8080` and complete the following one-time setup.
+1. **`Prometheus log aggregator :`** Log in to `http://grafana.beverages.com:8080` and complete the following one-time setup.
 
-     1. Log in to the portal using administrator credentials.
-     1. Click **Add data source** and select the **Prometheus** data source.
-     1. Configure the following settings and click the **Save and test** button.
+     * Log in to the portal using `admin/admin` credentials and click  **`skip`** on next page
+     * Click **`Add data source`** and select the **`Prometheus`** data source
+ 
+    ![GCP](./media/gcp-free-tier-image-22.png)
 
-        ![GCP](./media/cpx-ingress-image15.png)
+    ![GCP](./media/gcp-free-tier-image-23.png)
 
-### Grafana visual dashboard
+     * Configure the following settings and click on **`Save and test`** button and you will get a prompt that `Data Source is working`
+     >Make sure all **`prometheus`** shoud be in small letters
 
-1. From the left panel, select the **Import** option and **click on this url** <https://raw.githubusercontent.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/master/gcp/config-files/grafana_config.json> and paste the content in to JSON. Now you can see the Grafana dashboard with basic ADC stats listed.
+    ![GCP](./media/cpx-ingress-image15.png)
+
+1. **`Grafana visual dashboard :`** To monitor traffic stats of Citrix ADC
+  
+   * As shown above from the left panel, select the **Import** option and  `click url` <https://raw.githubusercontent.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/master/gcp/config-files/grafana_config.json> to copy entire content and paste in to JSON.
+   * Click on 'Load' and than 'Import' in next page
+
+    ![GCP](./media/gcp-free-tier-image-24.png)
 
     ![GCP](./media/cpx-ingress-image16.png)
 
 ---
 
-## Delete a deployment
+## Delete deployment
 
-1. To delete the entire deployment go to your cloud shell and run below commands to start the delete process
+To delete the entire deployment go to your cloud shell and run below commands to start the delete process
+
+1. >`This Step has to be used only if Automation script fails for you otheriwse go to next step`
+
+    ```cloudshell
+    git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
+    ```
+
+2. Now Go to scripts directory to start delete process using automated scripts
 
     ```cloudshell
     cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/scripts
+    ```
 
+    > `Delete Process takes around 10 mins`
+
+    ```cloudshell
     perl automated_deployment.pl delete
     ```
+
+---
