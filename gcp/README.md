@@ -107,7 +107,7 @@ Prerequisites (mandatory):
 
 Citrix ADC offers the two-tier architecture deployment solution to load balance the enterprise grade applications deployed in microservices and accessed through the Internet. Tier 1 has heavy load balancers such as VPX/SDX/MPX to load balance North-South traffic. Tier 2 has CPX deployment for managing microservices and load balances East-West traffic.
 
->Run all the following command on **`Cloud Shell`**
+>`We will run all following commands till page end on Cloud Shell only`
 
 1. To check the kubernetes nodes are in ready status or not
 
@@ -162,7 +162,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
     ![GCP](./media/gcp-free-tier-image-11.png)
 
-7. Deploy the three-hotdrink beverage microservices-- SSL type microservice with hair-pin architecture
+7. Deploy hotdrink beverage application microservices-- SSL type microservice with hair-pin architecture
 
      ```gcloudsdkkubectl
      kubectl create -f team_hotdrink.yaml -n team-hotdrink
@@ -177,7 +177,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
     ![GCP](./media/gcp-free-tier-image-13.png)
 
-8. Deploy the colddrink beverage microservice-- SSL_TCP type microservice
+8. Deploy colddrink beverage application microservice-- SSL_TCP type microservice
 
      ```gcloudsdkkubectl
      kubectl create -f team_colddrink.yaml -n team-colddrink
@@ -192,7 +192,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
     ![GCP](./media/gcp-free-tier-image-15.png)
 
-9. Deploy the guestbook-- NoSQL type microservice
+9. Deploy guestbook beverage application microservices-- NoSQL type microservice
 
      ```gcloudsdkkubectl
      kubectl create -f team_guestbook.yaml -n team-guestbook
@@ -208,7 +208,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
     ![GCP](./media/gcp-free-tier-image-17.png)
 
-10. Validate the CPX deployed for above three applications. First, obtain the CPX pods deployed as tier-2-adc and than get the CLI access to CPX.
+10. Validate the CPX deployed for above three applications. First, obtain the CPX pods deployed in tier-2-adc and than get the CLI access to CPX.
   
     To get CPX pods in tier-2-adc namespace  
 
@@ -276,21 +276,21 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
 ## Enable the Rewrite and Responder policies for the sample application
 
-Now it's time to push the Rewrite and Responder policies on VPX through the custom resource definition (CRD).
+Now it's time to push Rewrite and Responder policies in to VPX through the Citrix Ingress Controller(CIC) using custom resource definition (CRD)
 
-1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
+1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace
 
    ```gcloudsdkkubectl
    kubectl create -f crd_rewrite_responder.yaml
    ```
 
-2. **Blacklist URLs :** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee page.
+2. **Blacklist URLs :** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee page
 
    ```gcloudsdkkubectl
    kubectl create -f responderpolicy_hotdrink.yaml -n tier-2-adc
    ```
 
-   >After you deploy the Responder policy, `click on coffee image` on `hotdrink.beverages.com` to see following message.
+   >After you deploy the Responder policy, `click on coffee image` on `hotdrink.beverages.com` to see following message
 
    ![GCP](./media/cpx-ingress-image16a.png)
 
