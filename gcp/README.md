@@ -154,7 +154,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
      kubectl create -f hotdrink-secret.yaml -n tier-2-adc
      ```
 
-    To check CPX pods status, if they are in `running status` go to next step, otherwise delete above files by `replacing create with delete in above commands` and redploy them
+    To check CPX pods status, if they are in `running status` go to next step, otherwise delete pods by `replacing create with delete in above commands` and redeploy them
 
      ```gcloudsdkkubectl
      kubectl get pods -n tier-2-adc
@@ -169,7 +169,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
      kubectl create -f hotdrink-secret.yaml -n team-hotdrink
      ```
 
-     To check CPX pods status, if they are in `running status` go to next step otherwise delete above files by `replacing create with delete in above commands` and redploy them
+     To check hotdrink application pods status, if they are in `running status` go to next step, otherwise delete pods by `replacing create with delete in above commands` and redploy them
 
      ```gcloudsdkkubectl
      kubectl get pods -n team-hotdrink
@@ -184,7 +184,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
      kubectl create -f colddrink-secret.yaml -n team-colddrink
      ```
 
-    To check CPX pods status, if they are in `running status` go to next step otherwise delete above files by `replacing create with delete in above commands` and redploy them
+    To check colddrink application pods status, if they are in `running status` go to next step, otherwise delete pods by `replacing create with delete in above commands` and redploy them
 
      ```gcloudsdkkubectl
      kubectl get pods -n team-colddrink
@@ -200,7 +200,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
     ![GCP](./media/gcp-free-tier-image-16.png)
 
-     To check CPX pods status, if they are in `running status` go to next step otherwise delete above files by `replacing create with delete in above commands` and redploy them
+     To check guestbook application pods status, if they are in `running status` go to next step, otherwise delete pods by `replacing create with delete in above commands` and redploy them
 
      ```gcloudsdkkubectl
      kubectl get pods -n team-guestbook
