@@ -92,6 +92,10 @@ Prerequisites (mandatory):
     curl https://raw.githubusercontent.com/christus02/citrix-ingress-gke/master/scripts/automated_deployment.pl | perl
     ```
 
+    Automated perl script creates below GCP Infrastructure components required for hands-on
+
+    ![GCP](./media/gcp-free-tier-image-27.png)
+
     After Successful deployment you will get a message on `Cloud Shell` as shown
 
     ![GCP](./media/gcp-free-tier-image-26.png)
