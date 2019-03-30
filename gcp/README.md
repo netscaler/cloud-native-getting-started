@@ -86,13 +86,17 @@ Prerequisites (mandatory):
 
 1. Now we will run automated template script to bring GCP Infrastructure components required for hands-on. Script will run on your cloud shell which needs internet access so please make sure your system(laptop) is active.
 
-   > It will take around 15 mins to run script and wait till you get message from cloud shell that script has run successfully
+   > It will take around 15 mins to run script and wait till you get message from cloud shell as `End of Automated deployment for the training lab`
 
     ```gcloudsdk
     curl https://raw.githubusercontent.com/christus02/citrix-ingress-gke/master/scripts/automated_deployment.pl | perl
     ```
 
-    > If automation script fails don't create project with same name . Instead Go to **"Delete deployment Steps"** at page end and retry the script after successful deletion and relogin to your GCP account or delete the project using URL <https://cloud.google.com/go/getting-started/delete-tutorial-resources> and relogin to your GCP account.
+    After Successful deployment you will get a message on `Cloud Shell` as shown
+
+    ![GCP](./media/gcp-free-tier-image-26.png)
+
+    > If automation script fails don't create project with same name . Instead Go to **"Delete deployment Steps"** at page end and retry the script after successful deletion and re-login to your GCP account or delete the project using URL <https://cloud.google.com/go/getting-started/delete-tutorial-resources> and re-login to your GCP account.
 
 1. Once GCP Infrastructure is up with automated script. We have to access kubernetes cluster from the cloud shell.
 
