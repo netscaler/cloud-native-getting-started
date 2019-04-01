@@ -1,8 +1,8 @@
 # Two-Tier deployment with Citrix ADC VPX, Citrix Ingress Controller and Citrix ADC CPX on Google Cloud
 
-## Citrix product overview for GCP K8's architecture and components
+## Section A - Citrix product overview for GCP K8's architecture and components
 
-## The four major Citrix components of GCP
+### The four major Citrix components of GCP
 
 1. **Citrix ADC VPX as tier 1 ADC for ingress-based internet client traffic.**
 
@@ -40,13 +40,13 @@
     The Citrix ingress controller YAML file for GCP is located here:
     <https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/gcp>
 
-## Two-tier ingress deployment on GCP
+### Two-tier ingress deployment on GCP
 
 In a dual-tiered ingress deployment, deploy Citrix ADC VPX/MPX outside the Kubernetes cluster (Tier 1) and Citrix ADC CPXs inside the Kubernetes cluster (Tier 2).
 
 The tier 1 VPX/MPX would load balance the tier 2 CPX inside the Kubernetes cluster. This is a generic deployment model followed widely irrespective of the platform, whether it's Google Cloud, Amazon Web Services, Azure, or an on-premises deployment.
 
-## Automation of the tier 1 VPX/MPX
+### Automation of the tier 1 VPX/MPX
 
 The tier 1 VPX/MPX automatically load balances the tier 2 CPXs. Citrix ingress controller completes the automation configurations by running as a pod inside the Kubernetes cluster. It configures a separate ingress class for the tier 1 VPX/MPX so that the configuration does not overlap with other ingress resources.
 
@@ -54,7 +54,7 @@ The tier 1 VPX/MPX automatically load balances the tier 2 CPXs. Citrix ingress c
 
 ---
 
-## Citrix deployment overview
+## Section B - Citrix deployment overview
 
 ### Below prerequisites are mandatory for this GCP lab hands-on
 
@@ -114,7 +114,7 @@ Prerequisites (mandatory):
 
 ---
 
-## Deploy a sample application using the sample YAML file library
+## Section C - Deploy a sample application using the sample YAML file library
 
 Citrix ADC offers the two-tier architecture deployment solution to load balance the enterprise grade applications deployed in microservices and accessed through the Internet. Tier 1 has heavy load balancers such as VPX/SDX/MPX to load balance North-South traffic. Tier 2 has CPX deployment for managing microservices and load balances East-West traffic.
 
@@ -285,7 +285,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
 ---
 
-## Enable the Rewrite and Responder policies for the sample application
+### Enable the Rewrite and Responder policies for the sample application
 
 Now it's time to push Rewrite and Responder policies in to VPX through the Citrix Ingress Controller(CIC) using custom resource definition (CRD)
 
@@ -317,7 +317,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 ---
 
-## Open source tool sets
+## Section D - Integration with Open source tools for Monitoring (Prometheus/Grafana)
 
 1. Deploy Cloud Native Computing Foundation (CNCF) monitoring tools, such as Prometheus and Grafana to collect ADC proxy stats.
 
@@ -353,7 +353,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 ---
 
-## Delete deployment
+## Section E - Delete deployment
 
 To delete the entire deployment go to your cloud shell and run below commands to start the delete process
 
