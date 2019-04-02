@@ -102,13 +102,12 @@ print ("1. Clone the git repository\n");
 print ("2. Create a Google Image for VPX\n");
 print ("3. Create VPC Networks for ADM\n");
 print ("4. Create VPC Subnets for ADM\n");
-print ("5. Create a ADM NFS instance\n");
-print ("6. Configure basic configs in ADM NFS instance\n");
-print ("7. Create ADM GKE Kubernetes cluster\n");
-print ("8. Create a ADM VPX instance\n");
-print ("9. Configure basic configs in ADM VPX instance");
+print ("5. Create ADM GKE Kubernetes cluster\n");
+print ("6. Create a ADM VPX instance\n");
+print ("7. Configure basic configs in ADM VPX instance\n");
+print ("8. Create a ADM NFS instance\n");
+print ("9. Configure basic configs in ADM NFS instance");
 print ("\n******************************************************\n");
-
 
 if ($CREATE_VPC eq "TRUE") {
     print ("\n******************************************************\n");
@@ -130,29 +129,6 @@ if ($CREATE_VPC eq "TRUE") {
     qx#gcloud -q compute networks subnets create vpx-snet-snip-adm --network=vpx-snet-snip-adm --region=us-west1 --range=10.10.20.0/24#;
 }
 
-if ($NFS_ADM eq "TRUE") {
-    print ("\n******************************************************\n");
-    print ("Creating NFS storage for ADM");
-    print ("\n******************************************************\n");
-	qx#gcloud -q compute instances create nfs-adm --zone=us-west1-b --machine-type=n1-standard-4 --subnet=vpx-snet-snip-adm --private-network-ip=10.10.20.50 --network-tier=PREMIUM --maintenance-policy=MIGRATE --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append --image=ubuntu-1604-xenial-v20190325 --image-project=ubuntu-os-cloud --boot-disk-size=100GB --boot-disk-type=pd-ssd --boot-disk-device-name=nfs-adm#;
-}
-
-if ($CONFIG_NFS_ADM eq "TRUE") {
-
-    print ("\n******************************************************\n");
-    print ("Waiting for the ADM NFS to boot up");
-    print ("\n******************************************************\n");
-    sleep(100);
-    print ("\n******************************************************\n");
-    print ("Doing basic ADM NFS Configuration");
-    print ("\n******************************************************\n");
-    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo apt-get update"#;
-    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo apt install nfs-kernel-server"#;
-	qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo mkdir -p /var/citrixadm_nfs/config"#;
-    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo chmod 777 /var/citrixadm_nfs/config"#;
-	qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo mkdir -p /var/citrixadm_nfs/datastore"#;
-    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo chmod 777 /var/citrixadm_nfs/datastore"#;
-}
 
 if ($CREATE_GKE eq "TRUE") {
     print ("\n******************************************************\n");
@@ -200,6 +176,30 @@ if ($CONFIG_VPX eq "TRUE") {
     qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "add ns ip 10.10.20.20 255.255.255.0 -type snip -mgmt enabled"#;
     qx#gcloud -q compute ssh $vpx_instance_name --zone $zone --command "enable ns mode mbf"#;
 
+}
+
+if ($NFS_ADM eq "TRUE") {
+    print ("\n******************************************************\n");
+    print ("Creating NFS storage for ADM");
+    print ("\n******************************************************\n");
+	qx#gcloud -q compute instances create nfs-adm --zone=us-west1-b --machine-type=n1-standard-4 --subnet=vpx-snet-snip-adm --private-network-ip=10.10.20.50 --network-tier=PREMIUM --maintenance-policy=MIGRATE --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append --image=ubuntu-1604-xenial-v20190325 --image-project=ubuntu-os-cloud --boot-disk-size=100GB --boot-disk-type=pd-ssd --boot-disk-device-name=nfs-adm#;
+}
+
+if ($CONFIG_NFS_ADM eq "TRUE") {
+
+    print ("\n******************************************************\n");
+    print ("Waiting for the ADM NFS to boot up");
+    print ("\n******************************************************\n");
+    sleep(100);
+    print ("\n******************************************************\n");
+    print ("Doing basic ADM NFS Configuration");
+    print ("\n******************************************************\n");
+    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo apt-get update"#;
+    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo apt install nfs-kernel-server"#;
+	qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo mkdir -p /var/citrixadm_nfs/config"#;
+    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo chmod 777 /var/citrixadm_nfs/config"#;
+	qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo mkdir -p /var/citrixadm_nfs/datastore"#;
+    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo chmod 777 /var/citrixadm_nfs/datastore"#;
 }
 
 print ("\n******************************************************\n");
