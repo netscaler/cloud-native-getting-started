@@ -1,0 +1,61 @@
+imports:
+- path: admvpxtemplate.py
+resources:
+- name: citrix-adc-3nic-deployment
+  type: admvpxtemplate.py
+  properties:
+   #The Google Region where the Citrix ADC would be deployed. Example: us-east1
+   region: "us-west1"
+   #The availability zone in the region where the Citrix ADC would be deployed.
+   #Example: us-west1-b
+   google_zone: "us-west1-b"
+   #The network to deploy the Citrix ADC
+   mgmt_network: "vpx-snet-mgmt-adm"
+   #Subnet for the management interface
+   mgmt_subnet: "vpx-snet-mgmt-adm"
+   #Ports to open to process management traffic
+   mgmt_ports:
+       - "22"
+       - "80"
+       - "443"
+   #Network for the nic used to handle client side traffic
+   client_network: "vpx-snet-vip-adm"
+   #Subnet in the specified network to handle client side traffic
+   client_subnet: "vpx-snet-vip-adm"
+   #Network for the nic used to handle server side traffic
+   server_network: "vpx-snet-snip-adm"
+   #Subnet in the specified network to handle server side traffic
+   server_subnet: "vpx-snet-snip-adm"
+   #Ports to open to process client traffic
+   client_traffic_ports:
+       - "80"
+       - "22"
+       - "443"
+       - "5557"
+   #tcp Ports to open to process server traffic
+   server_traffic_tcp_ports:
+       - "80"
+       - "22"
+       - "443"   
+       - "5557"
+       - "111"
+       - "2049"
+       - "56473"
+   #udp Ports to open to process server traffic
+   server_traffic_udp_ports:
+       - "111"
+       - "2049"
+   #The Citrix ADC image name
+   image_name: "netscaler12-1"
+   #The project name where the image is hosted
+   image_project_name: "<your project name>"
+   #The instance type to deploy the Citrix ADC instance Example: n1-standard-4
+   instance_type: "n1-standard-4"
+   #The public key used for authenticating into the Citrix ADC.
+   #Specify values separated by \n to specify more than one user.
+   #Set it to "" if you wish to specify no key
+   ssh_public_key: ""
+   #Specify a service account. If not, leave the field blank.
+   service_account: ""
+   #Enter "yes" if you would like a public ip to be associated to the NIC.
+   assign_public_ip: "yes"
