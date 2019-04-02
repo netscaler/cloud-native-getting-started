@@ -140,7 +140,9 @@ def GenerateConfig(context):
           'sourceRanges': ['0.0.0.0/0'],
           'allowed': [{
               'IPProtocol': 'tcp',
-              'ports': context.properties['server_traffic_tcp_ports'],
+              'ports': context.properties['server_traffic_tcp_ports']
+			  },
+			  {
 			  'IPProtocol': 'udp',
               'ports': context.properties['server_traffic_udp_ports']
           }],
