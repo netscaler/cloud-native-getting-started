@@ -21,7 +21,7 @@ if ($operation eq "delete") {
     print ("\n******************************************************\n");
     print ("Deleting the ADM NFS Storage");
     print ("\n******************************************************\n"); 
-    qx#gcloud -q beta container instances delete "nfs-adm" --zone "us-west1-b"#;
+    qx#gcloud -q compute instances delete "nfs-adm" --zone "us-west1-b"#;
 
     print ("\n******************************************************\n");
     print ("Deleting the ADM VPC and Subnets");
