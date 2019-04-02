@@ -194,8 +194,6 @@ if ($CONFIG_NFS_ADM eq "TRUE") {
     print ("\n******************************************************\n");
     print ("Doing basic ADM NFS Configuration");
     print ("\n******************************************************\n");
-    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo apt-get update"#;
-    qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo apt install nfs-kernel-server"#;
 	qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo mkdir -p /var/citrixadm_nfs/config"#;
     qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo chmod 777 /var/citrixadm_nfs/config"#;
 	qx#gcloud -q compute ssh $nfs_adm_name --zone $zone --command "sudo mkdir -p /var/citrixadm_nfs/datastore"#;
