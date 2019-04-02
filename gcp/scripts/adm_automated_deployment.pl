@@ -60,8 +60,8 @@ my $CREATE_VPC = "TRUE";
 my $CREATE_VPX = "TRUE";
 my $CONFIG_VPX = "TRUE";
 my $ENABLE_APIS = "TRUE";
-my $NFS_ADM = "TRUE"
-my $CONFIG_NFS_ADM = "TRUE"
+my $NFS_ADM = "TRUE";
+my $CONFIG_NFS_ADM = "TRUE";
 
 print ("\n******************************************************\n");
 print ("Starting Automated Deployment for the training lab");
