@@ -14,13 +14,13 @@ citrix-adm-controller:
     secret: "ewogICJhdXRocyI6IHsKICAgICJxdWF5LmlvIjogewogICAgICAiYXV0aCI6ICJZMmwwY21sNFlXUnRkSEFyWVdSdFkzVnpkRzl0WlhJNlRVeEdSelpVVHpRMVZsUkRPREZNVTFOUlVrTlRSRmRJTTA0MFZGbFFSa05XV2xoSFRsRkdTekJYTTBGUFJVbE9OMWhVVTBveVVrRkZUa3N3VURoU05BPT0iLAogICAgICAiZW1haWwiOiAiIgogICAgfQogIH0KfQ=="
 
   # ingressIP is the VIP configured in the NetScaler for accessing the application
-  ingressIP: "172.16.10.8"
+  ingressIP: "172.16.20.20"
 
   storage:
     # type can have values as nfs or hostDirectory
     type: "nfs"
     # nfsServer is applicable only if storageType is nfs
-    nfsServer: "10.10.10.42"
+    nfsServer: "10.10.20.50"
     # appDataPath is the mount path in case storage type is nfs or is host path in case storage type is hostDirectory
     path: "/var/citrixadm_nfs/config"
     # size of the storage
@@ -49,6 +49,6 @@ pg-datastore:
     memory: 1048Mi
   storage:
      type: "nfs"
-     nfsServer: "10.10.10.42"
+     nfsServer: "10.10.20.50"
      size: 50Gi
      path: "/var/citrixadm_nfs/datastore"
