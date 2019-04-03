@@ -64,7 +64,7 @@ if ($CREATE_VPX_IMAGE eq "TRUE") {
     my $image_creation_pid = fork();
     if (not $image_creation_pid) {
        print ("\nImage Creation Child Process: Entering\n");
-       my $out = qx#gcloud -q compute images create netscaler12-1 --source-uri=gs://tme-cpx-storage/NSVPX-GCP-12.1-50.28_nc.tar.gz --guest-os-features=MULTI_IP_SUBNET#;
+       my $out = qx#gcloud -q compute images create netscaler12-1 --source-uri=gs://k8s-vpx-gcp/NSVPX-GCP-12.1-51.16_nc.tar.gz --guest-os-features=MULTI_IP_SUBNET#;
 
        print ("\nOutput of Image Creation is \n$out\n");
        print ("\nImage Creation Child Process: Exiting\n");
