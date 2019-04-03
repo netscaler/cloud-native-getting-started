@@ -139,6 +139,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 3. Access the config files directory which are downloaded as part of automation script to run applications required for two-tier deployment
 
      ```gcloudsdkkubectl
+    cd
     cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/config-files/
      ```
 
