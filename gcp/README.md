@@ -89,7 +89,7 @@ Prerequisites (mandatory):
    > It will take around 15 mins to run script and wait till you get message from cloud shell as `End of Automated deployment for the training lab`
 
     ```gcloudsdk
-    curl https://raw.githubusercontent.com/christus02/citrix-ingress-gke/master/scripts/automated_deployment.pl | perl
+    curl https://raw.githubusercontent.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/master/gcp/scripts/automated_deployment.pl | perl
     ```
 
     Automated perl script creates below GCP Infrastructure components required for hands-on
