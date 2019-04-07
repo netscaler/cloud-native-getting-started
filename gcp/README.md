@@ -1,8 +1,8 @@
-# Two-Tier deployment with Citrix ADC VPX, Citrix Ingress Controller and Citrix ADC CPX on Google Cloud
+# Two-Tier deployment with Citrix ADC VPX, Citrix Ingress Controller, Citrix ADC CPX and Application Delivery Management(ADM) on Google Cloud
 
 ## Section A - Citrix product overview for GCP K8's architecture and components
 
-### The four major Citrix components of GCP
+### The five major Citrix components of GCP
 
 1. **Citrix ADC VPX as tier 1 ADC for ingress-based internet client traffic.**
 
@@ -39,6 +39,10 @@
 
     The Citrix ingress controller YAML file for GCP is located here:
     <https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/gcp>
+
+1. **Deploy the Citrix Application Delivery Management (ADM) container into the GKE cluster.**
+
+   ![GCP](./media/cpx-ingress-image18.png)
 
 ### Two-tier ingress deployment on GCP
 
@@ -642,7 +646,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 ---
 
-## Section E - Delete deployment
+## Section F - Delete deployment
 
 To delete the entire deployment go to your cloud shell and run below commands to start the delete process
 
