@@ -548,9 +548,11 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 1. On ADM go to Orchestration > Kubernetes > Clusters and follow steps shown on image to see service graph
 
-    Access Application k8s cluster on cloud shell
+    Access Application k8s cluster on cloud shell to get required details to add cluster
 
     ![GCP](./media/gcp-free-tier-image-52.png)
+
+    > Access  `k8s-cluster-with-cpx` by following `STEP 6 of Section B`
 
     * `Name:`  Give Application cluster name, for example:k8s-cluster-with-cpx
 
