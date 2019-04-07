@@ -82,20 +82,20 @@ Prerequisites (mandatory):
 
 1. Increase `VPC/Networks, In-use IP addresses` quota to `8` to run automated script without fail
 
-   * `VPC/Networks`
+   * VPC/Networks
   
+        Go to IAM & admin > Quotas on GCP console
+
+        Select the settings as shown and click on Edit Quotas and give your details on next page
         ![GCP](./media/gcp-free-tier-image-58.png)
 
-        Click on Edit Quotas and give your details on next page
-        ![GCP](./media/gcp-free-tier-image-57.png)
-
-        Change quota to `8` and submit the request, refresh the page to validate the same. It will take copule of minutes to reflect.
+        Change quota to `8` and submit the request, refresh the page to validate the same. It will take couple of minutes to reflect.
 
         ![GCP](./media/gcp-free-tier-image-30.png)
 
-    * `In-use IP addresses`
+    * In-use IP addresses
 
-        Change In-use IP adresses for us-east1 and us-west1 as shown
+        Similarly select required settings and change In-use IP adresses for us-east1 and us-west1 as shown
 
         ![GCP](./media/gcp-free-tier-image-57.png)
 
@@ -103,7 +103,7 @@ Prerequisites (mandatory):
 
     ![GCP](./media/cpx-ingress-image-20.png)
 
-3. Now we will run automated template script to bring GCP Infrastructure components required for hands-on. Script will run on your cloud shell which needs internet access so please make sure your system(laptop) is active.
+1. Now we will run automated template script to bring GCP Infrastructure components required for hands-on. Script will run on your cloud shell which needs internet access so please make sure your system(laptop) is active.
 
    > It will take around 15 mins to run script and wait till you get message from cloud shell as `End of Automated deployment for the training lab`
 
@@ -121,7 +121,7 @@ Prerequisites (mandatory):
 
     > If automation script fails don't create project with same name . Instead Go to **"Delete deployment Steps"** at page end and retry the script after successful deletion and re-login to your GCP account or delete the project using URL <https://cloud.google.com/go/getting-started/delete-tutorial-resources> and re-login to your GCP account.
 
-4. Once GCP Infrastructure is up with automated script. We have to access kubernetes cluster from the cloud shell.
+1. Once GCP Infrastructure is up with automated script. We have to access kubernetes cluster from the cloud shell.
 
     Go to **Kubernetes Engine > Clusters** and click **Connect** icon
 
