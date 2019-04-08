@@ -560,7 +560,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     * `Name:`  Give Application cluster name, for example:k8s-cluster-with-cpx
 
-    * `API Server URL:`  Master node URL is the API server URL of Application K8s cluster. copy and paste as shown in above image
+    * `API Server URL:`  Master node URL is the API server URL of Application K8s cluster. copy and paste Kubernetes master running URL by adding port **"443"** as shown in above image
 
         ```cloudshell
         kubectl cluster-info
@@ -592,6 +592,8 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
         ![GCP](./media/gcp-free-tier-image-50.png)
 
+1. Now access hotdrink url application over the Internet to capture traffic on ADM for Serviegraph , `Wait for couple of minutes` to reflect service graph on ADM .For example, `https://hotdrink.beverages.com` or `http://hotdrink.beverages.com`
+
 1. On ADM go to `Applications > ServiceGraph` to see the service graph of Microservices and Summary Panel to check Latency,Errors..
 
     `Graphic` Layout for Service Graph
@@ -605,6 +607,15 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
     `Concentric` Layout for Service Graph
 
     ![GCP](./media/gcp-free-tier-image-56.png)
+
+1. If you can't see `Service Graph` access hotdrink CPX as mentioned in  `Step 10 of Section - C` , validate whether you can see any hits on appflow configured in hotdrink CPX.
+
+     ```cloudshell
+    cli_script.sh "show appflow collector"
+    cli_script.sh "show  appflow policy"
+    ```
+
+    ![GCP](./media/gcp-free-tier-image-59.png)
 
 ---
 
@@ -633,7 +644,6 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
         ![GCP](./media/cpx-ingress-image15.png)
 
-
 3. **`Grafana visual dashboard :`** To monitor traffic stats of Citrix ADC
   
    * As shown above from the left panel, select the **Import** option and  `click url` <https://raw.githubusercontent.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/master/gcp/config-files/grafana_config.json> to copy entire content and paste in to JSON.
@@ -653,12 +663,14 @@ To delete the entire deployment go to your cloud shell and run below commands to
 1. >`This Step has to be used only if Automation script fails before cloning the config-files for you otheriwse go to next step`
 
     ```cloudshell
+    cd ~
     git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
     ```
 
 1. Now Go to scripts directory to start delete process using automated scripts
 
     ```cloudshell
+    cd ~
     cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/scripts
     ```
 
@@ -669,6 +681,11 @@ To delete the entire deployment go to your cloud shell and run below commands to
     ```
 
 1. To delete ADM GCP Infra
+
+    ```cloudshell
+    cd ~
+    git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
+    ```
 
     ```cloudshell
     cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/scripts
