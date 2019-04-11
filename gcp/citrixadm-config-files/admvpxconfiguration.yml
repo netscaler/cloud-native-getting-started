@@ -5,10 +5,10 @@ resources:
   type: admvpxtemplate.py
   properties:
    #The Google Region where the Citrix ADC would be deployed. Example: us-east1
-   region: "us-west1"
+   region: "europe-west2"
    #The availability zone in the region where the Citrix ADC would be deployed.
-   #Example: us-west1-b
-   google_zone: "us-west1-b"
+   #Example: europe-west2-b
+   google_zone: "europe-west2-b"
    #The network to deploy the Citrix ADC
    mgmt_network: "vpx-snet-mgmt-adm"
    #Subnet for the management interface

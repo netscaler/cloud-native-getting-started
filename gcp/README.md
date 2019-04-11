@@ -99,7 +99,7 @@ Prerequisites (mandatory):
 
     * In-use IP addresses
 
-        Similarly select required settings and change In-use IP adresses for us-east1 and us-west1 as shown
+        Similarly select required settings and change In-use IP adresses for asia-northeast1, europe-west2 as shown
 
         ![GCP](./media/gcp-free-tier-image-57.png)
 
