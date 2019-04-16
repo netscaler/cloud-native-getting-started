@@ -5,13 +5,15 @@
 | Section | Description |
 | ------- | ----------- |
 | [Section A](#section-a) | Citrix product overview for GCP K8's architecture and components |
-| [Section B](#section-b) | Citrix deployment overview |
+| [Section B](#section-b) | GCP Infrastructure Setup |
 | [Section C](#section-c) | Deploy a sample application using the sample YAML file library |
 | [Section D](#section-d) | Integration with CNCF tools for Monitoring (Prometheus/Grafana) |
 | [Section E](#section-e) | ADM as Microservices on GCP for Monitoring and Service Graph |
 | [Section F](#section-f) |  Delete deployment |
 
-## Section A - Citrix product overview for GCP K8's architecture and components
+## Section A
+
+## Citrix product overview for GCP K8's architecture and components
 
 ### The five major Citrix components of GCP
 
@@ -69,7 +71,9 @@ The tier 1 VPX/MPX automatically load balances the tier 2 CPXs. Citrix ingress c
 
 ---
 
-## Section B - Citrix deployment overview
+## Section B
+
+## GCP Infrastructure Setup
 
 ### Below prerequisites are mandatory for this GCP lab hands-on
 
@@ -150,7 +154,9 @@ Prerequisites (mandatory):
 
 ---
 
-## Section C - Deploy a sample application using the sample YAML file library
+## Section C
+
+## Deploy a sample application using the sample YAML file library
 
 Citrix ADC offers the two-tier architecture deployment solution to load balance the enterprise grade applications deployed in microservices and accessed through the Internet. Tier 1 has heavy load balancers such as VPX/SDX/MPX to load balance North-South traffic. Tier 2 has CPX deployment for managing microservices and load balances East-West traffic.
 
@@ -353,7 +359,9 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 ---
 
-## Section D - Integration with CNCF tools for Monitoring (Prometheus/Grafana)
+## Section D
+
+## Integration with CNCF tools for Monitoring (Prometheus/Grafana)
 
 1. Deploy Cloud Native Computing Foundation (CNCF) monitoring tools, such as Prometheus and Grafana to collect ADC proxy stats.
 
@@ -390,7 +398,9 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 ---
 
-## Section E - ADM as Microservices on GCP for Monitoring and Service Graph
+## Section E
+
+## ADM as Microservices on GCP for Monitoring and Service Graph
 
 ### Prerequisites for ADM
 
@@ -669,7 +679,9 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 ---
 
-## Section F - Delete deployment
+## Section F
+
+## Delete deployment
 
 To delete the entire deployment go to your cloud shell and run below commands to start the delete process
 
