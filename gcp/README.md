@@ -4,12 +4,12 @@
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A](#section-a-citrix-product-overview-for-gcp-k8's--architecture-and-components) | Citrix product overview for GCP K8's architecture and components |
-| [Section B](#section-b-citrix-deployment-overview) | Citrix deployment overview |
-| [Section C](#section-c-deploy-a-sample-application-using-the-sample-yaml-file-library) | Deploy a sample application using the sample YAML file library |
-| [Section D](#section-d-integartion-withcncf-tools-for-monitoring-(prometheus/grafana)) | Integration with CNCF tools for Monitoring (Prometheus/Grafana) |
-| [Section E](#section-e-adm-as-microservices-on-gcp-for-monitoring-and-service-graph) | ADM as Microservices on GCP for Monitoring and Service Graph |
-| [Section F](#section-f-delete-deployment) |  Delete deployment |
+| [Section A](#section-a) | Citrix product overview for GCP K8's architecture and components |
+| [Section B](#section-b) | Citrix deployment overview |
+| [Section C](#section-c) | Deploy a sample application using the sample YAML file library |
+| [Section D](#section-d) | Integration with CNCF tools for Monitoring (Prometheus/Grafana) |
+| [Section E](#section-e) | ADM as Microservices on GCP for Monitoring and Service Graph |
+| [Section F](#section-f) |  Delete deployment |
 
 ## Section A - Citrix product overview for GCP K8's architecture and components
 
