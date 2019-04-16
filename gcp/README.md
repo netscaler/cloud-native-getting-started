@@ -136,11 +136,11 @@ Prerequisites (mandatory):
 
     ![GCP](./media/gcp-free-tier-image-27.png)
 
-    After Successful deployment with out any errors in script execution if you get a message on `Cloud Shell` as shown than proceed to next step otherwise go to last section to delete deployment.
+    After Successful deployment with out any errors in script execution if you get a message on `Cloud Shell` as shown than proceed to next step otherwise go to last section to delete deployment
 
     ![GCP](./media/gcp-free-tier-image-26.png)
 
-    > If automation script fails don't create project with same name . Instead Go to **"Delete deployment Steps"** at page end and retry the script after successful deletion
+    > If automation script fails don't create project with same name . Instead Go to **"Section F - Delete deployment Steps"** at page end and retry the script after successful deletion
 
 1. Once GCP Infrastructure is up with automated script. We have to access kubernetes cluster from the cloud shell.
 
@@ -418,11 +418,11 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     ![GCP](./media/gcp-free-tier-image-31.png)
 
-    After Successful deployment you will get a message on `Cloud Shell` as shown
+    After Successful deployment with out any errors in script execution if you get a message on `Cloud Shell` as shown than proceed to next step otherwise go to last section to delete deployment
 
     ![GCP](./media/gcp-free-tier-image-26.png)
 
-    > If automation script fails don't create project with same name . Instead Go to **"Section E - Delete deployment Steps"** at page end and retry the script after successful deletion and re-login to your GCP account or delete the project using URL <https://cloud.google.com/go/getting-started/delete-tutorial-resources> and re-login to your GCP account.
+    > If automation script fails don't create project with same name . Instead Go to **"Section F - Delete deployment Steps"** at page end and retry the script after successful deletion
 
 1. Once GCP Infrastructure is up with automated script. we have to initialise NFS Storage for ADM
 
@@ -650,7 +650,11 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
         kubectl describe secret <admin-service-name> -n kube-system
         ```
 
+        >Please copy the token and paste it on Notepad or Notepad++ and make sure entire token should be in **"single line"**
+
         ![GCP](./media/gcp-free-tier-image-50.png)
+
+        ![GCP](./media/gcp-free-tier-image-61.png)
 
 5. Now access hotdrink url application over the Internet to capture traffic on ADM for Serviegraph , `Wait for couple of minutes` to reflect service graph on ADM .For example, `https://hotdrink.beverages.com` or `http://hotdrink.beverages.com`
 
@@ -677,6 +681,39 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     ![GCP](./media/gcp-free-tier-image-59.png)
 
+8. Everything is working as expected but still you can't see service graph than follow below steps to make service graph work
+
+   Access adm k8s cluster by following Step 3 of prerequisites of ADM from `Section F`
+
+    Get ADM pods
+
+    ```cloudshell
+    kubectl get pods -n adm
+    ```
+
+    ![GCP](./media/gcp-free-tier-image-63.png)
+
+    Replace k8sadapter pod as shown in above screen shot and run below commands to bash/cli for k8sadapter pod
+
+    ```cloudshell
+    kubectl exec -it <k8sadapterpod> bash -n adm
+    ```
+
+    ```cloudshell
+    cd /var/log
+    tail -f k8_logger.log
+    ```
+
+    ![GCP](./media/gcp-free-tier-image-62.png)
+
+    Now If you see **"Invalid token as Error Message from logs "** due to addition of \n in token, than delete k8sadapter pod but a new k8sadpater pod will be created instantly
+
+    ```cloudshell
+    kubectl delete pod <k8sadapterpod> -n adm
+    ```
+
+    Now repeat the cluster addition step and once above issue is fixed access `hotdrink.beverages.com` url and wait for couple of minutes to see the service graph
+
 ---
 
 ## Section F
@@ -692,7 +729,7 @@ To delete the entire deployment go to your cloud shell and run below commands to
     git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
     ```
 
-1. Now Go to scripts directory to start delete process using automated scripts
+2. Now Go to scripts directory to start delete process using automated scripts
 
     ```cloudshell
     cd ~
@@ -705,7 +742,7 @@ To delete the entire deployment go to your cloud shell and run below commands to
     perl automated_deployment.pl delete
     ```
 
-1. To delete ADM GCP Infra
+3. To delete ADM GCP Infra
 
     ```cloudshell
     cd ~
