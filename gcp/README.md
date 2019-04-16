@@ -1,5 +1,16 @@
 # Two-Tier deployment with Citrix ADC VPX, Citrix Ingress Controller, Citrix ADC CPX and Application Delivery Management(ADM) on Google Cloud
 
+## Contents
+
+| Section | Description |
+| ------- | ----------- |
+| [Section A](#section-a-citrix-product-overview-for-gcp-k8's--architecture-and-components) | Citrix product overview for GCP K8's architecture and components |
+| [Section B](#section-b-citrix-deployment-overview) | Citrix deployment overview |
+| [Section C](#section-c-deploy-a-sample-application-using-the-sample-yaml-file-library) | Deploy a sample application using the sample YAML file library |
+| [Section D](#section-d-integartion-withcncf-tools-for-monitoring-(prometheus/grafana)) | Integration with CNCF tools for Monitoring (Prometheus/Grafana) |
+| [Section E](#section-e-adm-as-microservices-on-gcp-for-monitoring-and-service-graph) | ADM as Microservices on GCP for Monitoring and Service Graph |
+| [Section F](#section-f-delete-deployment) |  Delete deployment |
+
 ## Section A - Citrix product overview for GCP K8's architecture and components
 
 ### The five major Citrix components of GCP
@@ -8,11 +19,11 @@
 
     A VPX instance in GCP enables you to take advantage of GCP computing capabilities and use Citrix load balancing and traffic management features for your business needs. You can deploy VPX in GCP as a standalone instance. Both single and multiple network interface card (NIC) configurations are supported.
 
-1. **The Kubernetes cluster using Google Kubernetes Engine (GKE) to form the container platform.**
+2. **The Kubernetes cluster using Google Kubernetes Engine (GKE) to form the container platform.**
 
     Kubernetes Engine is a managed, production-ready environment for deploying containerized applications. It enables rapid deployment and management of your applications and services.
 
-1. **Deploy a sample Citrix web application using the YAML file library.**
+3. **Deploy a sample Citrix web application using the YAML file library.**
 
     Citrix has provided a sample microservice web application to test the two-tier application topology on GCP. We have also included the following components in the sample files for proof of concept:
 
@@ -24,7 +35,7 @@
 
     ![GCP](./media/cpx-ingress-image11.png)
 
-1. **Deploy the Citrix ingress controller for tier 1 Citrix ADC automation into the GKE cluster.**
+4. **Deploy the Citrix ingress controller for tier 1 Citrix ADC automation into the GKE cluster.**
 
     The Citrix ingress controller built around Kubernetes automatically configures one or more Citrix ADC based on the ingress resource configuration. An ingress controller is a controller that watches the Kubernetes API server for updates to the ingress resource and reconfigures the ingress load balancer accordingly. The Citrix ingress controller can be deployed either directly using YAML files or by Helm Charts.
 
@@ -40,7 +51,7 @@
     The Citrix ingress controller YAML file for GCP is located here:
     <https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/gcp>
 
-1. **Deploy the Citrix Application Delivery Management (ADM) container into the GKE cluster.**
+5. **Deploy the Citrix Application Delivery Management (ADM) container into the GKE cluster.**
 
    ![GCP](./media/cpx-ingress-image18.png)
 
@@ -78,26 +89,28 @@ Prerequisites (mandatory):
 
      ![GCP](./media/gcp-free-tier-image-5.png)
 
-    Now go to **Compute Engine > VM Instances** and wait till Compute Engine is ready
-
      ![GCP](./media/gcp-free-tier-image-6.png)
+
+    Now go to **Compute Engine > VM Instances** and wait till Compute Engine is ready
 
      ![GCP](./media/cpx-ingress-image-31.png)
 
-1. Increase `VPC/Networks, In-use IP addresses` quota to `8` to run automated script without fail
+1. Increase `VPC/Networks, In-use IP addresses` quota to `8`
 
-   * VPC/Networks
+   - VPC/Networks
   
         Go to IAM & admin > Quotas on GCP console
 
         Select the settings as shown and click on Edit Quotas and give your details on next page
         ![GCP](./media/gcp-free-tier-image-58.png)
 
+        ![GCP](./media/gcp-free-tier-image-60.png)
+
         Change quota to `8` and submit the request, refresh the page to validate the same. It will take couple of minutes to reflect.
 
         ![GCP](./media/gcp-free-tier-image-30.png)
 
-    * In-use IP addresses
+   - In-use IP addresses
 
         Similarly select required settings and change In-use IP adresses for asia-northeast1, europe-west2 as shown
 
@@ -119,11 +132,11 @@ Prerequisites (mandatory):
 
     ![GCP](./media/gcp-free-tier-image-27.png)
 
-    After Successful deployment you will get a message on `Cloud Shell` as shown
+    After Successful deployment with out any errors in script execution if you get a message on `Cloud Shell` as shown than proceed to next step otherwise go to last section to delete deployment.
 
     ![GCP](./media/gcp-free-tier-image-26.png)
 
-    > If automation script fails don't create project with same name . Instead Go to **"Delete deployment Steps"** at page end and retry the script after successful deletion and re-login to your GCP account or delete the project using URL <https://cloud.google.com/go/getting-started/delete-tutorial-resources> and re-login to your GCP account.
+    > If automation script fails don't create project with same name . Instead Go to **"Delete deployment Steps"** at page end and retry the script after successful deletion
 
 1. Once GCP Infrastructure is up with automated script. We have to access kubernetes cluster from the cloud shell.
 
@@ -340,7 +353,44 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 ---
 
-## Section D - ADM as Microservices on GCP for Monitoring and Service Graph
+## Section D - Integration with CNCF tools for Monitoring (Prometheus/Grafana)
+
+1. Deploy Cloud Native Computing Foundation (CNCF) monitoring tools, such as Prometheus and Grafana to collect ADC proxy stats.
+
+     ```gcloudsdkkubectl
+     kubectl create -f monitoring.yaml -n monitoring
+     kubectl create -f ingress_vpx_monitoring.yaml -n monitoring
+     ```
+
+    ![GCP](./media/gcp-free-tier-image-21.png)
+
+2. **`Prometheus log aggregator :`** Log in to `http://grafana.beverages.com:8080` and complete the following one-time setup.
+
+    - Log in to the portal using `admin/admin` credentials and click  **`skip`** on next page
+    - Click **`Add data source`** and select the **`Prometheus`** data source
+
+        ![GCP](./media/gcp-free-tier-image-22.png)
+
+        ![GCP](./media/gcp-free-tier-image-23.png)
+
+    - Configure the following settings and click on **`Save and test`** button and you will get a prompt that `Data Source is working`
+         >Make sure all **`prometheus`** shoud be in small letters
+
+        ![GCP](./media/cpx-ingress-image15.png)
+
+3. **`Grafana visual dashboard :`** To monitor traffic stats of Citrix ADC
+  
+   - As shown above from the left panel, select the **Import** option and  `click url` <https://raw.githubusercontent.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/master/gcp/config-files/grafana_config.json> to copy entire content and paste in to JSON.
+  
+   - Click on 'Load' and than 'Import' in next page
+
+        ![GCP](./media/gcp-free-tier-image-24.png)
+
+        ![GCP](./media/cpx-ingress-image16.png)
+
+---
+
+## Section E - ADM as Microservices on GCP for Monitoring and Service Graph
 
 ### Prerequisites for ADM
 
@@ -480,7 +530,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     SCP to `citrix-adc-tier1-vpx-adm` using its public ip to transfer above batch file
 
-    Go to **Compute Engine > VM instances** 
+    Go to **Compute Engine > VM instances**
 
     ![GCP](./media/gcp-free-tier-image-40.png)
 
@@ -531,7 +581,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     ![GCP](./media/gcp-free-tier-image-45.png)
 
-1. We will enable `App Flow` on `Hotdrinks CPX` to collect logs on ADM
+2. We will enable `App Flow` on `Hotdrinks CPX` to collect logs on ADM
 
     > Replace ADM External IP with your ADM IP
 
@@ -546,11 +596,11 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     ![GCP](./media/gcp-free-tier-image-46.png)
 
-1. Access ADM IP and add `citrix-adc-tier1-vpx`
+3. Access ADM IP and add `citrix-adc-tier1-vpx`
 
     ![GCP](./media/gcp-free-tier-image-51.png)
 
-1. On ADM go to Orchestration > Kubernetes > Clusters and follow steps shown on image to see service graph
+4. On ADM go to Orchestration > Kubernetes > Clusters and follow steps shown on image to see service graph
 
     Access Application k8s cluster on cloud shell to get required details to add cluster
 
@@ -558,15 +608,15 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     > Access  `k8s-cluster-with-cpx` by following `STEP 6 of Section B`
 
-    * `Name:`  Give Application cluster name, for example:k8s-cluster-with-cpx
+    - `Name:`  Give Application cluster name, for example:k8s-cluster-with-cpx
 
-    * `API Server URL:`  Master node URL is the API server URL of Application K8s cluster. copy and paste Kubernetes master running URL by adding port **"443"** as shown in above image
+    - `API Server URL:`  Master node URL is the API server URL of Application K8s cluster. copy and paste Kubernetes master running URL by adding port **"443"** as shown in above image
 
         ```cloudshell
         kubectl cluster-info
         ```
 
-    * `Authentication Token:` To get this token we have to install cluster role and service account on Application K8s cluster
+    - `Authentication Token:` To get this token we have to install cluster role and service account on Application K8s cluster
 
         ```cloudshell
         cd ~
@@ -592,9 +642,9 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
         ![GCP](./media/gcp-free-tier-image-50.png)
 
-1. Now access hotdrink url application over the Internet to capture traffic on ADM for Serviegraph , `Wait for couple of minutes` to reflect service graph on ADM .For example, `https://hotdrink.beverages.com` or `http://hotdrink.beverages.com`
+5. Now access hotdrink url application over the Internet to capture traffic on ADM for Serviegraph , `Wait for couple of minutes` to reflect service graph on ADM .For example, `https://hotdrink.beverages.com` or `http://hotdrink.beverages.com`
 
-1. On ADM go to `Applications > ServiceGraph` to see the service graph of Microservices and Summary Panel to check Latency,Errors..
+6. On ADM go to `Applications > ServiceGraph` to see the service graph of Microservices and Summary Panel to check Latency,Errors..
 
     `Graphic` Layout for Service Graph
 
@@ -608,7 +658,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     ![GCP](./media/gcp-free-tier-image-56.png)
 
-1. If you can't see `Service Graph` access hotdrink CPX as mentioned in  `Step 10 of Section - C` , validate whether you can see any hits on appflow configured in hotdrink CPX.
+7. If you can't see `Service Graph` access hotdrink CPX as mentioned in  `Step 10 of Section - C` , validate whether you can see any hits on appflow configured in hotdrink CPX.
 
      ```cloudshell
     cli_script.sh "show appflow collector"
@@ -616,43 +666,6 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
     ```
 
     ![GCP](./media/gcp-free-tier-image-59.png)
-
----
-
-## Section E - Integration with Open source tools for Monitoring (Prometheus/Grafana)
-
-1. Deploy Cloud Native Computing Foundation (CNCF) monitoring tools, such as Prometheus and Grafana to collect ADC proxy stats.
-
-     ```gcloudsdkkubectl
-     kubectl create -f monitoring.yaml -n monitoring
-     kubectl create -f ingress_vpx_monitoring.yaml -n monitoring
-     ```
-
-    ![GCP](./media/gcp-free-tier-image-21.png)
-
-2. **`Prometheus log aggregator :`** Log in to `http://grafana.beverages.com:8080` and complete the following one-time setup.
-
-     * Log in to the portal using `admin/admin` credentials and click  **`skip`** on next page
-     * Click **`Add data source`** and select the **`Prometheus`** data source
- 
-        ![GCP](./media/gcp-free-tier-image-22.png)
-
-        ![GCP](./media/gcp-free-tier-image-23.png)
-
-     * Configure the following settings and click on **`Save and test`** button and you will get a prompt that `Data Source is working`
-         >Make sure all **`prometheus`** shoud be in small letters
-
-        ![GCP](./media/cpx-ingress-image15.png)
-
-3. **`Grafana visual dashboard :`** To monitor traffic stats of Citrix ADC
-  
-   * As shown above from the left panel, select the **Import** option and  `click url` <https://raw.githubusercontent.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/master/gcp/config-files/grafana_config.json> to copy entire content and paste in to JSON.
-  
-   * Click on 'Load' and than 'Import' in next page
-
-        ![GCP](./media/gcp-free-tier-image-24.png)
-
-        ![GCP](./media/cpx-ingress-image16.png)
 
 ---
 
