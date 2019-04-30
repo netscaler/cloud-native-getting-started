@@ -103,20 +103,20 @@ Prerequisites (mandatory):
 
    - VPC/Networks
   
-        Go to IAM & admin > Quotas on GCP console
+     - Go to IAM & admin > Quotas on GCP console
 
-        Select the settings as shown and click on Edit Quotas and give your details on next page
+     - Select the settings as shown and click on Edit Quotas and give your details on next page
         ![GCP](./media/gcp-free-tier-image-58.png)
 
         ![GCP](./media/gcp-free-tier-image-60.png)
 
-        Change quota to `8` and submit the request, refresh the page to validate the same. It will take couple of minutes to reflect.
+     - Change quota to `8` and submit the request, refresh the page to validate the same. It will take couple of minutes to reflect.
 
         ![GCP](./media/gcp-free-tier-image-30.png)
 
    - In-use IP addresses
 
-        Similarly select required settings and change In-use IP adresses for asia-northeast1, europe-west2 as shown
+     - Similarly select required settings and change In-use IP adresses for asia-northeast1, europe-west2 as shown
 
         ![GCP](./media/gcp-free-tier-image-57.png)
 
