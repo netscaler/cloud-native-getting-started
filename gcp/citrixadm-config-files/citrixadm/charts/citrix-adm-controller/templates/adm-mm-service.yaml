@@ -29,6 +29,11 @@ spec:
     targetPort: 162
     nodePort: 31001
     name: snmp
+  - port: 161
+    protocol: UDP
+    targetPort: 161
+    nodePort: 31502
+    name: snmp-agent
   - port: 514
     protocol: UDP
     targetPort: 514

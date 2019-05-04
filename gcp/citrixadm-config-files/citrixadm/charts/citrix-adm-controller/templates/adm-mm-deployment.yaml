@@ -68,8 +68,22 @@ spec:
           value: "licensing"
         - name: KAD_HOST
           value: "k8sadapter"
+        - name: GRAPHQLAPI_HOST
+          value: "graphqlapi"
+        - name: GRAPHQLAPI_PORT
+          value: "6567"
+        - name: DATAPROCESSING_HOST
+          value: "dataprocessing"          
         - name: INGRESS_FRONTEND_IP
           value: {{ required "A valid ingressIP required!" .Values.ingressIP | quote }}
+        livenessProbe:
+          httpGet:
+            path: /nitro/v1/config/mas_health
+            port: 80
+          initialDelaySeconds: 320
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
         ports:
         - containerPort: 80
           protocol: TCP
@@ -79,6 +93,8 @@ spec:
           protocol: TCP
         - containerPort: 162
           protocol: UDP
+        - containerPort: 161
+          protocol: UDP          
         - containerPort: 514
           protocol: UDP
         - containerPort: 4739
