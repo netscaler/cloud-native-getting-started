@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: graphqlapi
+  labels:
+    app: graphqlapi
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+  #GraphQL runs on 6567 and can be accessed by other containers on 6567
+  - port: 6567
+    targetPort: 6567
+  selector:
+    app: graphqlapi
+    tier: backend

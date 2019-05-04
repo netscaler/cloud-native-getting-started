@@ -9,12 +9,24 @@ citrix-adm-controller:
     # repository is the repository from where to pull the images. Valid values are local, blr and sjc
     repository: "quay.io"
     # tag is the image tag. Default value is latest
-    tag: "latest"
+    tag: "12.1-535.127"
     # secret is the image pull secret
     secret: "ewogICJhdXRocyI6IHsKICAgICJxdWF5LmlvIjogewogICAgICAiYXV0aCI6ICJZMmwwY21sNFlXUnRkSEFyWVdSdFkzVnpkRzl0WlhJNlRVeEdSelpVVHpRMVZsUkRPREZNVTFOUlVrTlRSRmRJTTA0MFZGbFFSa05XV2xoSFRsRkdTekJYTTBGUFJVbE9OMWhVVTBveVVrRkZUa3N3VURoU05BPT0iLAogICAgICAiZW1haWwiOiAiIgogICAgfQogIH0KfQ=="
 
   # ingressIP is the VIP configured in the NetScaler for accessing the application
   ingressIP: "172.16.20.20"
+  
+  # applicationID is the string identifier for ingress configuration
+  applicationID: "adm_tp_k8s"
+
+  # ingressADCIP is the NSIP of the northbound ADC used to expose the ADM application to the outside world
+  ingressADCIP: "10.10.20.20"
+
+  # ingressADCUsername is the username of the northbound ADC
+  ingressADCUsername: "nsroot"
+
+  # ingressADCUsername is the password for above username
+  ingressADCPassword: "nsroot"
 
   storage:
     # type can have values as nfs or hostDirectory

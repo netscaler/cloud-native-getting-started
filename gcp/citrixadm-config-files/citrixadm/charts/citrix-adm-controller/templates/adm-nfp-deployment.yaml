@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: k8sadapter
+  name: nfprovisioning
 spec:
   selector:
     matchLabels:
-      app: k8sadapter
+      app: nfprovisioning
       tier: backend
   replicas: 1
   template:
     metadata:
       labels:
-        app: k8sadapter
+        app: nfprovisioning
         tier: backend
     spec:
       containers:
-      - name: kad
+      - name: nfprovisioning
         {{ if not .Values.image.repository }}
         dummy1: {{ required "A valid repository required!" .Values.image.repository }}
         dummy2: {{ required "A valid tag entry required!" .Values.image.tag }}
         {{ else }}
         {{ if eq .Values.image.repository "local"}}
-        image: adm-k8s-adapter:{{ .Values.image.tag | default "latest" }}
+        image: adm-nfprovisioning:{{ .Values.image.tag | default "latest" }}
         imagePullPolicy: IfNotPresent
         {{ else if eq .Values.image.repository "sjc"}}
-        image: adm-local-docker-kad.sjc-repo.citrite.net/adm-local-docker-kad:{{ .Values.image.tag | default "latest" }}
+        image: adm-local-docker-nfp.sjc-repo.citrite.net/adm-local-docker-nfp:{{ .Values.image.tag | default "latest" }}
         imagePullPolicy: Always
         {{ else if eq .Values.image.repository "blr"}}
-        image: adm-local-docker-kad.blr-repo.citrite.net/adm-local-docker-kad:{{ .Values.image.tag | default "latest" }}
+        image: adm-local-docker-nfp.blr-repo.citrite.net/adm-local-docker-nfp:{{ .Values.image.tag | default "latest" }}
         imagePullPolicy: Always
         {{ else if eq .Values.image.repository "quay.io"}}
-        image: quay.io/citrixadmtp/kad:{{ .Values.image.tag | default "latest" }}
+        image: quay.io/citrixadmtp/nfp:{{ .Values.image.tag | default "latest" }}
         imagePullPolicy: Always
         {{ end }}
         {{ end }}
@@ -39,26 +39,12 @@ spec:
           value: {{ required "A valid postgresHost required!" .Values.postgres.host | quote }}
         - name: POSTGRES_PORT
           value: {{ .Values.postgres.port | default "5454" | quote}}
-        - name: DB_CONNECTION_STR
-          value: "generic_connection_string:DRIVER=PostgreSQL_unixODBC;DATABASE=mpsdb;SERVER={{ .Values.postgres.host }};PORT={{ .Values.postgres.port }};UID=mpsroot;PWD=netscalermas$123;MaxVarcharSize=4096;"
-        - name: NFP_HOST
-          value: "nfprovisioning"
-        - name: NFP_PORT
-          value: "9801"
+        - name: POSTGRES_PASSWORD
+          value: "netscalermas$123"
         - name: MGMT_MONIT_HOST
-          value: "mgmt-monit"
-        - name: SDC_HOST
-          value: "sdc"
-        - name: SDC_PORT
-          value: "80"
-        - name: ANALYTICS_HOST
-          value: "dataprocessing"
-        - name: ANALYTICS_PORT
-          value: "6565"
-        - name: ANALYTICS_APP_EVENT_URI
-          value: "/sdc/nitro/v1/config/app_event"
+          value: "frontend:5900"
         ports:
-        - containerPort: 8083
+        - containerPort: 9801
         supplementalGroups: [0]
       {{ if eq .Values.image.repository "quay.io"}}
       imagePullSecrets:
