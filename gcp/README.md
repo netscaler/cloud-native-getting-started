@@ -178,6 +178,12 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
      kubectl create clusterrolebinding citrix-cluster-admin --clusterrole=cluster-admin --user=<email-id of your GCP account>
      ```
 
+    Optional: If you paste in an incorrect email follow these steps to remove the role binding, you will then have to go in and repeat step 2 to correctly bind your Google Account as the Citrix Cluster Admin.
+
+    ```gcloudsdkkubectl
+     kubectl delete clusterrolebinding citrix-cluster-admin
+    ```
+
 3. Access the config files directory which are downloaded as part of automation script to run applications required for two-tier deployment
 
      ```gcloudsdkkubectl
@@ -532,39 +538,21 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     ![GCP](./media/gcp-free-tier-image-38.png)
 
-    Generate a `bash` file to install in  `citrix-adc-tier1-vpx-adm` to make it as an `tier1-ingress`
+    To check ADM Microservice installation is successful, go to citrix-adc-tier1-vpx-adm and wait till licensing lb verservers are up
 
-    ```cloudshell
-    bash generate_ingress_conf.sh 172.16.20.20 customeradm
-    ```
+    ![GCP](./media/gcp-free-tier-image-64.png)
 
-    SCP to `citrix-adc-tier1-vpx-adm` using its public ip to transfer above batch file
+    Look for `Licensing load balancing vservers` are UP or not.If vservers are UP than access ADM otherwise wait till licensing vservers are UP
 
-    Go to **Compute Engine > VM instances**
-
-    ![GCP](./media/gcp-free-tier-image-40.png)
-
-    >Replace **"external IP of citrix-adc-tier1-vpx-adm"** with `External IP of Citrix-adc-tier1-vpx-adm` to send file to tier1-vpx-adm
-
-    ```cloudshell
-    scp customeradm-batch.txt nsroot@External IP of citrix-adc-tier1-vpx-adm:/nsconfig
-    ```
-
-    ![GCP](./media/gcp-free-tier-image-41.png)
-
-    SSH to `citrix-adc-tier1-vpx-adm` and run below command
-
-    ```cloudshell
-    batch -f /nsconfig/customeradm-batch.txt
-    ````
-
-    ![GCP](./media/gcp-free-tier-image-42.png)
+    ![GCP](./media/gcp-free-tier-image-65.png)
 
     Double click on `citrix-adc-tier1-vpx-adm` to get ADM IP
 
     ![GCP](./media/gcp-free-tier-image-43.png)
 
     Scroll down and Copy ADM IP as shown here on your browser to access `For Example: http://35.199.148.128`
+
+    Acess ADM using default credentials UserName/Passowrd: nsroot/nsroot
 
     ![GCP](./media/gcp-free-tier-image-44.png)
 
@@ -574,22 +562,30 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 > Run configure appflow commands in `k8s-cluster-with-cpx` cluster only
 
-1. Access  `k8s-cluster-with-cpx` by following `STEP 6 of Section B` to configure hotdrink CPX
+1. Access  `k8s-cluster-with-cpx` to configure hotdrink CPX
 
-    To get CPX pods in tier-2-adc namespace  
+    - Go to **Kubernetes Engine > Clusters** and click **Connect** icon
 
-     ```cloudshellkubectl
-     kubectl get pods -n tier-2-adc
-     ```
+        ![GCP](./media/gcp-free-tier-image-7.png)
 
-    To get CLI access (bash) to the CPX pod (hotdrinks-cpx pod)
-    >Change the CPX pod name in double quotes "" for below command and than execute
+        Copy paste Kubernetes CLI access on your cloud shell
 
-     ```cloudshellkubectl
-     kubectl exec -it "copy and paste hotdrink CPX pod name here from the above step" bash -n tier-2-adc
-     ```
+        ![GCP](./media/cpx-ingress-image-26.png)
 
-    ![GCP](./media/gcp-free-tier-image-45.png)
+    - To get CPX pods in tier-2-adc namespace  
+
+        ```cloudshellkubectl
+        kubectl get pods -n tier-2-adc
+        ```
+
+    - To get CLI access (bash) to the CPX pod (hotdrinks-cpx pod)
+        >Change the CPX pod name in double quotes "" for below command and than execute
+
+        ```cloudshellkubectl
+        kubectl exec -it "copy and paste hotdrink CPX pod name here from the above step" bash -n tier-2-adc
+        ```
+
+        ![GCP](./media/gcp-free-tier-image-45.png)
 
 2. We will enable `App Flow` on `Hotdrinks CPX` to collect logs on ADM
 
@@ -604,9 +600,15 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
     cli_script.sh "enable ns mode ULFD"
     ```
 
+    To check Appflow status is UP or not
+
+    ```gcloudshell
+    cli_script.sh "show appflow collector"
+    ```
+
     ![GCP](./media/gcp-free-tier-image-46.png)
 
-3. Access ADM IP and add `citrix-adc-tier1-vpx`
+3. Access ADM IP by using default credentials nsroot/nsroot and add `citrix-adc-tier1-vpx`
 
     ![GCP](./media/gcp-free-tier-image-51.png)
 
@@ -614,9 +616,9 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     Access Application k8s cluster on cloud shell to get required details to add cluster
 
-    ![GCP](./media/gcp-free-tier-image-52.png)
+    ![GCP](./media/gcp-free-tier-image-66.png)
 
-    > Access  `k8s-cluster-with-cpx` by following `STEP 6 of Section B`
+    > Get back to cloud shell to access  `k8s-cluster-with-cpx` - The Application Cluster
 
     - `Name:`  Give Application cluster name, for example:k8s-cluster-with-cpx
 
@@ -625,6 +627,8 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
         ```cloudshell
         kubectl cluster-info
         ```
+
+        ![GCP](./media/gcp-free-tier-image-67.png)
 
     - `Authentication Token:` To get this token we have to install cluster role and service account on Application K8s cluster
 
@@ -654,25 +658,23 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
         ![GCP](./media/gcp-free-tier-image-50.png)
 
+        Click on `Create` than you will see below screen after cluster addition
+
         ![GCP](./media/gcp-free-tier-image-61.png)
 
 5. Now access hotdrink url application over the Internet to capture traffic on ADM for Serviegraph , `Wait for couple of minutes` to reflect service graph on ADM .For example, `https://hotdrink.beverages.com` or `http://hotdrink.beverages.com`
 
 6. On ADM go to `Applications > ServiceGraph` to see the service graph of Microservices and Summary Panel to check Latency,Errors..
 
-    `Graphic` Layout for Service Graph
-
-    ![GCP](./media/gcp-free-tier-image-54.png)
-
-    `Grid` Layout for Service Graph
+    Click on `View as` for different service graph views to get better visibility
 
     ![GCP](./media/gcp-free-tier-image-55.png)
 
-    `Concentric` Layout for Service Graph
+    SKIP Troubleshooting ADM Service Graph if you can see Service Graph on ADM
 
-    ![GCP](./media/gcp-free-tier-image-56.png)
+### Troubleshooting Application Delivery Management (ADM) Service Graph
 
-7. If you can't see `Service Graph` access hotdrink CPX as mentioned in  `Step 10 of Section - C` , validate whether you can see any hits on appflow configured in hotdrink CPX.
+1. If you can't see `Service Graph` access hotdrink CPX as mentioned in  `Step 10 of Section - C` , validate whether you can see any hits on appflow configured in hotdrink CPX.
 
      ```cloudshell
     cli_script.sh "show appflow collector"
@@ -681,7 +683,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     ![GCP](./media/gcp-free-tier-image-59.png)
 
-8. Everything is working as expected but still you can't see service graph than follow below steps to make service graph work
+2. Everything is working as expected but still you can't see service graph than follow below steps to make service graph work
 
    Access adm k8s cluster by following Step 3 of prerequisites of ADM from `Section F`
 
