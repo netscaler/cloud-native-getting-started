@@ -5,10 +5,10 @@ resources:
   type: template.py
   properties:
    #The Google Region where the Citrix ADC would be deployed. Example: us-east1
-   region: "us-east1"
+   region: "<your region>"
    #The availability zone in the region where the Citrix ADC would be deployed.
    #Example: us-east1-b
-   google_zone: "us-east1-b"
+   google_zone: "<your zone>"
    #The network to deploy the Citrix ADC
    mgmt_network: "vpx-snet-mgmt"
    #Subnet for the management interface

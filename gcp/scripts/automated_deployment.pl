@@ -1,6 +1,13 @@
 #!/usr/bin/perl 
 
-my $operation = $ARGV[0];
+#Create mode
+# Usage: perl <script name> <region> <zone>
+#Delete mode
+# Usage: perl <script name> <region> <zone> <delete>
+
+my $region = $ARGV[0];
+my $zone = $ARGV[1];
+my $operation = $ARGV[2];
 
 if ($operation eq "delete") {
 
@@ -16,18 +23,18 @@ if ($operation eq "delete") {
     print ("\n******************************************************\n");
     print ("Deleting the GKE Kubernetes cluster");
     print ("\n******************************************************\n"); 
-    qx#gcloud -q beta container clusters delete "k8s-cluster-with-cpx" --zone "us-east1-b"#;
+    qx#gcloud -q beta container clusters delete "k8s-cluster-with-cpx" --zone "$zone"#;
 
     print ("\n******************************************************\n");
     print ("Deleting the VPC and Subnets");
     print ("\n******************************************************\n"); 
-    qx#gcloud -q compute networks subnets delete vpx-snet-mgmt --region=us-east1#;
+    qx#gcloud -q compute networks subnets delete vpx-snet-mgmt --region=$region#;
     qx#gcloud -q compute networks delete vpx-snet-mgmt#;
 
-    qx#gcloud -q compute networks subnets delete vpx-snet-vip --region=us-east1#;
+    qx#gcloud -q compute networks subnets delete vpx-snet-vip --region=$region#;
     qx#gcloud -q compute networks delete vpx-snet-vip#;
 
-    qx#gcloud -q compute networks subnets delete vpx-snet-snip --region=us-east1#;
+    qx#gcloud -q compute networks subnets delete vpx-snet-snip --region=$region#;
     qx#gcloud -q compute networks delete vpx-snet-snip#;
 
     print ("\n******************************************************\n");
@@ -44,7 +51,7 @@ my $home_dir = $ENV{'HOME'};
 my $repo_path = $ENV{'HOME'} . "/example-cpx-vpx-for-kubernetes-2-tier-microservices/";
 my $config_dir = $repo_path . "/gcp/config-files/";
 my $vpx_deployment_config_file = $config_dir . "/configuration.yml";
-my $zone = "us-east1-b";
+my $zone = "$zone";
 my $vpx_instance_name = "citrix-adc-tier1-vpx";
 
 my $CLONE_REPO = "TRUE";
@@ -105,26 +112,26 @@ if ($CREATE_VPC eq "TRUE") {
     print ("Creating VPC for Management Network");
     print ("\n******************************************************\n");
     qx#gcloud -q compute networks create vpx-snet-mgmt --subnet-mode=custom#;
-    qx#gcloud -q compute networks subnets create vpx-snet-mgmt --network=vpx-snet-mgmt --region=us-east1 --range=192.168.10.0/24#;
+    qx#gcloud -q compute networks subnets create vpx-snet-mgmt --network=vpx-snet-mgmt --region=$region --range=192.168.10.0/24#;
 
     print ("\n******************************************************\n");
     print ("Creating VPC for Client Network");
     print ("\n******************************************************\n");
     qx#gcloud -q compute networks create vpx-snet-vip --subnet-mode=custom#;
-    qx#gcloud -q compute networks subnets create vpx-snet-vip --network=vpx-snet-vip --region=us-east1 --range=172.16.10.0/24#;
+    qx#gcloud -q compute networks subnets create vpx-snet-vip --network=vpx-snet-vip --region=$region --range=172.16.10.0/24#;
 
     print ("\n******************************************************\n");
     print ("Creating VPC for Server Network");
     print ("\n******************************************************\n");
     qx#gcloud -q compute networks create vpx-snet-snip --subnet-mode=custom#;
-    qx#gcloud -q compute networks subnets create vpx-snet-snip --network=vpx-snet-snip --region=us-east1 --range=10.10.10.0/24#;
+    qx#gcloud -q compute networks subnets create vpx-snet-snip --network=vpx-snet-snip --region=$region --range=10.10.10.0/24#;
 }
 
 if ($CREATE_GKE eq "TRUE") {
     print ("\n******************************************************\n");
     print ("Creating a 3 node GKE Cluster");
     print ("\n******************************************************\n");
-	qx#gcloud -q beta container clusters create "k8s-cluster-with-cpx" --zone "us-east1-b" --username "admin" --machine-type "n1-standard-1" --image-type "COS" --disk-type "pd-standard" --disk-size "100" --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --enable-cloud-logging --enable-cloud-monitoring --no-enable-ip-alias --network "projects/$project_id/global/networks/vpx-snet-snip" --subnetwork "projects/$project_id/regions/us-east1/subnetworks/vpx-snet-snip" --addons HorizontalPodAutoscaling,HttpLoadBalancing --enable-autoupgrade --enable-autorepair#;
+	qx#gcloud -q beta container clusters create "k8s-cluster-with-cpx" --zone "$zone" --username "admin" --machine-type "n1-standard-1" --image-type "COS" --disk-type "pd-standard" --disk-size "100" --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --enable-cloud-logging --enable-cloud-monitoring --no-enable-ip-alias --network "projects/$project_id/global/networks/vpx-snet-snip" --subnetwork "projects/$project_id/regions/$region/subnetworks/vpx-snet-snip" --addons HorizontalPodAutoscaling,HttpLoadBalancing --enable-autoupgrade --enable-autorepair#;
 }
 
 if ($CREATE_VPX eq "TRUE") {
@@ -132,6 +139,8 @@ if ($CREATE_VPX eq "TRUE") {
     print ("Editing the deployment manager configuration file");
     print ("\n******************************************************\n");
     qx#sed -i "s/<your project name>/$project_id/g" $vpx_deployment_config_file#;
+    qx#sed -i "s/<your region>/$region/g" $vpx_deployment_config_file#;
+    qx#sed -i "s/<your zone>/$zone/g" $vpx_deployment_config_file#;
 }
 
 if ($CREATE_VPX_IMAGE eq "TRUE") {
