@@ -128,8 +128,28 @@ Prerequisites (mandatory):
 
    > It will take around 15 mins to run script and wait till you get message from cloud shell as `End of Automated deployment for the training lab`
 
+    Downlaod/Clone the File Repository
+
+    ```gcloudshell
+    git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
+    ```
+
     ```gcloudsdk
-    curl https://raw.githubusercontent.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/master/gcp/scripts/automated_deployment.pl | perl
+    cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/scripts/
+    ```
+
+    > Very Important: Change the REGION and ZONE as per your choice
+
+    ```gcloudshell
+    perl automated_deployment.pl REGION ZONE
+    ```
+
+    For Example
+
+    ```gcloudshell
+    perl automated_deployment.pl us-east1 us-east1-b
+    perl automated_deployment.pl europe-west1 europe-west1-b
+    perl automated_deployment.pl asia-northeast1 asia-northeast1-b
     ```
 
     Automated perl script creates below GCP Infrastructure components required for hands-on
@@ -140,7 +160,7 @@ Prerequisites (mandatory):
 
     ![GCP](./media/gcp-free-tier-image-26.png)
 
-    > If automation script fails don't create project with same name . Instead Go to **"Section F - Delete deployment Steps"** at page end and retry the script after successful deletion
+    > If automation script fails don't delete and create project with same name . Instead Go to **"1st Step of Section F - Delete deployment Steps"** at page end and retry from this step script after successful deletion
 
 1. Once GCP Infrastructure is up with automated script. We have to access kubernetes cluster from the cloud shell.
 
@@ -416,8 +436,21 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     ```gcloudsdk
     cd ~
+    cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/scripts/
+    ```
 
-    curl https://raw.githubusercontent.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/master/gcp/scripts/adm_automated_deployment.pl | perl
+    > Very Important: Change the REGION and ZONE as per your choice
+
+    ```gcloudshell
+    perl adm_automated_deployment.pl REGION ZONE
+    ```
+
+    For Example
+
+    ```gcloudshell
+    perl adm_automated_deployment.pl us-west1 us-west1-b
+    perl adm_automated_deployment.pl europe-west2 europe-west2-b
+    perl adm_automated_deployment.pl asia-northeast2 asia-northeast2-b
     ```
 
     Automated perl script creates below GCP Infrastructure components required for ADM in K8s cluster hands-on
@@ -428,7 +461,7 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     ![GCP](./media/gcp-free-tier-image-26.png)
 
-    > If automation script fails don't create project with same name . Instead Go to **"Section F - Delete deployment Steps"** at page end and retry the script after successful deletion
+    > If automation script fails don't delete and create project with same name . Instead Go to "2nd Step of Section F - Delete deployment Steps" at page end and retry from this step script after successful deletion
 
 1. Once GCP Infrastructure is up with automated script. we have to initialise NFS Storage for ADM
 
@@ -724,42 +757,65 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
 To delete the entire deployment go to your cloud shell and run below commands to start the delete process
 
-1. >`This Step has to be used only if Automation script fails before cloning the config-files for you otheriwse go to next step`
+1. To delete Sample Application with tir-1-adc(VPX),tier-2-adc(CPX),CIC GCP Infrastructure
+
+    ```gcloudshell
+    cd ~
+    git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
+    ```
+
+    ```gcloudshell
+    cd ~
+    cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/scripts/
+    ```
+
+    > Very Important: Make sure the REGION and ZONE are same as the one used for GCP Infrastructure creation
+
+    ```gcloudshell
+    perl automated_deployment.pl REGION ZONE delete
+    ```
+
+    For Example
+
+    ```gcloudshell
+    perl automated_deployment.pl us-east1 us-east1-b delete
+    perl automated_deployment.pl europe-west1 europe-west1-b delete
+    perl automated_deployment.pl asia-northeast1 asia-northeast1-b delete
+    ```
+
+    > `Delete Process takes around 10 mins`
+
+    Automated perl script deletes GCP Infrastructure components created for sample application hands-on
+
+1. To delete ADM GCP Infrastructure
 
     ```cloudshell
     cd ~
     git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
     ```
 
-2. Now Go to scripts directory to start delete process using automated scripts
-
-    ```cloudshell
+    ```gcloudsdk
     cd ~
-    cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/scripts
+    cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/scripts/
+    ```
+
+    > Very Important: Make sure the REGION and ZONE are same as the one used for GCP Infrastructure creation
+
+    ```gcloudshell
+    perl adm_automated_deployment.pl REGION ZONE delete
+    ```
+
+    For Example
+
+    ```gcloudshell
+    perl adm_automated_deployment.pl us-west1 us-west1-b delete
+    perl adm_automated_deployment.pl europe-west2 europe-west2-b delete
+    perl adm_automated_deployment.pl asia-northeast2 asia-northeast2-b delete
     ```
 
     > `Delete Process takes around 10 mins`
 
-    ```cloudshell
-    perl automated_deployment.pl delete
-    ```
-
-3. To delete ADM GCP Infra
-
-    ```cloudshell
-    cd ~
-    git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
-    ```
-
-    ```cloudshell
-    cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/scripts
-    ```
-
-    > `Delete Process takes around 10 mins`
-
-    ```cloudshell
-    perl adm_automated_deployment.pl delete
-    ```
+    Automated perl script deletes GCP Infrastructure components created for ADM in K8s hands-on
 
 ---
 ---
