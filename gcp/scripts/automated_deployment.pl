@@ -88,22 +88,22 @@ if ($ENABLE_APIS eq "TRUE") {
 }
 
 
-if ($CLONE_REPO eq "TRUE") {
-    print ("\n******************************************************\n");
-    print ("Cloning the GIT repo to your home directory");
-    print ("\n******************************************************\n");
-    qx#git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git $repo_path#;
-}
+#if ($CLONE_REPO eq "TRUE") {
+#    print ("\n******************************************************\n");
+#    print ("Cloning the GIT repo to your home directory");
+#    print ("\n******************************************************\n");
+#    qx#git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git $repo_path#;
+#}
 
 print ("\n******************************************************\n");
 print ("This automated deployment would: \n");
-print ("1. Clone the git repository\n");
-print ("2. Create a Google Image for VPX\n");
-print ("3. Create VPC Networks\n");
-print ("4. Create VPC Subnets\n");
-print ("5. Create GKE Kubernetes cluster\n");
-print ("6. Create a VPX instance\n");
-print ("7. Configure basic configs in VPX instance");
+#print ("1. Clone the git repository\n");
+print ("1. Create a Google Image for VPX\n");
+print ("2. Create VPC Networks\n");
+print ("3. Create VPC Subnets\n");
+print ("4. Create GKE Kubernetes cluster\n");
+print ("5. Create a VPX instance\n");
+print ("6. Configure basic configs in VPX instance");
 print ("\n******************************************************\n");
 
 
