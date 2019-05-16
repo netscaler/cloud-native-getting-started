@@ -520,16 +520,15 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
     ```
 
     ```cloudshell
-    curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
-    chmod 700 get_helm.sh
-    ./get_helm.sh
+    chmod 700 helm_install.sh
+    ./helm_install.sh
     ```
 
     ```cloudshell
-    kubectl create -f tiller-rbac.yaml
-    ```
+    kubectl create serviceaccount --namespace kube-system tiller
 
-    ```cloudshell
+    kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+
     helm init --service-account tiller --upgrade
     ```
 
