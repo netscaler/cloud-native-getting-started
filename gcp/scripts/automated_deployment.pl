@@ -21,6 +21,11 @@ if ($operation eq "delete") {
     qx#gcloud -q deployment-manager deployments delete tier1-vpx#;
 
     print ("\n******************************************************\n");
+    print ("Deleting the VPX image");
+    print ("\n******************************************************\n"); 
+    qx#gcloud -q compute images create netscaler12-1e#;
+    
+    print ("\n******************************************************\n");
     print ("Deleting the GKE Kubernetes cluster");
     print ("\n******************************************************\n"); 
     qx#gcloud -q beta container clusters delete "k8s-cluster-with-cpx" --zone "$zone"#;
