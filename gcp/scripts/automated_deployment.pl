@@ -23,7 +23,7 @@ if ($operation eq "delete") {
     print ("\n******************************************************\n");
     print ("Deleting the VPX image");
     print ("\n******************************************************\n"); 
-    qx#gcloud -q compute images delete netscaler12-1e#;
+    qx#gcloud -q compute images delete netscaler12-1#;
     
     print ("\n******************************************************\n");
     print ("Deleting the GKE Kubernetes cluster");
