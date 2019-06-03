@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: route-vpx-cold
+  annotations:
+   kubernetes.io/ingress.class: "Citrix"
+#   ingress.citrix.com/insecure-termination: "allow"
+   #ingress.citrix.com/frontend-ip: "10.217.212.246"
+   ingress.citrix.com/secure_backend: '{"lb-service-hotdrinks": "True","lb-service-colddrinks": "True"}'
+spec:
+  host: colddrink.beverages.com
+#  path: "/" 
+  to:
+    kind: Service
+    name: lb-service-colddrinks
+  tls:
+    termination: passthrough
+
+
