@@ -5,7 +5,7 @@ metadata:
   labels:
       name: tea-beverage
 spec:
-  replicas: 4
+  replicas: 2 
   template:
     metadata:
       labels:
@@ -45,7 +45,7 @@ metadata:
   labels:
       name: coffee-beverage
 spec:
-  replicas: 4
+  replicas: 2 
   template:
     metadata:
       labels:
@@ -85,7 +85,7 @@ metadata:
   labels:
       name: frontend-hotdrinks
 spec:
-  replicas: 4
+  replicas: 2 
   template:
     metadata:
       labels:
@@ -127,7 +127,7 @@ metadata:
    kubernetes.io/ingress.class: "hotdrink"
    ingress.citrix.com/secure_backend: '{"coffee-beverage": "True"}'
 #   ingress.citrix.com/insecure-termination: "allow"
-   ingress.citrix.com/lbvserver: '{"frontend-hotdrinks":{"lbmethod":"ROUNDROBIN"},"tea-beverage":{"lbmethod":"LEASTRESPONSETIME"},"coffee-beverage":{"persistencetype":"SOURCEIP"}}'
+#   ingress.citrix.com/lbvserver: '{"frontend-hotdrinks":{"lbmethod":"ROUNDROBIN"},"tea-beverage":{"lbmethod":"LEASTRESPONSETIME"},"coffee-beverage":{"persistencetype":"SOURCEIP"}}'
 spec:
   tls:
   - hosts:

@@ -3,9 +3,9 @@ kind: Ingress
 metadata:
   name: ingress-vpx
   annotations:
-   kubernetes.io/ingress.class: "vpx"
+   kubernetes.io/ingress.class: "Citrix"
 #   ingress.citrix.com/insecure-termination: "allow"
-   ingress.citrix.com/frontend-ip: "X.X.X.X"
+   #ingress.citrix.com/frontend-ip: "10.217.212.246"
    ingress.citrix.com/secure_backend: '{"lb-service-hotdrinks": "True","lb-service-colddrinks": "True"}'
 spec:
   tls:
