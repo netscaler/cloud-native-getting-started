@@ -1,0 +1,16 @@
+apiVersion: citrix.com/v1
+kind: rewritepolicy
+metadata:
+  name: multipolicy 
+spec:       
+  rewrite-policies:
+    - servicenames: 
+        - lb-service-colddrinks 
+      rewrite-policy:
+        operation: insert_http_header
+        target: 'sessionID'
+        modify-expression: '"48592th42gl24456284536tgt2"'
+        comment: 'insert SessionID in header'
+        direction: RESPONSE
+        rewrite-criteria: 'http.res.is_valid'
+
