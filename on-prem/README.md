@@ -37,21 +37,17 @@ Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-
 **Pre-Requsites:**
 Make sure that route configuraton is present in Tier 1 ADC so that Ingress NetScaler should be able to reach kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network-config.md for Network configuration.
  
-3.	Create a namespaces using Kubernetes master CLI console.
+3.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/config/`` to master node in ``/root/yamls directory``
+
+4. Create a namespaces using Kubernetes master CLI console.
 ```
-kubectl create namespace tier-2-adc
-kubectl create namespace team-hotdrink
-kubectl create namespace team-colddrink
-kubectl create namespace team-guestbook
-kubectl create namespace monitoring
+kubectl create -f /root/yamls/namespace.yaml
 ```
 Once you execute above commands, you should see the output given in below screenshot using command: 
 ```
 kubectl get namespaces
 ```
 ![getnamespace](https://user-images.githubusercontent.com/42699135/50677390-97e66480-101f-11e9-9a69-cc132407bd1e.png)
-
-4.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/config/`` to master node in ``/root/yamls directory``
 
 5.	Go to Kubenetes dashboard and deploy the ``rbac.yaml`` in the default namespace
 ```
@@ -61,7 +57,6 @@ kubectl create -f /root/yamls/rbac.yaml
 6.	Deploy the CPX for hotdrink, colddrink and guestbook microservices using following commands,
 
 ```
-kubectl create -f /root/yamls/cpx-svcacct.yaml -n tier-2-adc
 kubectl create -f /root/yamls/cpx.yaml -n tier-2-adc
 kubectl create -f /root/yamls/hotdrink-secret.yaml -n tier-2-adc
 ```
