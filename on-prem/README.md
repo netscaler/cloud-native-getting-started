@@ -37,7 +37,7 @@ Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-
 **Pre-Requsites:**
 Make sure that route configuraton is present in Tier 1 ADC so that Ingress NetScaler should be able to reach kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network-config.md for Network configuration.
  
-3.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/config/`` to master node in ``/root/yamls directory``
+3.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/on-prem/config/`` to master node in ``/root/yamls directory``
 
 4. Create a namespaces using Kubernetes master CLI console.
 ```
