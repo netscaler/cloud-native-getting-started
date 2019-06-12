@@ -8,13 +8,11 @@ spec:
       serviceAccountName: cpx
       containers:
       - name: cic-vpx
-        image: "in-docker-reg.eng.citrite.net/cic-dev/cic:280"
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.3"
         env:
          # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
          - name: "NS_IP"
-           value: "10.217.212.246"
-         - name: "NS_VIP"
-           value: "10.217.212.239"
+           value: "x.x.x.x"
          # Set username for Nitro
          # Set log level
          - name: "NS_ENABLE_MONITORING"
@@ -25,10 +23,11 @@ spec:
            value: "nsroot"
          - name: "EULA"
            value: "yes"
+         - name: "LOGLEVEL"
+           value: "DEBUG"
         args:
           - --ingress-classes
-           Citrix
-	   my-custom-class
-	  - --default-ssl-certificate
-          default/default-cert 
+            vpx
+          - --feature-node-watch
+            true
         imagePullPolicy: IfNotPresent

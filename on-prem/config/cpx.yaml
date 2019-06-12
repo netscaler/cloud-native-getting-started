@@ -11,6 +11,7 @@ spec:
         app: cpx-ingress-hotdrinks
         app1: exporter
       annotations:
+        NETSCALER_AS_APP: "True"
     spec:
       serviceAccountName: cpx
       containers:
@@ -93,11 +94,12 @@ spec:
         app: cpx-ingress-colddrinks
         app1: exporter
       annotations:
+        NETSCALER_AS_APP: "True"
     spec:
       serviceAccountName: cpx
       containers:
         - name: cpx-ingress-colddrinks
-          image: "quay.io/citrix/citrix-k8s-cpx-ingress:12.1-51.16"
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-36.28"
           securityContext: 
              privileged: true
           env:
@@ -108,7 +110,7 @@ spec:
           imagePullPolicy: Always
         # Add cic as a sidecar
         - name: cic
-          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.1"
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.3"
           env:
           - name: "EULA"
             value: "yes"
@@ -173,11 +175,12 @@ spec:
         app: cpx-ingress-guestbook
         app1: exporter
       annotations:
+        NETSCALER_AS_APP: "True"
     spec:
       serviceAccountName: cpx
       containers:
         - name: cpx-ingress-guestbook
-          image: "quay.io/citrix/citrix-k8s-cpx-ingress:12.1-51.16"
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-36.28"
           securityContext: 
              privileged: true
           env:
@@ -188,7 +191,7 @@ spec:
           imagePullPolicy: Always
         # Add cic as a sidecar
         - name: cic
-          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.1"
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.3"
           env:
           - name: "EULA"
             value: "yes"
