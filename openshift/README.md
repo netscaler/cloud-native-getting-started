@@ -46,42 +46,42 @@ This cpx service account does not have permissions to do all these tasks. Above 
 
 4.	Create a namespaces using Kubernetes master CLI console.
 ```
-kubectl create -f /root/yamls/namespace.yaml
+oc create -f /root/yamls/namespace.yaml
 ```
 Once you execute above commands, you should see the output given in below screenshot using command: 
 ```
-kubectl get namespaces
+oc get namespaces
 ```
 ![namespace](https://user-images.githubusercontent.com/48945413/59844907-9dd7c400-9379-11e9-8373-ee32d2d2bbca.PNG)
 
 5.	Now deploy the ``rbac.yaml`` in the default namespace for better security policies
 ```
-kubectl create -f /root/yamls/rbac.yaml 
+oc create -f /root/yamls/rbac.yaml 
 ```
 
 6.	Deploy the CPX for hotdrink, colddrink and guestbook microservices using following commands,
 
 ```
-kubectl create -f /root/yamls/cpx-svcacct.yaml -n tier-2-adc
-kubectl create -f /root/yamls/cpx.yaml -n tier-2-adc
-kubectl create -f /root/yamls/hotdrink-secret.yaml -n tier-2-adc
+oc create -f /root/yamls/cpx-svcacct.yaml -n tier-2-adc
+oc create -f /root/yamls/cpx.yaml -n tier-2-adc
+oc create -f /root/yamls/hotdrink-secret.yaml -n tier-2-adc
 ```
 
 7.	Deploy the three types of hotdrink beverage microservices using following commands
 ```
-kubectl create -f /root/yamls/team_hotdrink.yaml -n team-hotdrink
-kubectl create -f /root/yamls/hotdrink-secret.yaml -n team-hotdrink
+oc create -f /root/yamls/team_hotdrink.yaml -n team-hotdrink
+oc create -f /root/yamls/hotdrink-secret.yaml -n team-hotdrink
 ```
 
 8.	Deploy the colddrink beverage microservice using following commands
 ```
-kubectl create -f /root/yamls/team_colddrink.yaml -n team-colddrink
-kubectl create -f /root/yamls/colddrink-secret.yaml -n team-colddrink
+oc create -f /root/yamls/team_colddrink.yaml -n team-colddrink
+oc create -f /root/yamls/colddrink-secret.yaml -n team-colddrink
 ```
 
 9.	Deploy the guestbook no sql type microservice using following commands
 ```
-kubectl create -f /root/yamls/team_guestbook.yaml -n team-guestbook
+oc create -f /root/yamls/team_guestbook.yaml -n team-guestbook
 ```
 10.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC.
 
@@ -94,8 +94,8 @@ Go to ``cic_vpx.yaml`` and change the NS_IP value to your VPX NS_IP.
   value: "x.x.x.x"``
 Now execute the following commands after the above change.
 ```
-kubectl create -f /root/yamls/ingress_vpx.yaml -n tier-2-adc
-kubectl create -f /root/yamls/cic_vpx.yaml -n tier-2-adc
+oc create -f /root/yamls/ingress_vpx.yaml -n tier-2-adc
+oc create -f /root/yamls/cic_vpx.yaml -n tier-2-adc
 ```
 
   
@@ -117,10 +117,10 @@ e.g. ``https://hotdrink.beverages.com``
 14.	Deploy the CNCF monitoring tools such as Prometheus and Grafana to collect ADC proxies’ stats. Monitoring ingress yaml will push the configuration automatically to Tier 1 ADC.
 **Note:-**
 Go to ``ingress_vpx_monitoring.yaml`` and change the frontend-ip address from ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver Prometheus and Grafana portal or you can use the same frontend-IP used in Step 11. 
-e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.161"``
+e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.160"``
 ```
-kubectl create -f /root/yamls/monitoring.yaml -n monitoring
-kubectl create -f /root/yamls/ingress_vpx_monitoring.yaml -n monitoring
+oc create -f /root/yamls/monitoring.yaml -n monitoring
+oc create -f /root/yamls/ingress_vpx_monitoring.yaml -n monitoring
 ```
 
 15.	Add the DNS entries in your local machine host files for accessing monitoring portals though internet.
@@ -130,7 +130,7 @@ Add below entries in hosts file and save the file
 <frontend-ip from ingress_vpx_monitoring.yaml> grafana.beverages.com
 <frontend-ip from ingress_vpx_monitoring.yaml> prometheus.beverages.com
 ```
-16.	Login to ``http://grafana.beverages.com`` and do the following one time setup
+16.	Login to ``http://grafana.beverages.com:8080`` and do the following one time setup
 Login to portal using admin/admin credentials.
 Click on Add data source and select the Prometheus data source. Do the settings as shown below and click on save & test button.
  
