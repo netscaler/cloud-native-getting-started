@@ -8,52 +8,53 @@ Step by step demo
 
 Citrix ADC works in the two-tier architecture deployment solution to load balance the enterprise grade applications deployed in microservices and access those through internet. Tier 1 can have traditional load balancers such as VPX/SDX/MPX, or CPX (containerized Citrix ADC) to manage high scale north-south traffic. Tier 2 has CPX deployment for managing microservices and load balances the north-south & east-west traffic.
 
-![2tierarchitecture](https://user-images.githubusercontent.com/5059506/52114542-518e2080-2632-11e9-8d17-eb0b5623b74f.png)
+![OpenShift-2-tier-deployment](https://user-images.githubusercontent.com/48945413/59842745-c6a98a80-9374-11e9-8f1e-d1e0c7413313.PNG)
 
 
-In the Kubernetes cluster, pod gets deployed across worker nodes. Below screenshot demonstrates the microservice deployment which contains 3 services marked in blue, red and green colour and 12 pods running across two worker nodes. These deployments are logically categorized by Kubenetes namespace (e.g. team-hotdrink namespace)
+OpenShift leverages the Kubernetes concepts for microservice deployments where pods are deployed in worker nodes. Below screenshot demonstrates the microservice deployment which contains 3 services marked in blue, red and green colour and 12 pods running across two worker nodes. These deployments are logically categorized by Kubenetes namespace (e.g. team-hotdrink namespace)
 
 ![hotdrinknamespacek8s](https://user-images.githubusercontent.com/42699135/50677395-99179180-101f-11e9-93f0-566cf179ce25.png)
 
 Here are the detailed demo steps in cloud native infrastructure which offers the tier 1 and tier 2 seamless integration along with automation of proxy configuration using yaml files. 
 
 1.	Bring your own nodes (BYON)
-Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. Please install and configure Kubernetes cluster with one master node and at least two worker node deployment.
-Recommended OS: Ubuntu 16.04 desktop/server OS. 
-Visit: https://kubernetes.io/docs/setup/scratch/ for Kubernetes cluster deployment guide.
-Once Kubernetes cluster is up and running, execute the below command on master node to get the node status.
+Red Hat OpenShift is an  container application platform based on the Kubernetes container orchestrator for enterprise application development and deployment. Please install and configure OpenShift cluster with one master node and at least one worker node deployment.
+Recommended OS: Red Hat Enterprise Linux 7.6 and above 
+Visit: https://docs.openshift.com/container-platform/3.11/install/running_install.html for OpenShift cluster deployment guide.
+Once OpenShift cluster is up and running, execute the below command on master node to get the node status.
 ``` 
-kubectl get nodes
+oc get nodes
 ```
- ![getnodes](https://user-images.githubusercontent.com/42699135/50677393-987efb00-101f-11e9-8580-4d27746bb96a.png)
+![oc-nodes](https://user-images.githubusercontent.com/48945413/59844387-61f02f00-9378-11e9-836b-1a8f59e4f3b2.PNG)
  
- (Screenshot above has Kubernetes cluster with one master and two worker node).
+ (Screenshot above has OpenShift cluster with one master and two worker node).
 
-2.	Set up a Kubernetes dashboard for deploying containerized applications.
-Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/ and follow the steps mentioned to bring the Kubernetes dashboard up as shown below.
-
-![k8sdashboard](https://user-images.githubusercontent.com/42699135/50677396-99179180-101f-11e9-95a4-1d9aa1b9051b.png)
 
 **Pre-Requsites:**
-Make sure that route configuraton is present in Tier 1 ADC so that Ingress NetScaler should be able to reach kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network-config.md for Network configuration.
+Make sure that route configuraton is present in Tier 1 ADC so that Ingress NetScaler should be able to reach kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
+Note: Automatically configure route on the Citrix ADC instance will not work for Kubernetes Ingress deployment on OpenShift cluster.
  
-3.	Create a namespaces using Kubernetes master CLI console.
+2.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/openshift/Ingress-config/`` to master node in ``/root/yamls directory``
+
+3. When you try to deploy a normal apache pod in Openshift, it would fail as apache pod always runs as a root pod. OpenShift has strict security checks which blocks running a pod as root or binding to port 80 or creating a directory, etc.
+
 ```
-kubectl create namespace tier-2-adc
-kubectl create namespace team-hotdrink
-kubectl create namespace team-colddrink
-kubectl create namespace team-guestbook
-kubectl create namespace monitoring
+oc adm policy add-scc-to-user privileged system:serviceaccount:tier-2-adc:cpx
+oc adm policy add-scc-to-group anyuid system:authenticated
+```
+This cpx service account does not have permissions to do all these tasks. Above commands add this cpx serviceaccount to the privileged security context of OpenShift.
+
+4.	Create a namespaces using Kubernetes master CLI console.
+```
+kubectl create -f /root/yamls/namespace.yaml
 ```
 Once you execute above commands, you should see the output given in below screenshot using command: 
 ```
 kubectl get namespaces
 ```
-![getnamespace](https://user-images.githubusercontent.com/42699135/50677390-97e66480-101f-11e9-9a69-cc132407bd1e.png)
+![namespace](https://user-images.githubusercontent.com/48945413/59844907-9dd7c400-9379-11e9-8373-ee32d2d2bbca.PNG)
 
-4.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/config/`` to master node in ``/root/yamls directory``
-
-5.	Go to Kubenetes dashboard and deploy the ``rbac.yaml`` in the default namespace
+5.	Now deploy the ``rbac.yaml`` in the default namespace for better security policies
 ```
 kubectl create -f /root/yamls/rbac.yaml 
 ```
@@ -179,15 +180,3 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 Citrix ADC solution supports the load balancing of various protocol layer traffic such as SSL,  SSL_TCP, HTTP, TCP. Below screenshot has listed different flavours of traffic supported by this demo.
 ![traffic_flow](https://user-images.githubusercontent.com/42699135/50677397-99179180-101f-11e9-8a40-26ba7d0d54e0.png)
 
-
-# How user traffic reaches hotdrink-beverage microservices?
-
-Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where hotdrink beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
-![hotdrink-packetflow-gif](https://user-images.githubusercontent.com/42699135/53723239-4a566e80-3e8d-11e9-99d1-dd9bd53dea53.gif)
- 
-# How user traffic reaches guestbook-beverage microservices?
-Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where guestbook beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
-
-![guestbook-app](https://user-images.githubusercontent.com/42699135/53723248-50e4e600-3e8d-11e9-8036-c27c9af22bf7.gif)
-
-Please refer to Citrix ingress controller for more information, present at- https://github.com/citrix/citrix-k8s-ingress-controller
