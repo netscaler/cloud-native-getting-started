@@ -34,8 +34,8 @@ Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-
 
 ![k8sdashboard](https://user-images.githubusercontent.com/42699135/50677396-99179180-101f-11e9-95a4-1d9aa1b9051b.png)
 
-**Pre-Requsites:**
-Make sure that route configuraton is present in Tier 1 ADC so that Ingress NetScaler should be able to reach kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
+**Pre-Requisites:**
+Make sure that route configuration is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
  
 3.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/on-prem/config/`` to master node in ``/root/yamls directory``
 
@@ -73,7 +73,7 @@ kubectl create -f /root/yamls/team_colddrink.yaml -n team-colddrink
 kubectl create -f /root/yamls/colddrink-secret.yaml -n team-colddrink
 ```
 
-9.	Deploy the guestbook no sql type microservice using following commands
+9.	Deploy the guestbook no SQL type microservice using following commands
 ```
 kubectl create -f /root/yamls/team_guestbook.yaml -n team-guestbook
 ```
@@ -124,7 +124,7 @@ Add below entries in hosts file and save the file
 <frontend-ip from ingress_vpx_monitoring.yaml> grafana.beverages.com
 <frontend-ip from ingress_vpx_monitoring.yaml> prometheus.beverages.com
 ```
-16.	Login to ``http://grafana.beverages.com`` and do the following one time setup
+16.	Login to ``http://grafana.beverages.com`` and do the following one-time setup
 Login to portal using admin/admin credentials.
 Click on Add data source and select the Prometheus data source. Do the settings as shown below and click on save & test button.
  
@@ -142,13 +142,13 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 
 1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
 
-   ```gcloudsdkkubectl
+   ```
    kubectl create -f /root/yamls/crd_rewrite_responder.yaml
    ```
 
 1. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
 
-   ```gcloudsdkkubectl
+   ```
    kubectl create -f /root/yamls/responderpolicy_hotdrink.yaml -n tier-2-adc
    ```
 
@@ -158,7 +158,7 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 
 1. **Header insertion** Configure the Rewrite policy on `https://colddrink.beverages.com` to insert the session ID in the header.
 
-   ```gcloudsdkkubectl
+   ```
    kubectl create -f /root/yamls/rewritepolicy_colddrink.yaml -n tier-2-adc
    ```
 
@@ -177,11 +177,11 @@ Citrix ADC solution supports the load balancing of various protocol layer traffi
 
 # How user traffic reaches hotdrink-beverage microservices?
 
-Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where hotdrink beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
+Client sends the traffic to Tier 1 ADC through Content Switching virtual server and reaches to pods where hotdrink beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
 ![hotdrink-packetflow-gif](https://user-images.githubusercontent.com/42699135/53723239-4a566e80-3e8d-11e9-99d1-dd9bd53dea53.gif)
  
 # How user traffic reaches guestbook-beverage microservices?
-Client send the traffic to Tier 1 ADC thorugh Content Switching virtual server and reaches to pods where guestbook beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
+Client sends the traffic to Tier 1 ADC through Content Switching virtual server and reaches to pods where guestbook beverage microservices are running. Detailed traffic flow is allocated in following gif picture (please wait for a moment on gif picture to see the packet flow).
 
 ![guestbook-app](https://user-images.githubusercontent.com/42699135/53723248-50e4e600-3e8d-11e9-8036-c27c9af22bf7.gif)
 
