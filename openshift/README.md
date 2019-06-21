@@ -33,7 +33,7 @@ oc get nodes
 (Screenshot above has OpenShift cluster with one master and two worker node).
 
 
-**Pre-Requisites: **
+**Pre-Requisites:**
 Make sure that route configuration  is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes  pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
 Note: Automatically configure route on the Citrix ADC instance will not work for Kubernetes Ingress deployment on OpenShift cluster.
  
