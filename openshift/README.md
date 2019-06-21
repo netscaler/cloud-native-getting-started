@@ -18,8 +18,11 @@ OpenShift leverages the Kubernetes concepts for microservice deployments where p
 Here are the detailed demo steps in cloud native infrastructure which offers the tier 1 and tier 2 seamless integration along with automation of proxy configuration using yaml files. 
 
 1.	Bring your own nodes (BYON)
+
 Red Hat OpenShift is an container application platform based on the Kubernetes container orchestrator for enterprise application development and deployment. Please install and configure OpenShift cluster with one master node and at least one worker node deployment.
+
 Recommended OS: Red Hat Enterprise Linux 7.6 and above 
+
 Visit: https://docs.openshift.com/container-platform/3.11/install/running_install.html for OpenShift cluster deployment guide.
 Once OpenShift cluster is up and running, execute the below command on master node to get the node status.
 ``` 
@@ -27,14 +30,14 @@ oc get nodes
 ```
 ![oc-nodes](https://user-images.githubusercontent.com/48945413/59844387-61f02f00-9378-11e9-836b-1a8f59e4f3b2.PNG)
  
- (Screenshot above has OpenShift cluster with one master and two worker node).
+(Screenshot above has OpenShift cluster with one master and two worker node).
 
 
 **Pre-Requisites: **
 Make sure that route configuration  is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes  pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
 Note: Automatically configure route on the Citrix ADC instance will not work for Kubernetes Ingress deployment on OpenShift cluster.
  
-2.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/openshift/Ingress-config/`` to master node in ``/root/yamls directory``
+2.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/openshift/Ingress-config/`` to master node in ``/root/yamls`` directory
 
 3. By default, OpenShift prevents containers from running as root. Since our applications (beverages application) requires root privileges, we need to over-ride this restriction by running following command as “cluster-admin”
 
@@ -150,13 +153,13 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 
 1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
 
-   ```gcloudsdkkubectl
+   ```
    oc create -f /root/yamls/crd_rewrite_responder.yaml
    ```
 
-1. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
+1. **UseCase: Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
 
-   ```gcloudsdkkubectl
+   ```
    oc create -f /root/yamls/responderpolicy_hotdrink.yaml -n tier-2-adc
    ```
 
@@ -164,9 +167,9 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
    
    ![cpx-ingress-image16a](https://user-images.githubusercontent.com/48945413/55129538-7f2cad00-513d-11e9-9191-72a385fad377.png)
 
-1. **Header insertion** Configure the Rewrite policy on `https://colddrink.beverages.com` to insert the session ID in the header.
+1. **UseCase: Header insertion** Configure the Rewrite policy on `https://colddrink.beverages.com` to insert the session ID in the header.
 
-   ```gcloudsdkkubectl
+   ```
    oc create -f /root/yamls/rewritepolicy_colddrink.yaml -n tier-2-adc
    ```
 
