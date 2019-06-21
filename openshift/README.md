@@ -18,7 +18,7 @@ OpenShift leverages the Kubernetes concepts for microservice deployments where p
 Here are the detailed demo steps in cloud native infrastructure which offers the tier 1 and tier 2 seamless integration along with automation of proxy configuration using yaml files. 
 
 1.	Bring your own nodes (BYON)
-Red Hat OpenShift is an  container application platform based on the Kubernetes container orchestrator for enterprise application development and deployment. Please install and configure OpenShift cluster with one master node and at least one worker node deployment.
+Red Hat OpenShift is an container application platform based on the Kubernetes container orchestrator for enterprise application development and deployment. Please install and configure OpenShift cluster with one master node and at least one worker node deployment.
 Recommended OS: Red Hat Enterprise Linux 7.6 and above 
 Visit: https://docs.openshift.com/container-platform/3.11/install/running_install.html for OpenShift cluster deployment guide.
 Once OpenShift cluster is up and running, execute the below command on master node to get the node status.
@@ -30,21 +30,23 @@ oc get nodes
  (Screenshot above has OpenShift cluster with one master and two worker node).
 
 
-**Pre-Requsites:**
-Make sure that route configuraton is present in Tier 1 ADC so that Ingress NetScaler should be able to reach kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
+**Pre-Requisites: **
+Make sure that route configuration  is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes  pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
 Note: Automatically configure route on the Citrix ADC instance will not work for Kubernetes Ingress deployment on OpenShift cluster.
  
 2.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/openshift/Ingress-config/`` to master node in ``/root/yamls directory``
 
-3. When you try to deploy a normal apache pod in Openshift, it would fail as apache pod always runs as a root pod. OpenShift has strict security checks which blocks running a pod as root or binding to port 80 or creating a directory, etc.
+3. By default, OpenShift prevents containers from running as root. Since our applications (beverages application) requires root privileges, we need to over-ride this restriction by running following command as “cluster-admin”
 
 ```
-oc adm policy add-scc-to-user privileged system:serviceaccount:tier-2-adc:cpx
 oc adm policy add-scc-to-group anyuid system:authenticated
 ```
-This cpx service account does not have permissions to do all these tasks. Above commands add this cpx serviceaccount to the privileged security context of OpenShift.
+CPX runs as a privileged container. Hence you need to add the CPX service accounts to the privileged security context.
+```
+oc adm policy add-scc-to-user privileged system:serviceaccount:tier-2-adc:cpx
+```
 
-4.	Create a namespaces using Kubernetes master CLI console.
+4.	Create a namespace using Kubernetes master CLI console.
 ```
 oc create -f /root/yamls/namespace.yaml
 ```
@@ -79,14 +81,14 @@ oc create -f /root/yamls/team_colddrink.yaml -n team-colddrink
 oc create -f /root/yamls/colddrink-secret.yaml -n team-colddrink
 ```
 
-9.	Deploy the guestbook no sql type microservice using following commands
+9.	Deploy the guestbook no SQL type microservice using following commands
 ```
 oc create -f /root/yamls/team_guestbook.yaml -n team-guestbook
 ```
 10.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC.
 
 11.	Deploy the VPX ingress and ingress controller to push the CPX configuration into the tier 1 ADC automatically.
-**Note:-** 
+**Note: -** 
 Go to ``ingress_vpx.yaml`` and change the IP address of ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver for accessing microservices.
 e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.160"``
 Go to ``cic_vpx.yaml`` and change the NS_IP value to your VPX NS_IP.         
@@ -130,7 +132,7 @@ Add below entries in hosts file and save the file
 <frontend-ip from ingress_vpx_monitoring.yaml> grafana.beverages.com
 <frontend-ip from ingress_vpx_monitoring.yaml> prometheus.beverages.com
 ```
-16.	Login to ``http://grafana.beverages.com:8080`` and do the following one time setup
+16.	Login to ``http://grafana.beverages.com:8080`` and do the following one-time setup
 Login to portal using admin/admin credentials.
 Click on Add data source and select the Prometheus data source. Do the settings as shown below and click on save & test button.
  
@@ -149,13 +151,13 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
 
    ```gcloudsdkkubectl
-   kubectl create -f /root/yamls/crd_rewrite_responder.yaml
+   oc create -f /root/yamls/crd_rewrite_responder.yaml
    ```
 
 1. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
 
    ```gcloudsdkkubectl
-   kubectl create -f /root/yamls/responderpolicy_hotdrink.yaml -n tier-2-adc
+   oc create -f /root/yamls/responderpolicy_hotdrink.yaml -n tier-2-adc
    ```
 
    After you deploy the Responder policy, access the coffee page on `https://hotdrink.beverages.com/coffee.php`. Then you receive the following message.
@@ -165,7 +167,7 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 1. **Header insertion** Configure the Rewrite policy on `https://colddrink.beverages.com` to insert the session ID in the header.
 
    ```gcloudsdkkubectl
-   kubectl create -f /root/yamls/rewritepolicy_colddrink.yaml -n tier-2-adc
+   oc create -f /root/yamls/rewritepolicy_colddrink.yaml -n tier-2-adc
    ```
 
    After you deploy the Rewrite policy, access `colddrink.beverages.com` with developer mode enabled on the browser. In Chrome, press F12 and preserve the log in network category to see the session ID, which is inserted by the Rewrite policy on tier-1-adc (VPX).
