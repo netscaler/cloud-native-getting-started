@@ -1,3 +1,8 @@
+# Learn how to deploy Citrix ADC & microservices on Kubernetes on-prem cluster (Tier 1 ADC as Citrix ADC VPX, Tier 2 ADC as Citrix ADC CPX)
+
+* [Using NodePort Solution](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/gcp)
+* [Using Kubernetes Ingress Solution](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
+
 
 Use Citrix ADC in two tier microservices architecture
 =====================================================
