@@ -67,7 +67,7 @@ metadata:
   labels:
     app: lb-service-hotdrinks
 spec:
-  clusterIP: None
+  type: NodePort 
   ports:
   - port: 80
     protocol: TCP
@@ -148,7 +148,7 @@ metadata:
   labels:
     app: lb-service-colddrinks
 spec:
-  clusterIP: None
+  type: NodePort
   ports:
   - port: 80
     protocol: TCP
@@ -229,7 +229,7 @@ metadata:
   labels:
     app: lb-service-guestbook
 spec:
-  clusterIP: None
+  type: NodePort
   ports:
   - port: 80
     protocol: TCP
