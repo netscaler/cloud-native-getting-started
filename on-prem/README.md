@@ -36,10 +36,11 @@ Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-
 
 
 **Note: Proceed with Microservice deployment either with NodePort or Ingress solution.**
+
 | Section | Description |
 | ------- | ----------- |
-| [Section A](#section-a) | Kubernetes NodePort solution to Deploy microservices |
-| [Section B](#section-b) | Kubernetes Ingress solution to Deploy microservices |
+| [Section A](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/blob/master/on-prem/README.md#section-a-deploy-microservices-using-kubernetes-nodeport-solution) | Kubernetes NodePort solution to Deploy microservices |
+| [Section B](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/blob/master/on-prem/README.md#section-b-deploy-microservices-using-kubernetes-ingress-solution) | Kubernetes Ingress solution to Deploy microservices |
 
 
 ## Section A (Deploy microservices using Kubernetes NodePort solution)
@@ -147,7 +148,7 @@ Now you can see the Grafana dashboard with basic ADC stats listed.
 ## Section B (Deploy microservices using Kubernetes Ingress solution)
 
 
-1.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/on-prem/Ingress-config/`` to master node in ``/root/yamls directory``
+1.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/on-prem/config/`` to master node in ``/root/yamls directory``
 
 2. Create a namespaces using Kubernetes master CLI console.
 ```
