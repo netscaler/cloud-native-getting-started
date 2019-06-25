@@ -3,3 +3,4 @@
 
 * [GCP (Google Cloud Platform)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/gcp)
 * [On-Prem (using VMs on Xenserver)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
+* [OpenShift (using Red Hat Enterprise Linux VMs)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
