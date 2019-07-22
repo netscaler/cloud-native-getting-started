@@ -39,17 +39,7 @@ Note: Automatically configure route on the Citrix ADC instance will not work for
  
 2.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/openshift/Ingress-config/`` to master node in ``/root/yamls`` directory
 
-3. By default, OpenShift prevents containers from running as root. Since our applications (beverages application) requires root privileges, we need to over-ride this restriction by running following command as “cluster-admin”
-
-```
-oc adm policy add-scc-to-group anyuid system:authenticated
-```
-CPX runs as a privileged container. Hence you need to add the CPX service accounts to the privileged security context.
-```
-oc adm policy add-scc-to-user privileged system:serviceaccount:tier-2-adc:cpx
-```
-
-4.	Create a namespace using Kubernetes master CLI console.
+3.	Create a namespace using Kubernetes master CLI console.
 ```
 oc create -f /root/yamls/namespace.yaml
 ```
@@ -59,15 +49,24 @@ oc get namespaces
 ```
 ![namespace](https://user-images.githubusercontent.com/48945413/59844907-9dd7c400-9379-11e9-8373-ee32d2d2bbca.PNG)
 
-5.	Now deploy the ``rbac.yaml`` in the default namespace for better security policies
+4.	Now deploy the ``rbac.yaml`` in the default namespace for better security policies
 ```
 oc create -f /root/yamls/rbac.yaml 
+```
+
+5. By default, OpenShift prevents containers from running as root. Since our applications (beverages application) requires root privileges, we need to over-ride this restriction by running following command as “cluster-admin”
+
+```
+oc adm policy add-scc-to-group anyuid system:authenticated
+```
+CPX runs as a privileged container. Hence you need to add the CPX service accounts to the privileged security context.
+```
+oc adm policy add-scc-to-user privileged system:serviceaccount:tier-2-adc:cpx
 ```
 
 6.	Deploy the CPX for hotdrink, colddrink and guestbook microservices using following commands,
 
 ```
-oc create -f /root/yamls/cpx-svcacct.yaml -n tier-2-adc
 oc create -f /root/yamls/cpx.yaml -n tier-2-adc
 oc create -f /root/yamls/hotdrink-secret.yaml -n tier-2-adc
 ```
