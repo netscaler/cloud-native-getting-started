@@ -34,14 +34,24 @@ oc get nodes
 
 
 **Pre-Requisites:**
-Make sure that route configuration  is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes  pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
+Make sure that route configuration  is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes  pod network for seamless connectivity. 
+Please refer to Section `Configure static routes on Citrix ADC VPX or MPX to reach the pods inside the OpenShift cluster` from https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/deployment/openshift#deploy-the-citrix-ingress-controller-as-a-pod-in-an-openshift-cluster  for Network configuration.
+
 Note: Automatically configure route on the Citrix ADC instance will not work for Kubernetes Ingress deployment on OpenShift cluster.
  
-2.	Copy the yaml files from ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/openshift/Ingress-config/`` to master node in ``/root/yamls`` directory
+2.	Clone the GitHub repository to your Master node using following command
+``
+git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git
+``
+
+Now change the directory to access the yaml files
+``
+>> cd example-cpx-vpx-for-kubernetes-2-tier-microservices/openshift/Ingress-config/
+``
 
 3.	Create a namespace using Kubernetes master CLI console.
 ```
-oc create -f /root/yamls/namespace.yaml
+oc create -f namespace.yaml
 ```
 Once you execute above commands, you should see the output given in below screenshot using command: 
 ```
@@ -51,7 +61,7 @@ oc get namespaces
 
 4.	Now deploy the ``rbac.yaml`` in the default namespace for better security policies
 ```
-oc create -f /root/yamls/rbac.yaml 
+oc create -f rbac.yaml 
 ```
 
 5. By default, OpenShift prevents containers from running as root. Since our applications (beverages application) requires root privileges, we need to over-ride this restriction by running following command as “cluster-admin”
@@ -67,25 +77,25 @@ oc adm policy add-scc-to-user privileged system:serviceaccount:tier-2-adc:cpx
 6.	Deploy the CPX for hotdrink, colddrink and guestbook microservices using following commands,
 
 ```
-oc create -f /root/yamls/cpx.yaml -n tier-2-adc
-oc create -f /root/yamls/hotdrink-secret.yaml -n tier-2-adc
+oc create -f cpx.yaml -n tier-2-adc
+oc create -f hotdrink-secret.yaml -n tier-2-adc
 ```
 
 7.	Deploy the three types of hotdrink beverage microservices using following commands
 ```
-oc create -f /root/yamls/team_hotdrink.yaml -n team-hotdrink
-oc create -f /root/yamls/hotdrink-secret.yaml -n team-hotdrink
+oc create -f team_hotdrink.yaml -n team-hotdrink
+oc create -f hotdrink-secret.yaml -n team-hotdrink
 ```
 
 8.	Deploy the colddrink beverage microservice using following commands
 ```
-oc create -f /root/yamls/team_colddrink.yaml -n team-colddrink
-oc create -f /root/yamls/colddrink-secret.yaml -n team-colddrink
+oc create -f team_colddrink.yaml -n team-colddrink
+oc create -f colddrink-secret.yaml -n team-colddrink
 ```
 
 9.	Deploy the guestbook no SQL type microservice using following commands
 ```
-oc create -f /root/yamls/team_guestbook.yaml -n team-guestbook
+oc create -f team_guestbook.yaml -n team-guestbook
 ```
 10.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC.
 
@@ -98,8 +108,8 @@ Go to ``cic_vpx.yaml`` and change the NS_IP value to your VPX NS_IP.
   value: "x.x.x.x"``
 Now execute the following commands after the above change.
 ```
-oc create -f /root/yamls/ingress_vpx.yaml -n tier-2-adc
-oc create -f /root/yamls/cic_vpx.yaml -n tier-2-adc
+oc create -f ingress_vpx.yaml -n tier-2-adc
+oc create -f cic_vpx.yaml -n tier-2-adc
 ```
 
   
@@ -123,8 +133,8 @@ e.g. ``https://hotdrink.beverages.com``
 Go to ``ingress_vpx_monitoring.yaml`` and change the frontend-ip address from ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver Prometheus and Grafana portal or you can use the same frontend-IP used in Step 11. 
 e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.160"``
 ```
-oc create -f /root/yamls/monitoring.yaml -n monitoring
-oc create -f /root/yamls/ingress_vpx_monitoring.yaml -n monitoring
+oc create -f monitoring.yaml -n monitoring
+oc create -f ingress_vpx_monitoring.yaml -n monitoring
 ```
 
 15.	Add the DNS entries in your local machine host files for accessing monitoring portals though internet.
@@ -153,13 +163,13 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
 
    ```
-   oc create -f /root/yamls/crd_rewrite_responder.yaml
+   oc create -f crd_rewrite_responder.yaml
    ```
 
 1. **UseCase: Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
 
    ```
-   oc create -f /root/yamls/responderpolicy_hotdrink.yaml -n tier-2-adc
+   oc create -f responderpolicy_hotdrink.yaml -n tier-2-adc
    ```
 
    After you deploy the Responder policy, access the coffee page on `https://hotdrink.beverages.com/coffee.php`. Then you receive the following message.
@@ -169,7 +179,7 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 1. **UseCase: Header insertion** Configure the Rewrite policy on `https://colddrink.beverages.com` to insert the session ID in the header.
 
    ```
-   oc create -f /root/yamls/rewritepolicy_colddrink.yaml -n tier-2-adc
+   oc create -f rewritepolicy_colddrink.yaml -n tier-2-adc
    ```
 
    After you deploy the Rewrite policy, access `colddrink.beverages.com` with developer mode enabled on the browser. In Chrome, press F12 and preserve the log in network category to see the session ID, which is inserted by the Rewrite policy on tier-1-adc (VPX).
