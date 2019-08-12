@@ -1,0 +1,272 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cpx-ingress-hotdrinks
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-hotdrinks
+      labels:
+        app: cpx-ingress-hotdrinks
+        app1: exporter
+      annotations:
+        NETSCALER_AS_APP: "True"
+    spec:
+      serviceAccountName: cpx
+      containers:
+        - name: cpx-ingress-hotdrinks
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-36.28"
+          securityContext: 
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.2.0"
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          args:
+            - --ingress-classes
+              hotdrink
+            - --default-ssl-certificate
+              $(POD_NAMESPACE)/hotdrink-secret
+          imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-hotdrinks
+  labels:
+    app: lb-service-hotdrinks
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+    targetPort: 80
+  - port: 443
+    protocol: TCP
+    name: https
+    targetPort: 443
+  selector:
+    app: cpx-ingress-hotdrinks
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cpx-ingress-colddrinks
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-colddrinks
+      labels:
+        app: cpx-ingress-colddrinks
+        app1: exporter
+      annotations:
+        NETSCALER_AS_APP: "True"
+    spec:
+      serviceAccountName: cpx
+      containers:
+        - name: cpx-ingress-colddrinks
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-36.28"
+          securityContext: 
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.2.0"
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          args:
+            - --ingress-classes
+              colddrink
+          imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-colddrinks
+  labels:
+    app: lb-service-colddrinks
+  annotations:
+spec:
+  type: LoadBalancer
+  ports:
+#  - port: 80
+#    protocol: TCP
+#    name: http
+#    targetPort: 80
+  - port: 443
+    protocol: TCP
+    name: https
+    targetPort: 443
+  selector:
+    app: cpx-ingress-colddrinks
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cpx-ingress-guestbook
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-guestbook
+      labels:
+        app: cpx-ingress-guestbook
+        app1: exporter
+      annotations:
+        NETSCALER_AS_APP: "True"
+    spec:
+      serviceAccountName: cpx
+      containers:
+        - name: cpx-ingress-guestbook
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-36.28"
+          securityContext: 
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.2.0"
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          args:
+            - --ingress-classes
+              guestbook
+          imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-guestbook
+  labels:
+    app: lb-service-guestbook
+  annotations:
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+    name: frontend
+    targetPort: 80
+#  - port: 6379
+#    protocol: TCP
+#    name: guestbook
+#    targetPort: 6379
+  selector:
+    app: cpx-ingress-guestbook
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus
+spec:
+  type: ExternalName
+  externalName: prometheus.monitoring.svc.cluster.local
+  ports:
+  - name: http
+    port: 9090
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: grafana
+spec:
+  type: ExternalName
+  externalName: grafana.monitoring.svc.cluster.local
+  ports:
+  - name: http
+    port: 3000
+
