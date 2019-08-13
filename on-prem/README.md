@@ -1,5 +1,12 @@
 # Learn how to deploy Citrix ADC & microservices on Kubernetes on-prem cluster (Tier 1 ADC as Citrix ADC VPX, Tier 2 ADC as Citrix ADC CPX)
 
+This guide covers the below deployments
+
+| Section | Description |
+| ------- | ----------- |
+| [Section A] | Kubernetes NodePort type service solution to Deploy microservices |
+| [Section B] | Kubernetes Ingress solution to Deploy microservices |
+| [Section C] | Kubernetes LoadBalancer type service solution to Deploy microservices |
 
 Step by step demo
 -----------------
