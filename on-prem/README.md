@@ -54,10 +54,12 @@ Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-
 ## Section A (Deploy microservices using Kubernetes NodePort solution)
 
 
-1.	Clone the GitHub repository to your Master node using following command 
+1.	Clone the GitHub repository to your Master node using following command
+
 ``git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git ``
 
 Now change the directory to access the yaml files 
+
 ``
 cd example-cpx-vpx-for-kubernetes-2-tier-microservices/on-prem/NodePort-config/ ``
 
@@ -162,9 +164,11 @@ Now you can see the Grafana dashboard with basic ADC stats listed.
 
 
 1.	Clone the GitHub repository to your Master node using following command 
+
 ``git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git ``
 
 Now change the directory to access the yaml files 
+
 ``
 cd example-cpx-vpx-for-kubernetes-2-tier-microservices/on-prem/config/ ``
 
@@ -268,9 +272,11 @@ Now you can see the Grafana dashboard with basic ADC stats listed.
 ## Section C (Deploy microservices using Kubernetes service type LoadBalancer solution)
 
 1.	Clone the GitHub repository to your Master node using following command 
+
 ``git clone https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices.git ``
 
 Now change the directory to access the yaml files 
+
 ``
 cd example-cpx-vpx-for-kubernetes-2-tier-microservices/on-prem/LoadBalancer-config/ ``
 
