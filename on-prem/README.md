@@ -41,7 +41,7 @@ Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-
 | ------- | ----------- |
 | [Section A](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/blob/master/on-prem/README.md#section-a-deploy-microservices-using-kubernetes-nodeport-solution) | Kubernetes NodePort type service solution to Deploy microservices |
 | [Section B](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/blob/master/on-prem/README.md#section-b-deploy-microservices-using-kubernetes-ingress-solution) | Kubernetes Ingress solution to Deploy microservices |
-| [Section C](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/blob/master/on-prem/README.md#section-b-deploy-microservices-using-kubernetes-ingress-solution) | Kubernetes LoadBalancer type service solution to Deploy microservices |
+| [Section C](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/blob/master/on-prem/README.md#section-c-deploy-microservices-using-kubernetes-service-type-loadbalancer-solution) | Kubernetes LoadBalancer type service solution to Deploy microservices |
 
 
 ## Section A (Deploy microservices using Kubernetes NodePort solution)
