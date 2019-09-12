@@ -16,7 +16,7 @@ spec:
          # Set username for Nitro
          # Set log level
          - name: "NS_ENABLE_MONITORING"
-           value: "NO"
+           value: "YES"
          - name: "NS_USER"
            value: "nsroot"
          - name: "NS_PASSWORD"
