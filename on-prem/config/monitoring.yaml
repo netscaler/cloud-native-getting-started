@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
     - name: exporter
-      image: "quay.io/citrix/netscaler-metrics-exporter:1.1"
+      image: "quay.io/citrix/citrix-adc-metrics-exporter:1.2"
       args:
         - "--target-nsip=lb-service-hotdrinks.tier-2-adc.svc.cluster.local:9080"
         - "--target-nsip=lb-service-colddrinks.tier-2-adc.svc.cluster.local:9080"
