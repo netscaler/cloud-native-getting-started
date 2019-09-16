@@ -148,7 +148,7 @@ Add below entries in hosts file and save the file
 <frontend-ip from ingress_vpx_monitoring.yaml> grafana.beverages.com
 <frontend-ip from ingress_vpx_monitoring.yaml> prometheus.beverages.com
 ```
-14.	Login to ``http://grafana.beverages.com`` and do the following one-time setup
+14.	Login to ``http://grafana.beverages.com:8080`` and do the following one-time setup
 Login to portal using admin/admin credentials.
 Click on Add data source and select the Prometheus data source. Do the settings as shown below and click on save & test button.
  
@@ -257,7 +257,7 @@ Add below entries in hosts file and save the file
 <frontend-ip from ingress_vpx_monitoring.yaml> grafana.beverages.com
 <frontend-ip from ingress_vpx_monitoring.yaml> prometheus.beverages.com
 ```
-14.	Login to ``http://grafana.beverages.com`` and do the following one-time setup
+14.	Login to ``http://grafana.beverages.com:8080`` and do the following one-time setup
 Login to portal using admin/admin credentials.
 Click on Add data source and select the Prometheus data source. Do the settings as shown below and click on save & test button.
  
@@ -373,7 +373,7 @@ Add below entries in hosts file and save the file
 <frontend-ip from ingress_vpx_monitoring.yaml> grafana.beverages.com
 <frontend-ip from ingress_vpx_monitoring.yaml> prometheus.beverages.com
 ```
-14.	Login to ``http://grafana.beverages.com`` and do the following one-time setup
+14.	Login to ``http://grafana.beverages.com:8080`` and do the following one-time setup
 Login to portal using admin/admin credentials.
 Click on Add data source and select the Prometheus data source. Do the settings as shown below and click on save & test button.
  
