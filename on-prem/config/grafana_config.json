@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
-  "iteration": 1568634930298,
+  "id": 1,
+  "iteration": 1570765191765,
   "links": [],
   "panels": [
     {
@@ -60,7 +60,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "lb_hits_rate",
+          "expr": "citrixadc_lb_hits_rate{citrixadc_lb_name=~\"$lbvservers\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "refId": "A"
@@ -148,7 +148,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "lb_hits_total",
+          "expr": "citrixadc_lb_hits_total{citrixadc_lb_name=~\"$lbvservers\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "refId": "A"
@@ -236,7 +236,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "cpu_usage_percent",
+          "expr": "citrixadc_cpu_usage_percent",
           "format": "time_series",
           "intervalFactor": 1,
           "refId": "A"
@@ -324,7 +324,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "memory_usage_percent",
+          "expr": "citrixadc_memory_usage_percent",
           "format": "time_series",
           "intervalFactor": 1,
           "refId": "A"
@@ -373,13 +373,14 @@
     }
   ],
   "refresh": "2s",
-  "schemaVersion": 19,
+  "schemaVersion": 18,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
+          "selected": true,
           "text": "prometheus",
           "value": "prometheus"
         },
@@ -402,14 +403,14 @@
           "value": "$__all"
         },
         "datasource": "$datasource_prometheus",
-        "definition": "",
+        "definition": "label_values(citrixadc_lb_name)",
         "hide": 0,
         "includeAll": true,
         "label": "lbvservers",
         "multi": true,
         "name": "lbvservers",
         "options": [],
-        "query": "label_values(netscaler_lb_vserver_hits_total, lb_vserver_name)",
+        "query": "label_values(citrixadc_lb_name)",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -454,7 +455,7 @@
     ]
   },
   "timezone": "",
-  "title": "NetScaler Stats",
+  "title": "Citrix ADC Stats",
   "uid": "NT3Z0MJik",
-  "version": 6
+  "version": 10
 }
