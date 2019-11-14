@@ -137,7 +137,7 @@ metadata:
   name: frontend
 spec:
   type: ExternalName
-  externalName: lb-service-guestbook.tier-2-cpx.svc.cluster.local
+  externalName: lb-service-guestbook.tier-2-adc.svc.cluster.local
   ports:
   - name: frontend
     port: 80
