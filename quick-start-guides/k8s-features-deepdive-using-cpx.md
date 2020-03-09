@@ -13,7 +13,7 @@ CPX proxy supported various deployment modes,
 #### Section A (Standalone Citrix ADC CPX deployment (CPX per k8s cluster))
 Lets  deploy a stand-alone Citrix ADC CPX as the ingress device.
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/standalone-cpx-mode.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml
 kubectl get pods -n default -l app=cpx-ingress
 kubectl get svc cpx-service
 ```
@@ -25,7 +25,7 @@ curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 #### Section B (Citrix ADC CPX per node deployment)
 Lets deploy Citrix ADC CPX per node
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/cpx-per-node-mode.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx-per-node-mode.yaml
 kubectl get pods app=cpx-ingress
 kubectl get svc cpx-service
 ```
@@ -53,7 +53,7 @@ curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 #### Section D (High availability Citrix ADC CPX deployment)
 Lets deploy Citrix ADC CPX in HA
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/standalone-cpx-mode.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml
 kubectl get pods app=cpx-ingress
 ```
 

@@ -9,7 +9,7 @@ CIC can be deployed as
 ###### Note: This tutorial is for learning different CIC deployment modes not considered as end to end guide. Real world examples will use either one/both of CIC modes. 
 Lets deploy CIC for configuring Tier 1 Citrix ADC
 ```
-kubectl deploy -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/tier1-cic.yaml
+kubectl deploy -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/tier1-cic.yaml
 ```
 ![tier1-cic](images/tier1-cic.png)
 
@@ -24,7 +24,7 @@ kubectl logs -f tier1-cic-c669b8c4c-9fqxd
 
 Lets deploy CIC as a sidecar with CPX proxy
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/cpx.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
 kubectl get pods -n default -l app=cpx-ingress
 ```
 ![tier2-cic](images/tier2-cic.png)
