@@ -1,6 +1,8 @@
 # Deploy a Citrix ADC CPX proxy in docker
 
-Citrix ADC CPX is container based proxy can be deployed as a process in docker. Purpose of this guide is to showcase CPX deployment in docker. However Load Balancing use cases of CPX will be shown in other guides.
+Citrix ADC CPX is a container based proxy and can be deployed as a process in docker. 
+* **Note**: This tutorial is for learning Citrix ADC CPX deployment in docker container and not to be considered as end to end guide. Real world examples will use CPX in different deployment modes showcased in other quick-getting-started guides.
+**Prerequisite**: Docker engine (Below example is tested in docker engine v18.06)
 
  Install a Citrix ADC CPX on the docker container
 Change LS_IP=<Citrix ADC MPX/VPX/BLX NSIP> as per your deployment
@@ -20,4 +22,4 @@ cli_script.sh "sh capacity"
 
 To know more about CPX instance in docker,[ refer here](https://docs.citrix.com/en-us/citrix-adc-cpx/12/deploy-using-docker-image-file.html)
 
-Click on [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides) for next tutorials.
+Click on [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides) for next tutorial.
