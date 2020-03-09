@@ -4,20 +4,20 @@ This type of deployment is called as Service mesh lite deployment where CPX will
 
 Lets deploy Citrix ADC CPX to load balance East-West traffic in K8s cluster
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/cpx.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
 kubectl get pods -n default -l app=cpx-ingress
 ```
 ![tier2-cic](images/tier2-cic.png)
 
 Lets deploy hotdrink application in K8s cluster
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/hotdrink-app.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/hotdrink-app.yaml
 kubectl get pods
 ```
 
 Lets deploy an Ingress rule that sends traffic to 'hotdrink.beverages.com' front-end microservice. Based on user request for tea or coffee app, front-end hotdrink app will do E-W call to tea/coffee app.
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/hotdrink-ingress.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/hotdrink-ingress.yaml
 kubectl get ingress
 kubectl get svc cpx-service
 ```

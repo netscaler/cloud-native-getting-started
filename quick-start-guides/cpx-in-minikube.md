@@ -5,21 +5,21 @@ Kubernetes Ingress kind is a way to send Internet traffic to a microservice appl
 
 Lets deploy Citrix ADC CPX as Ingress proxy in Minikube
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/cpx.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
 kubectl get pods -n default -l app=cpx-ingress
 ```
 ![tier2-cic](images/tier2-cic.png)
 
 Lets deploy Guestbook application in Minikube
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/guestbook-app.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/guestbook-app.yaml
 kubectl get pods -n default -l 'app in (guestbook, redis)'
 ```
 ----image-----
 
 Lets deploy an Ingress rule that sends traffic to http://www.guestbook.com to the frontend pods
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/guestbook-ingress.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/guestbook-ingress.yaml
 kubectl get ingress
 kubectl get svc cpx-service
 ```
