@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-colddrinks
+spec:
+  selector:
+    matchLabels:
+      app: frontend-colddrinks
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: frontend-colddrinks
+    spec:
+      containers:
+      - name: frontend-colddrinks
+        image: "quay.io/sample-apps/colddrinks:v1"
+        ports:
+        - name: colddrinks-80
+          containerPort: 80
+#        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-colddrinks
+spec:
+  type: NodePort
+  ports:
+  - name: colddrinks-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: frontend-colddrinks
+
+---

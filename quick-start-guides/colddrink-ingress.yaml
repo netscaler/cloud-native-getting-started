@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: colddrink-ingress
+  annotations:
+   kubernetes.io/ingress.class: "citrix"
+spec:
+  rules:
+  - host:  www.guestbook.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: frontend-colddrinks
+          servicePort: 80
+---
