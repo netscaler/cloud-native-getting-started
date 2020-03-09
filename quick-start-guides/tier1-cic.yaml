@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tier1-cic 
+spec:
+  selector:
+    matchLabels:
+      app: tier1-cic
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: tier1-cic
+    spec:
+      containers:
+      - name: cic-vpx
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.7.6"
+        env:
+         # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
+         - name: "NS_IP"
+           value: "10.105.1.1"
+         # Set username for Nitro
+         # Set log level
+         - name: "NS_ENABLE_MONITORING"
+           value: "YES"
+         - name: "NS_USER"
+           value: "nsroot"
+         - name: "NS_PASSWORD"
+           value: "nsroot"
+         - name: "EULA"
+           value: "yes"
+         - name: "LOGLEVEL"
+           value: "DEBUG"
+        args:
+          - --ingress-classes
+            vpx
+          - --feature-node-watch
+            true
+          - --ipam
+            citrix-ipam-controller
+        imagePullPolicy: IfNotPresent 

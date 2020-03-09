@@ -19,4 +19,4 @@ cli_script.sh "sh capacity"
 
 To know more about CPX instance in docker,[ refer here](https://docs.citrix.com/en-us/citrix-adc-cpx/12/deploy-using-docker-image-file.html)
 
-Click on [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-guides) for next tutorials.
+Click on [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides) for next tutorials.
