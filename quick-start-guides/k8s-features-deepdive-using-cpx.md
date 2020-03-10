@@ -16,25 +16,29 @@ CPX proxy supported various deployment modes shown in below table.
 Lets  deploy a stand-alone Citrix ADC CPX as the ingress device.
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml
-kubectl get pods app=cpx-ingress
+kubectl get pods -l app=cpx-ingress
 kubectl get svc cpx-service
 ```
 Lets send traffic to apache microservice
 ```
 curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 ```
+![standalone-cpx](images/standalone-cpx.PNG)
 
 #### Section B: Citrix ADC CPX per node deployment
 Lets deploy Citrix ADC CPX per node
 ```
+kubectl get nodes
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx-per-node-mode.yaml
-kubectl get pods app=cpx-ingress
+kubectl get pods -l app=cpx-ingress
 kubectl get svc cpx-service
 ```
 Lets send traffic to apache microservice
 ```
 curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 ```
+(Number of CPX-ingress pods is equal to number of worker node)
+![cpx-per-node](images/cpx-per-node.PNG)
 
 #### Section C: Citrix ADC CPX per namespace deployment
 Lets deploy Citrix ADC CPX per namespace
@@ -44,7 +48,9 @@ kubectl create namespace team-A team-B team-C
 ```
 Lets deploy CPX in each namespace
 ```
-
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml -n team-A
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml -n team-B
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml -n team-C
 ```
 Lets send the traffic for each CPX deployed in different namespaces
 ```
@@ -55,13 +61,13 @@ curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 Lets deploy Citrix ADC CPX in HA
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml
-kubectl get pods app=cpx-ingress
+kubectl get pods -l app=cpx-ingress
 ```
 
 Lets scale-up the CPX pods to 2 instances
 ```
 kubectl scale deployment cpx-ingress --replicas=2 
-kubectl get pods app=cpx-ingress
+kubectl get pods -l app=cpx-ingress
 ```
 
 Lets scale-down the CPX pods to 1 instance
@@ -72,10 +78,10 @@ kubectl get pods app=cpx-ingress
 
 Kubernetes has inbuilt <u>self healing</u> property where if something goes wrong to pod then k8s will spin-up new pod automatically.
 ```
-kubectl get pods app=cpx-ingress
+kubectl get pods -l app=cpx-ingress
 kubectl delete pod <cpx-ingress pod name>
 
-kubectl get pods app=cpx-ingress
+kubectl get pods -l app=cpx-ingress
 ```
 You will see that new CPX pod has come up immediately once running pod goes down.
  

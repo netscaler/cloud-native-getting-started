@@ -9,7 +9,7 @@ Lets deploy Citrix ADC CPX to load balance East-West traffic in K8s cluster
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
 kubectl get pods -l app=cpx-ingress
 ```
-![tier2-cic](images/tier2-cic.PNG)
+![tier2-cic](images/tier2-cpx.png)
 
 Lets deploy hotdrink application in K8s cluster
 ```
