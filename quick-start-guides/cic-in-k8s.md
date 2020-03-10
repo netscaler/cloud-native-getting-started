@@ -15,7 +15,7 @@ kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-
 
 kubectl get pods | grep tier1-cic
 ```
-![tier1-cic](images/tier1-cic.png)
+![tier1-cic](images/tier1-cic.PNG)
 
 How do I check the CIC logs
 ```
@@ -28,7 +28,7 @@ kubectl logs -f tier1-cic-7dc96f89db-shj7c
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
 kubectl get pods -n default -l app=cpx-ingress
 ```
-![tier2-cic](images/tier2-cic.png)
+![tier2-cic](images/tier2-cic.PNG)
 
 
 There are 2 contains running in same pod highlighted by 2/2 under READY column. One container is for CPX proxy and another container is for CIC.
@@ -36,7 +36,7 @@ Lets check the status of both containers.
 ```
 kubectl describe pod cpx-ingress-9f56bcbd6-qjvmd
 ```
-![tier2-cic-pod](images/tier2-cic-pod.png)
+![tier2-cic-pod](images/tier2-cic-pod.PNG)
 
  To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 
