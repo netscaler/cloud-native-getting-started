@@ -8,14 +8,14 @@ Kubernetes Ingress kind is a way to send Internet traffic to a microservice appl
 Lets deploy Citrix ADC CPX as Ingress proxy in K8s cluster
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
-kubectl get pods app=cpx-ingress
+kubectl get pods -l app=cpx-ingress
 ```
-![tier2-cic](images/tier2-cic.png)
+![tier2-cic](images/tier2-cpx.PNG)
 
 Lets deploy colddrink application in K8s cluster
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/colddrink-app.yaml
-kubectl get pods frontend-colddrinks
+kubectl get pods -l app=frontend-colddrinks
 ```
 
 Lets deploy an Ingress rule that sends traffic to http://www.colddrink.com
@@ -29,6 +29,7 @@ Lets send the Ingress traffic to colddrink microservice app
 ```
 curl -s -H "Host: www.colddrink.com" http://<MasterNode IP:<NodePort> | grep colddrink
 ```
+![colddrink-app](images/colddrink-app.PNG)
 
 To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 

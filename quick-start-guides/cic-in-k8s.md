@@ -12,8 +12,7 @@ CIC can be deployed in two modes,
 1. Lets deploy CIC for configuring Tier 1 Citrix ADC
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/tier1-cic.yaml
-
-kubectl get pods | grep tier1-cic
+kubectl get pods -l app=tier1-cic
 ```
 ![tier1-cic](images/tier1-cic.PNG)
 
@@ -26,9 +25,9 @@ kubectl logs -f tier1-cic-7dc96f89db-shj7c
 2. Lets deploy CIC as a sidecar with CPX proxy
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
-kubectl get pods -n default -l app=cpx-ingress
+kubectl get pods -l app=cpx-ingress
 ```
-![tier2-cic](images/tier2-cic.PNG)
+![tier2-cic](images/tier2-cpx.PNG)
 
 
 There are 2 contains running in same pod highlighted by 2/2 under READY column. One container is for CPX proxy and another container is for CIC.

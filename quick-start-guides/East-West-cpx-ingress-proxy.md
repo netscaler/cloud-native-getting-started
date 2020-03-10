@@ -7,15 +7,18 @@ This type of deployment is called as Service mesh lite deployment where CPX will
 Lets deploy Citrix ADC CPX to load balance East-West traffic in K8s cluster
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
-kubectl get pods app=cpx-ingress
+kubectl get pods -l app=cpx-ingress
 ```
-![tier2-cic](images/tier2-cic.png)
+![tier2-cic](images/tier2-cic.PNG)
 
 Lets deploy hotdrink application in K8s cluster
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/hotdrink-app.yaml
-kubectl get pods
+kubectl get pods -l app=tea-beverage
+kubectl get pods -l app=coffee-beverage
+kubectl get pods -l app=frontend-hotdrinks
 ```
+![hotdrink-app](images/hotdrink-app.PNG)
 
 Lets deploy an Ingress rule that sends traffic to 'hotdrink.beverages.com' front-end microservice. Based on user request for tea or coffee app, front-end hotdrink app will do E-W call to tea/coffee app.
 ```
@@ -24,10 +27,12 @@ kubectl get ingress
 kubectl get svc cpx-service
 ```
 
-Lets send the traffic to hotdrink frontend microservice
+Lets send the traffic to hotdrink front-end microservice
 ```
 curl -s -H "Host: hotdrink.beverages.com " http://<MasterNode IP:<NodePort> | grep hotdrink
 ```
+
+![hotdrink-ingress](images/hotdrink-ingress.PNG)
 
 Lets verify the E-W traffic flow:
 
@@ -42,6 +47,8 @@ In local browser access below URL
 ```
 http://hotdrink.beverages.com:<NodePort>
 ```
+![hotdrink-GUI](images/hotdrink-GUI.png)
+
 **Note**: If you are not able to see the front-end hotdrink microservice app (due to FW issue), access the URL from K8s cluster host machine browser.
 
 Click on Tea image and you will render to tea page. Internally front-end hotdrink microservice has called tea microservice
@@ -49,9 +56,11 @@ Click on Tea image and you will render to tea page. Internally front-end hotdrin
 Lets check the hit count for front-end hotdrink and tea microservice.
 
 ```
-kubectl exec -it cpx-ingress-9f56bcbd6-9g42r bash
-cli_script.sh "sh csvserver k8s-10.244.1.47_80_http
+kubectl get pods -l app=cpx-ingress
+kubectl exec -it cpx-ingress-9f56bcbd6-9mx2z bash
+cli_script.sh "sh cs vserver k8s-10.244.1.120_80_http"
 ```
+![hotdrink-apphit-count](images/hotdrink-apphit-count.PNG)
 
 To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 
