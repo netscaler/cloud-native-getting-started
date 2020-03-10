@@ -3,28 +3,27 @@ An Ingress Controller is a controller monitors the Kubernetes API server for upd
 
 Citrix ingress controller <u>(**CIC**)</u> can configure any form factor of Citrix ADC (MPX/SDX/VPX/BLX/CPX).
 CIC can be deployed in two modes, 
-* Independent k8s deployment kind for configuring Tier 1 Ingress proxy (MPX/SDX/BLX/VPX)
-* A sidecar container for configuring CPX proxy (Tier 2 proxy)
+  1. Independent k8s deployment kind for configuring Tier 1 Ingress proxy (MPX/SDX/BLX/VPX)
+  2. A sidecar container for configuring CPX proxy (Tier 2 proxy)
 
 ###### Note: This tutorial is for learning different CIC deployment modes and not to be considered as end to end guide. Real world examples will use either one/both CIC modes. 
 **Prerequisite**: Kubernetes cluster (Below example is tested in on-prem v1.17.0 K8s cluster)
 
-Lets deploy CIC for configuring Tier 1 Citrix ADC
+1. Lets deploy CIC for configuring Tier 1 Citrix ADC
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/tier1-cic.yaml
+
+kubectl get pods | grep tier1-cic
 ```
 ![tier1-cic](images/tier1-cic.png)
 
+How do I check the CIC logs
 ```
-kubectl get pods | grep tier1-cic
-```
-
-Lets check the CIC logs
-```
-kubectl logs -f tier1-cic-c669b8c4c-9fqxd
+kubectl logs -f tier1-cic-7dc96f89db-shj7c
 ```
 
-Lets deploy CIC as a sidecar with CPX proxy
+
+2. Lets deploy CIC as a sidecar with CPX proxy
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
 kubectl get pods -n default -l app=cpx-ingress
