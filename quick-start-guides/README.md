@@ -1,4 +1,4 @@
-# <u>'Quick getting started guides for Citrix Cloud Networking'</u>
+# <u>'Getting started guides for Citrix Cloud Networking'</u>
 
 You can start with below tutorials to get yourself comfortable with Citrix ADC CPX and Citrix Ingress Controller configurations.
 * [Deploy a Citrix ADC CPX proxy in docker](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/cpx-in-docker.md)
