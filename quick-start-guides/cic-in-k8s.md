@@ -39,4 +39,4 @@ kubectl describe pod cpx-ingress-9f56bcbd6-qjvmd
 
  To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 
-Click on [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides) for next tutorial.
+For next tutorial, visit [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides)
