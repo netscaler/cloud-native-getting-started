@@ -32,4 +32,4 @@ curl -s -H "Host: www.guestbook.com" http://<MiniKube IP:<NodePort> | grep Guest
 
 To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 
-Click on [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides) for next tutorials.
+For next tutorial, visit [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides)

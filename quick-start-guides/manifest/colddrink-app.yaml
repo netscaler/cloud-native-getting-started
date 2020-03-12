@@ -25,7 +25,7 @@ kind: Service
 metadata:
   name: frontend-colddrinks
 spec:
-  type: NodePort
+#  type: NodePort
   ports:
   - name: colddrinks-80
     port: 80

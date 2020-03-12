@@ -9,7 +9,7 @@ spec:
   - host:  www.colddrink.com
     http:
       paths:
-      - path: /
+      - path: 
         backend:
           serviceName: frontend-colddrinks
           servicePort: 80

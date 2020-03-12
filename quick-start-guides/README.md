@@ -7,3 +7,4 @@ You can start with below tutorials to get yourself comfortable with Citrix ADC C
 * [Load balance North-South Ingress traffic using Citrix CPX proxy](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/North-South-cpx-ingress-proxy.md)
 * [Load balance East-West microservice traffic using Citrix CPX proxy](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/East-West-cpx-ingress-proxy.md)
 * [Deep dive on K8s features with Citrix ADC CPX](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/k8s-features-deepdive-using-cpx.md)
+* [Leverage ConfigMap for changing CIC log levels]()
