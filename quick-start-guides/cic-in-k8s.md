@@ -27,7 +27,7 @@ kubectl logs -f tier1-cic-7dc96f89db-shj7c
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
 kubectl get pods -l app=cpx-ingress
 ```
-![tier2-cic](images/tier2-cpx.PNG)
+![tier2-cic](images/tier2-cpx.png)
 
 
 There are 2 contains running in same pod highlighted by 2/2 under READY column. One container is for CPX proxy and another container is for CIC.
