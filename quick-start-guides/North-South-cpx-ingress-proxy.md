@@ -10,7 +10,7 @@ Lets deploy Citrix ADC CPX as Ingress proxy in K8s cluster
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
 kubectl get pods -l app=cpx-ingress
 ```
-![tier2-cic](images/tier2-cpx.PNG)
+![tier2-cic](images/tier2-cpx.png)
 
 Lets deploy colddrink application in K8s cluster
 ```
