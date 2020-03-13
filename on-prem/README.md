@@ -102,6 +102,9 @@ kubectl create -f colddrink-secret.yaml -n team-colddrink
 kubectl create -f team_guestbook.yaml -n team-guestbook
 ```
 8.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC.
+``
+Note: If you do not have Tier 1 ADC already present in your setup then you can refer to [Citrix ADC VPX installation on XenCenter](https://github.com/citrix/cloud-native-getting-started/tree/master/VPX) for deploying Citrix ADC as Tier 1 ADC.
+``
 
 9.	Deploy the VPX ingress and ingress controller to push the CPX configuration into the tier 1 ADC automatically.
 **Note:-** 
@@ -211,6 +214,9 @@ kubectl create -f colddrink-secret.yaml -n team-colddrink
 kubectl create -f team_guestbook.yaml -n team-guestbook
 ```
 8.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC.
+``
+Note: If you do not have Tier 1 ADC already present in your setup then you can refer to [Citrix ADC VPX installation on XenCenter](https://github.com/citrix/cloud-native-getting-started/tree/master/VPX) for deploying Citrix ADC as Tier 1 ADC.
+``
 
 9.	Deploy the VPX ingress and ingress controller to push the CPX configuration into the tier 1 ADC automatically.
 **Note:-** 
@@ -324,6 +330,9 @@ kubectl create -f colddrink-secret.yaml -n team-colddrink
 kubectl create -f team_guestbook.yaml -n team-guestbook
 ```
 9.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC.
+``
+Note: If you do not have Tier 1 ADC already present in your setup then you can refer to [Citrix ADC VPX installation on XenCenter](https://github.com/citrix/cloud-native-getting-started/tree/master/VPX) for deploying Citrix ADC as Tier 1 ADC.
+``
 
 10.	Deploy the Citrix ingress controller to push the CPX configuration into the tier 1 ADC automatically.
 **Note:-** 
