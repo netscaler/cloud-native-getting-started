@@ -1,10 +1,10 @@
 # Deep dive on K8s features with Citrix ADC CPX
 In this example, the Citrix ADC CPX (a containerized form-factor) is used to route the Ingress traffic to apache microservice application.
-CPX proxy supported various deployment modes shown in below table.
+Citrix ADC CPX proxy supported various deployment modes shown in below table.
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/k8s-features-deepdive-using-cpx.md#section-a-standalone-citrix-adc-cpx-deployment-cpx-per-k8s-cluster) | Standalone Citrix ADC CPX deployment (CPX per k8s cluster) |
+| [Section A](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/k8s-features-deepdive-using-cpx.md#section-a-standalone-citrix-adc-cpx-deployment-cpx-per-k8s-cluster) | Standalone Citrix ADC CPX deployment (Citrix ADC CPX per k8s cluster) |
 | [Section B](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/k8s-features-deepdive-using-cpx.md#section-b-citrix-adc-cpx-per-node-deployment) | Citrix ADC CPX per node deployment |
 | [Section C](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/k8s-features-deepdive-using-cpx.md#section-c-citrix-adc-cpx-per-namespace-deployment) | Citrix ADC CPX per namespace deployment |
 | [Section D](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/k8s-features-deepdive-using-cpx.md#section-d-high-availability-citrix-adc-cpx-deployment) | High availability Citrix ADC CPX deployment (Horizontal scaling) |
@@ -12,7 +12,7 @@ CPX proxy supported various deployment modes shown in below table.
 **Prerequisite**: Kubernetes cluster (Below examples are tested in on-prem v1.17.0 K8s cluster)
 
 
-#### Section A: Standalone Citrix ADC CPX deployment (CPX per k8s cluster)
+#### Section A: Standalone Citrix ADC CPX deployment (Citrix ADC CPX per k8s cluster)
 Lets  deploy a stand-alone Citrix ADC CPX as the ingress device.
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml
@@ -46,13 +46,13 @@ Lets create 3 namespaces
 ```
 kubectl create namespace team-A team-B team-C
 ```
-Lets deploy CPX in each namespace
+Lets deploy Citrix ADC CPX in each namespace
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml -n team-A
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml -n team-B
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml -n team-C
 ```
-Lets send the traffic for each CPX deployed in different namespaces
+Lets send the traffic for each Citrix ADC CPX deployed in different namespaces
 ```
 curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 ```

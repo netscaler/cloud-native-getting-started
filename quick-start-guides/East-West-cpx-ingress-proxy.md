@@ -1,6 +1,6 @@
 # Load balance East-West microservice traffic using Citrix CPX proxy
 In this example, the Citrix ADC CPX (a containerized form-factor) is used to route the East West traffic between tea and coffee hotdrink microservice applications.
-This type of deployment is called as Service mesh lite deployment where CPX will load balance the E-W microservice traffic. Here CPX is deployed as a deployment kind and not as a sidecar proxy.
+This type of deployment is called as Service mesh lite deployment where Citrix ADC CPX will load balance the E-W microservice traffic. Here Citrix ADC CPX is deployed as a deployment kind and not as a sidecar proxy.
 
 **Prerequisite**: Kubernetes cluster (Below example is tested in on-prem v1.17.0 K8s cluster)
 
