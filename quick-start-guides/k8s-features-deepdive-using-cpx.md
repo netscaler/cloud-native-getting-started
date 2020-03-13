@@ -9,72 +9,113 @@ Citrix ADC CPX proxy supported various deployment modes shown in below table.
 | [Section C](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/k8s-features-deepdive-using-cpx.md#section-c-citrix-adc-cpx-per-namespace-deployment) | Citrix ADC CPX per namespace deployment |
 | [Section D](https://github.com/citrix/cloud-native-getting-started/blob/master/quick-start-guides/k8s-features-deepdive-using-cpx.md#section-d-high-availability-citrix-adc-cpx-deployment) | High availability Citrix ADC CPX deployment (Horizontal scaling) |
 
-**Prerequisite**: Kubernetes cluster (Below examples are tested in on-prem v1.17.0 K8s cluster)
+**Prerequisite**: Kubernetes cluster (Below examples are tested in on-prem v1.17.0 K8s cluster).
 
 
 #### Section A: Standalone Citrix ADC CPX deployment (Citrix ADC CPX per k8s cluster)
-Lets  deploy a stand-alone Citrix ADC CPX as the ingress device.
+1. Lets  deploy a stand-alone Citrix ADC CPX as an ingress device
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml
 kubectl get pods -l app=cpx-ingress
 kubectl get svc cpx-service
 ```
-Lets send traffic to apache microservice
+2. Lets send traffic to apache microservice
 ```
 curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 ```
 ![standalone-cpx](images/standalone-cpx.PNG)
 
+
 #### Section B: Citrix ADC CPX per node deployment
-Lets deploy Citrix ADC CPX per node
+1. Lets deploy Citrix ADC CPX per node
 ```
 kubectl get nodes
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx-per-node-mode.yaml
 kubectl get pods -l app=cpx-ingress
 kubectl get svc cpx-service
 ```
-Lets send traffic to apache microservice
+2. Lets send traffic to apache microservice
 ```
 curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 ```
-(Number of CPX-ingress pods is equal to number of worker node)
+(Number of CPX-ingress pods is equal to number of node in K8s cluster deploying pods)
 ![cpx-per-node](images/cpx-per-node.PNG)
 
 #### Section C: Citrix ADC CPX per namespace deployment
-Lets deploy Citrix ADC CPX per namespace
-Lets create 3 namespaces
+In this example we will deploy Citrix ADC CPX in 3 namespaces.
+
+1. Lets create three namespaces in K8s cluster
 ```
 kubectl create namespace team-A team-B team-C
 ```
-Lets deploy Citrix ADC CPX in each namespace
+2. Lets deploy Citrix ADC CPX in each namespace
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml -n team-A
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml -n team-B
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml -n team-C
 ```
-Lets send the traffic for each Citrix ADC CPX deployed in different namespaces
+3. Lets deploy colddrink microservice apps in all namespaces
 ```
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/colddrink-app.yaml -n team-A
+kubectl get pods -l app=frontend-colddrinks -n team-A
+
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/colddrink-app.yaml -n team-B
+kubectl get pods -l app=frontend-colddrinks -n team-B
+
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/colddrink-app.yaml -n team-C
+kubectl get pods -l app=frontend-colddrinks -n team-C
+```
+4. Lets deploy an Ingress rule that sends traffic to http://www.colddrink.com
+```
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/colddrink-ingress.yaml -n team-A
+kubectl get ingress -n team-A
+kubectl get svc cpx-service -n team-A
+
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/colddrink-ingress.yaml -n team-B
+kubectl get ingress -n team-B
+kubectl get svc cpx-service -n team-B
+
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/colddrink-ingress.yaml -n team-C
+kubectl get ingress -n team-C
+kubectl get svc cpx-service -n team-C
+```
+5. Lets send the traffic for each Citrix ADC CPX deployed in different namespaces
+```
+kubectl get pods -l app=cpx-ingress -n team-A
+kubectl get pods -l app=cpx-ingress -n team-B
+kubectl get pods -l app=cpx-ingress -n team-C
+```
+```
+kubectl get svc -n team-A
+kubectl get svc -n team-B
+kubectl get svc -n team-C
+```
+Check for Nodeports for all CPXs and create curl request accrodingly,
+``` 
 curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 ```
 
 #### Section D: High availability Citrix ADC CPX deployment
-Lets deploy Citrix ADC CPX in HA
+1. Lets deploy Citrix ADC CPX in HA
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/standalone-cpx-mode.yaml
 kubectl get pods -l app=cpx-ingress
 ```
 
-Lets scale-up the CPX pods to 2 instances
+2. Lets scale-up the CPX pods to 2 instances
 ```
 kubectl scale deployment cpx-ingress --replicas=2 
 kubectl get pods -l app=cpx-ingress
 ```
+Now both CPXs are capable to take distributed Ingress traffic.
 
-Lets scale-down the CPX pods to 1 instance
+3. Lets scale-down the CPX pods to 1 instance
 ```
 kubectl scale deployment cpx-ingress --replicas=1
 kubectl get pods app=cpx-ingress
 ```
+
+**Mini exercise:**
 
 Kubernetes has inbuilt <u>self healing</u> property where if something goes wrong to pod then k8s will spin-up new pod automatically.
 ```
