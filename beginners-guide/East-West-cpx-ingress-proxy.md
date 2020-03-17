@@ -6,14 +6,14 @@ This type of deployment is called as [Service Mesh lite topology](https://develo
 
 1. Lets deploy Citrix ADC CPX to load balance East-West traffic in K8s cluster
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cpx.yaml
 kubectl get pods -l app=cpx-ingress
 ```
 ![tier2-cic](images/tier2-cpx.png)
 
 2. Lets deploy hotdrink application (front-end hotdrink, tea and coffee microservices) in K8s cluster
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/hotdrink-app.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/hotdrink-app.yaml
 kubectl get pods -l app=tea-beverage
 kubectl get pods -l app=coffee-beverage
 kubectl get pods -l app=frontend-hotdrinks
@@ -22,7 +22,7 @@ kubectl get pods -l app=frontend-hotdrinks
 
 3. Lets deploy an Ingress rule that sends traffic to 'http://hotdrink.beverages.com' front-end hotdrink microservice (Based on user request for tea or coffee app, front-end hotdrink app will do E-W call to tea/coffee app)
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/hotdrink-ingress.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/hotdrink-ingress.yaml
 kubectl get ingress
 kubectl get svc cpx-service
 ```
@@ -66,4 +66,4 @@ cli_script.sh "sh cs vserver k8s-10.244.1.120_80_http"
 
 To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 
-For next tutorial, visit [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides)
+For next tutorial, visit [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide)

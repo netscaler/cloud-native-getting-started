@@ -1,11 +1,4 @@
 
-# Learn how to use Citrix ADC & [Citrix Ingress Controller](https://github.com/citrix/citrix-k8s-ingress-controller) for microservices architecture based on Kubernetes (Tier 1 ADC as Citrix ADC VPX, Tier 2 ADC as Citrix ADC CPX)
-
-* [GCP (Google Cloud Platform)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/gcp)
-* [On-Prem (using VMs on Xenserver)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
-* [OpenShift (using Red Hat Enterprise Linux VMs)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
-
-
 # Citrix Cloud Native Networking (CNN) hands-on guides
 **Citrix cloud-native solutions** leverage the advanced traffic management, observability, and comprehensive security features of Citrix ADCs to ensure enterprise grade reliability and security. Lets get started with CNN GitHub!
 
@@ -23,3 +16,7 @@
 Here are very cool hands-on guides for you to understand Citrix Cloud Native portfolio
 * [Citrix CNN Beginners Guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide)
 * Citrix CNN Advanced Guides
+  * [GCP (Google Cloud Platform)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/gcp)
+  * [On-Prem (using VMs on Xenserver)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
+  * [OpenShift (using Red Hat Enterprise Linux VMs)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
+

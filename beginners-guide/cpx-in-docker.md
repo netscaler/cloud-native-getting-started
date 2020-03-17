@@ -20,8 +20,8 @@ docker exec -it cpxproxy bash
 ```
 cli_script.sh "sh capacity"
 ```
-![Cpx Docker Cli](images/cpx-docker-cli.png)
+![Cpx Docker Cli](images/cpx-docker-cli.PNG)
 
 To know more about Citrix ADC CPX instance in docker,[ refer here](https://docs.citrix.com/en-us/citrix-adc-cpx/12/deploy-using-docker-image-file.html)
 
-For next tutorial, visit [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides)
+For next tutorial, visit [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide)

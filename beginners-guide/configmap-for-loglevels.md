@@ -14,13 +14,13 @@ Lets do demo of ConfigMap support for changing CIC loglevel.
 
 1. Deploy ConfigMap in k8s cluster
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/configmap.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/configmap.yaml
 kubectl get configmap cic-configmap
 ```
 2. Deploy Citrix ADC CPX proxy in k8s cluster
 Download the cpx yaml file in your machine,
 ```
-wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
+wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cpx.yaml
 ```
 Edit cpx.yaml file and add ConfigMap argument in CIC container args section as mentioned below,
 ```
@@ -28,6 +28,7 @@ Edit cpx.yaml file and add ConfigMap argument in CIC container args section as m
               default/cic-configmap
 ```
 See the below screenshot for identifying right placeholder of configmap arg in CPX yaml file,
+
 ![cpx-configmap](images/cpx-configmap.PNG)
 
 Deploy edited cpx yaml file in k8s cluster,
@@ -38,7 +39,7 @@ kubectl create -f cpx.yaml
 3. Deploy colddrink microservice app
 
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/colddrink-app.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml
 kubectl get pods -l app=frontend-colddrinks
 ```
 ![configmap-pod-status](images/configmap-pod-status.PNG)
@@ -59,7 +60,7 @@ kubectl apply -f configmap.yaml
 ```
 Now loglevel has been changed to debug, to validate it check CIC logs again,
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/colddrink-ingress.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml
 kubectl logs -f cpx-ingress-79646f9c94-vhxnq -c cic
 ```
 **Note**: Colddrink ingress is applied to see more logs in CIC.
@@ -71,7 +72,7 @@ To know more about Citrix ingress controller,[refer here](https://github.com/cit
 
 Learn more about [ConfigMap support for the Citrix ingress controller](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/configure/config-map/)
 
-For next tutorial, visit [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides)
+For next tutorial, visit [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide)
 
 
 
