@@ -11,10 +11,10 @@ CIC can be deployed in two modes,
 
 1. Lets deploy CIC for configuring Tier 1 Citrix ADC
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/tier1-cic.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/tier1-cic.yaml
 kubectl get pods -l app=tier1-cic
 ```
-![tier1-cic](images/tier1-cic.PNG)
+![tier1-cic](images/tier1-cic.png)
 
 How do I check the CIC logs
 ```
@@ -24,7 +24,7 @@ kubectl logs -f tier1-cic-7dc96f89db-shj7c
 
 2. Lets deploy CIC as a sidecar with Citrix ADC CPX proxy
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/quick-start-guides/manifest/cpx.yaml
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cpx.yaml
 kubectl get pods -l app=cpx-ingress
 ```
 ![tier2-cic](images/tier2-cpx.png)
@@ -35,8 +35,8 @@ Lets see the details of both containers,
 ```
 kubectl describe pod cpx-ingress-9f56bcbd6-qjvmd
 ```
-![tier2-cic-pod](images/tier2-cic-pod.PNG)
+![tier2-cic-pod](images/tier2-cic-pod.png)
 
  To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 
-For next tutorial, visit [quick-start-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/quick-start-guides)
+For next tutorial, visit [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide)
