@@ -21,5 +21,5 @@
 
 ## Getting Started
 Here are very cool hands-on guides for you to understand Citrix Cloud Native portfolio
-* [Citrix CNN Beginners Guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guides)
+* [Citrix CNN Beginners Guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide)
 * Citrix CNN Advanced Guides
