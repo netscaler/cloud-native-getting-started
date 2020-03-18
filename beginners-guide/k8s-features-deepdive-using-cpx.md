@@ -25,6 +25,11 @@ curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 ```
 ![standalone-cpx](images/standalone-cpx.PNG)
 
+2. Clean Up
+```
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/standalone-cpx-mode.yaml
+```
+
 
 #### Section B: Citrix ADC CPX per node deployment
 1. Lets deploy Citrix ADC CPX per node
@@ -41,12 +46,19 @@ curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 (Number of CPX-ingress pods is equal to number of node in K8s cluster deploying pods)
 ![cpx-per-node](images/cpx-per-node.PNG)
 
+2. Clean Up
+```
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cpx-per-node-mode.yaml
+```
+
 #### Section C: Citrix ADC CPX per namespace deployment
 In this example we will deploy Citrix ADC CPX in 3 namespaces.
 
 1. Lets create three namespaces in K8s cluster
 ```
-kubectl create namespace team-A team-B team-C
+kubectl create namespace team-A 
+kubectl create namespace team-B 
+kubectl create namespace team-C
 ```
 2. Lets deploy Citrix ADC CPX in each namespace
 ```
@@ -90,9 +102,24 @@ kubectl get svc -n team-A
 kubectl get svc -n team-B
 kubectl get svc -n team-C
 ```
-Check for Nodeports for all CPXs and create curl request accrodingly,
+Check for Nodeport for all CPXs and create curl request accordingly,
 ``` 
 curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
+```
+
+6. Clean Up
+```
+kubectl delete namespace team-A team-B team-C
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/standalone-cpx-mode.yaml -n team-A
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/standalone-cpx-mode.yaml -n team-B
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/standalone-cpx-mode.yaml -n team-C
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml -n team-A
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml -n team-B
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml -n team-C
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml -n team-A
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml -n team-B
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml -n team-C
+
 ```
 
 #### Section D: High availability Citrix ADC CPX deployment
@@ -115,8 +142,7 @@ kubectl scale deployment cpx-ingress --replicas=1
 kubectl get pods app=cpx-ingress
 ```
 
-**Mini exercise:**
-
+4. Test K8s self-healing mechanism
 Kubernetes has inbuilt <u>self healing</u> property where if something goes wrong to pod then k8s will spin-up new pod automatically.
 ```
 kubectl get pods -l app=cpx-ingress
@@ -125,7 +151,12 @@ kubectl delete pod <cpx-ingress pod name>
 kubectl get pods -l app=cpx-ingress
 ```
 You will see that new CPX pod has come up immediately once running pod goes down.
- 
+
+4. Clean Up
+```
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/standalone-cpx-mode.yaml
+```
+
 
 To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 

@@ -3,26 +3,13 @@ An Ingress Controller is a controller monitors the Kubernetes API server for upd
 
 Citrix ingress controller <u>(**CIC**)</u> can configure any form factor of Citrix ADC (MPX/SDX/VPX/BLX/CPX).
 CIC can be deployed in two modes, 
-  1. Independent k8s deployment kind for configuring Tier 1 Ingress proxy (MPX/SDX/BLX/VPX).
-  2. A sidecar container for configuring Tier 2 proxy (Citrix ADC CPX proxy).
+  1. A sidecar container for configuring Tier 2 proxy (Citrix ADC CPX proxy).
+  2. Independent k8s deployment kind for configuring Tier 1 Ingress proxy (MPX/SDX/BLX/VPX).
 
 ###### Note: This tutorial is for learning different CIC deployment modes and not to be considered as end user example. Real world examples will use either one/both CIC modes with other use cases. 
 **Prerequisite**: Kubernetes cluster (Below example is tested in on-prem v1.17.0 K8s cluster).
 
-1. Lets deploy CIC for configuring Tier 1 Citrix ADC
-```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/tier1-cic.yaml
-kubectl get pods -l app=tier1-cic
-```
-![tier1-cic](images/tier1-cic.png)
-
-How do I check the CIC logs
-```
-kubectl logs -f tier1-cic-7dc96f89db-shj7c
-```
-
-
-2. Lets deploy CIC as a sidecar with Citrix ADC CPX proxy
+1. Lets deploy CIC as a sidecar with Citrix ADC CPX proxy
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cpx.yaml
 kubectl get pods -l app=cpx-ingress
@@ -36,6 +23,46 @@ Lets see the details of both containers,
 kubectl describe pod $(kubectl get pods -l app=cpx-ingress | awk ‘{print $1}’ | grep cpx-ingress)
 ```
 ![tier2-cic-pod](images/tier2-cic-pod.png)
+
+2. Lets deploy CIC for configuring Tier 1 Citrix ADC
+
+Download CIC to local machine,
+```
+wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/tier1-cic.yaml
+```
+Change NS_IP environment variable in tier1-cic yaml with Citrix ADC management IP.
+
+Now deploy CIC in K8s cluster,
+```
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/tier1-cic.yaml
+kubectl get pods -l app=tier1-cic
+```
+![tier1-cic](images/tier1-cic.png)
+
+Lets see the summary of CIC pod,
+```
+kubectl describe pod <pod name>
+```
+e.g.
+```
+kubectl describe pod tier1-cic-7dc96f89db-shj7c
+```
+
+How do I check the CIC logs
+```
+kubectl logs -f <pod name>
+```
+e.g.
+```
+kubectl logs -f tier1-cic-7dc96f89db-shj7c
+```
+
+3 Clean up K8s cluster
+```
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cpx.yaml
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/tier1-cic.yaml
+
+```
 
  To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 
