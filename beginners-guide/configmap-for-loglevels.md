@@ -27,7 +27,7 @@ Edit cpx.yaml file and add ConfigMap argument in CIC container args section as m
             - --configmap
               default/cic-configmap
 ```
-See the below screenshot for identifying right placeholder of configmap arg in CPX yaml file,
+See the below screen-shot for identifying right placeholder of configmap arg in CPX yaml file,
 
 ![cpx-configmap](images/cpx-configmap.PNG)
 
@@ -46,7 +46,11 @@ kubectl get pods -l app=frontend-colddrinks
 
 4. Lets check the current CIC loglevel
 ```
-kubectl logs -f cpx-ingress-79646f9c94-vhxnq -c cic
+kubectl logs -f <pod name> -c cic
+```
+
+```
+e.g.kubectl logs -f cpx-ingress-79646f9c94-vhxnq -c cic
 ```
 
 5. Change the loglevel and redeploy ConfigMap in k8s cluster
@@ -61,12 +65,19 @@ kubectl apply -f configmap.yaml
 Now loglevel has been changed to debug, to validate it check CIC logs again,
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml
-kubectl logs -f cpx-ingress-79646f9c94-vhxnq -c cic
+kubectl logs -f <pod name> -c cic
 ```
 **Note**: Colddrink ingress is applied to see more logs in CIC.
 
 ![edit-configmap](images/edit-configmap.PNG)
 
+6. Clean Up
+```
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/configmap.yaml
+kubectl delete -f cpx.yaml
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml
+```
 
 To know more about Citrix ingress controller,[refer here](https://github.com/citrix/citrix-k8s-ingress-controller)
 
