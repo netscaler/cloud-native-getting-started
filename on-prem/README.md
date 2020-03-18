@@ -25,7 +25,7 @@ Here are the detailed demo steps in cloud native infrastructure which offers the
 1.	Bring your own nodes (BYON)
 Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. Please install and configure Kubernetes cluster with one master node and at least two worker node deployment.
 Recommended OS: Ubuntu 16.04 desktop/server OS. 
-Visit: https://kubernetes.io/docs/setup/scratch/ for Kubernetes cluster deployment guide.
+Visit: https://kubernetes.io/docs/setup/ for Kubernetes cluster deployment guide.
 Once Kubernetes cluster is up and running, execute the below command on master node to get the node status.
 ``` 
 kubectl get nodes
