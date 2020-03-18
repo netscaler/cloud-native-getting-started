@@ -38,7 +38,7 @@ curl -s -H "Host: hotdrink.beverages.com " http://<MasterNode IP:<NodePort> | gr
 
 Add the DNS entries in your local machine host files for accessing microservices though Internet.
 
-Path for host file: ``C:\Windows\System32\drivers\etc\hosts``
+Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
 
 Add below entries in hosts file and save the file,
 ```
