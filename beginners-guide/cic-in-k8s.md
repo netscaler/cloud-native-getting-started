@@ -33,7 +33,7 @@ kubectl get pods -l app=cpx-ingress
 There are 2 contains running in same pod highlighted by 2/2 under READY column. One container is for Citrix ADC CPX proxy and another container is for CIC.
 Lets see the details of both containers,
 ```
-kubectl describe pod cpx-ingress-9f56bcbd6-qjvmd
+kubectl describe pod $(kubectl get pods -l app=cpx-ingress | awk ‘{print $1}’ | grep cpx-ingress)
 ```
 ![tier2-cic-pod](images/tier2-cic-pod.png)
 
