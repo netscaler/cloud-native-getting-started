@@ -69,6 +69,12 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     ```
      ![ipam](images/ipam.PNG)
 
+3. Access colddrink beverage microservice
+    ```
+    kubectl get svc -n tier-2-adc -o wide
+    ```
+    ![colddrink-svc](images/colddrink-svc.PNG)
+    Access to application from local browser using URL - http://<External-IP>:NodePort (e.g. http://10.105.158.196:31554)
 
 ### Section B (Deploy hotdrink beverage microservice application exposed as Ingress Type service)
 
