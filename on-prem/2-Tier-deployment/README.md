@@ -136,7 +136,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     ```
     ![secret](images/secret.PNG)
 
-7. Validate the microservice deployment for both teams
+7. Validate microservice deployment status for both teams
 
     Ensure that all pods are running for Frontend developers team
     ![frontend-developers-pod](images/frontend-developers-pod.PNG)
@@ -144,7 +144,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     Ensure that all pods are running for Mobiles developers team
     ![mobile-developers-pod](images/mobile-developers-pod.PNG)
 
-    Also, you can verify from the k8s logs that, CIC and CPX are listening to k8s event within deployed namespace. It verifies that one team deployment has no visibility into other team deployment.
+    Also, you can verify from the k8s logs that CIC and CPX are listening to k8s event within deployed namespace. It verifies that one team deployment has no visibility into other team deployment.
     ```
     kubectl logs -f cic-vpx -n frontend-developers
     ```
@@ -153,7 +153,8 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     kubectl logs -f <cpx pod name> -c cic -n frontend-developers
     ```
 
-7. Yeah!!! Your application is successfully deployed and ready to access from Internet
+8. Yeah!!! Your application is successfully deployed and ready to access from Internet
+    
     Add the DNS entries in your local machine host files for accessing microservices though Internet
     Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
     
