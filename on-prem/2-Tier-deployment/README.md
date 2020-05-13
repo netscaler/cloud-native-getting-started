@@ -13,7 +13,7 @@ Example: There are two teams in an Organization team 'Frontend-developers' and t
 In each namespace we will deploy back-end applications, Citrix ADC CPX, Citrix Ingress Controller and Ingress rule to load balance N-S Ingress traffic. K8s namespace will provide logical isolation of entities deployed in each namespace.
 Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers' and vice-versa.
 
-###### Step by step guide to Load Balance N-S Ingress traffic in 2-Tier Ingress topology
+#### Step by step guide to Load Balance N-S Ingress traffic in 2-Tier Ingress topology
 
 1.  Bring your own nodes (BYON)
 
@@ -40,50 +40,60 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     If you have K8s cluster and Tier 1 Citrix ADC in same subnet then you do not have to do anything, below example will take care of route info.
     You need Citrix Node Controller configuration only when K8s cluster and Tier 1 ADC are in different subnet. Please refer to https://github.com/citrix/citrix-k8s-node-controller for Network configuration.
 
-### Lets deploy 2-Tier ingress microservices
+###### Lets deploy 2-Tier ingress microservices
 1. Create two namespaces for each team
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/namespace.yaml
     ```
+    ![namespace](images/namespace.PNG)
 
-2. Deploy backend microservice application for each team
-    Deploy Frontend-developers team application
+2. Deploy microservice application for each team
+    
+    Deploy app for Frontend-developers team
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-app.yaml -n frontend-developers
     ```
+    ![fronetend-developers-app](images/fronetend-developers-app.PNG)
 
-    Deploy Mobile-developers team application
+    Deploy app for Mobile-developers team
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-app.yaml -n mobile-developers
     ```
+    ![mobile-developers-app](images/mobile-developers-app.PNG)
 
 3. Deploy RBAC for each team to restrict k8s resource permissions within namespaces 
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-rbac.yaml -n frontend-developers
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-rbac.yaml -n mobile-developers
     ```
+    ![rbac](images/rbac.PNG)
 
 4. Deploy Citrix ADC CPX to Load Balance N-S traffic for individual teams
+    
     Deploy Citrix ADC CPX for Frontend-developers team
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-cpx.yaml -n frontend-developers
     ```
+    ![frontend-developers-cpx](images/frontend-developers-cpx.PNG)
 
     Deploy Citrix ADC CPX for Mobile-developers team
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-cpx.yaml -n mobile-developers
     ```
+    ![mobile-developers-cpx](images/mobile-developers-cpx.PNG)
 
 5. Deploy Citrix Ingress Controller for each team to configure Tier 1 ADC
+    
     Deploy Citrix Ingress Controller for Frontend-developers team
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-cic.yaml
     ```
-    Edit 'NS_IP' variable from 'frontend-developers-cic.yaml' file with Tier 1 ADC NSIP. Also Provide Tier 1 NSIP login credentials correctly in 'NS_USER' and 'NS_PASSWORD'.
-
+    Edit 'NS_IP' variable from 'frontend-developers-cic.yaml' file with Tier 1 ADC NSIP.
+    Change username 'NS_USER' and password 'NS_PASSWORD' as per user credentials used for Tier 1 ADC .
     ```
     kubectl create -f frontend-developers-cic.yaml -n frontend-developers
     ```
+    ![frontend-developers-cic](images/frontend-developers-cic.PNG)
 
     Deploy Citrix Ingress Controller for Mobile-developers team
     ```
@@ -94,6 +104,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     ```
     kubectl create -f mobile-developers-cic.yaml -n mobile-developers
     ```
+    ![mobile-developers-cic](images/mobile-developers-cic.PNG)
 
 6. Deploy K8s Ingress rule to send N-S traffic from Tier 1 ADC to Tier 2 ADC
 
@@ -106,6 +117,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     ```
     kubectl create -f frontend-developers-ingress.yaml -n frontend-developers
     ```
+    ![frontend-developers-ingress](images/frontend-developers-ingress.PNG)
 
     Deploy Citrix Ingress Controller for Mobile-developers team
     ```
@@ -115,23 +127,46 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     ```
     kubectl create -f mobile-developers-ingress.yaml -n mobile-developers
     ```
+    ![mobile-developers-ingress](images/mobile-developers-ingress.PNG)
 
     Deploy k8s secret for each team to configure TLS certificate in Tier 1 ADC
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-secret.yaml -n frontend-developers
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-secret.yaml -n mobile-developers
     ```
+    ![secret](images/secret.PNG)
+
+7. Validate the microservice deployment for both teams
+
+    Ensure that all pods are running for Frontend developers team
+    ![frontend-developers-pod](images/frontend-developers-pod.PNG)
+
+    Ensure that all pods are running for Mobiles developers team
+    ![mobile-developers-pod](images/mobile-developers-pod.PNG)
+
+    Also, you can verify from the k8s logs that, CIC and CPX are listening to k8s event within deployed namespace. It verifies that one team deployment has no visibility into other team deployment.
+    ```
+    kubectl logs -f cic-vpx -n frontend-developers
+    ```
+    OR
+    ```
+    kubectl logs -f <cpx pod name> -c cic -n frontend-developers
+    ```
+
 7. Yeah!!! Your application is successfully deployed and ready to access from Internet
     Add the DNS entries in your local machine host files for accessing microservices though Internet
     Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
+    
     Add below entries in hosts file and save the file
-
     ```
     <frontend-ip from frontend-developers-ingress.yaml> frontend.agiledevelopers.com
     <frontend-ip from mobile-developers-ingress.yaml> mobile.agiledevelopers.com
     ```
-
     Lets access microservice app from local machine browser
-    e.g. ``https://frontend.agiledevelopers.com``
-         ``https://mobile.agiledevelopers.com``
+
+    ``https://frontend.agiledevelopers.com
+      https://mobile.agiledevelopers.com ``
+
+Please refer to Citrix ingress controller for more information, present at- https://github.com/citrix/citrix-k8s-ingress-controller
+
            
