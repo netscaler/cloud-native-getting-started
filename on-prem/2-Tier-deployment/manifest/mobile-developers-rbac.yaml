@@ -1,0 +1,48 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cic-k8s-role
+  namespace: mobile-developers
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints", "ingresses", "pods", "secrets", "nodes", "routes", "namespaces"]
+    verbs: ["get", "list", "watch"]
+  # services/status is needed to update the loadbalancer IP in service status for integrating
+  # service of type LoadBalancer with external-dns
+  - apiGroups: [""]
+    resources: ["services/status"]
+    verbs: ["patch"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: ["extensions"]
+    resources: ["ingresses", "ingresses/status"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cic-k8s-rolebinding
+  namespace: mobile-developers
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cic-k8s-role
+subjects:
+- kind: ServiceAccount
+  name: mobile-cpx
+  namespace: mobile-developers
+apiVersion: rbac.authorization.k8s.io/v1
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mobile-cpx
+  namespace: mobile-developers 
+---
