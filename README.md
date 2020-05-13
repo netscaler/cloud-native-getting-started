@@ -17,6 +17,9 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
 * [Citrix CNN Beginners Guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide)
 * Citrix CNN Advanced Guides
   * [GCP (Google Cloud Platform)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/gcp)
-  * [On-Prem (using VMs on Xenserver)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
+  * On-Prem (using VMs on Xenserver)
+    * [Unified Ingress topology](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress)
+    * [2-Tier Ingress topology](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/2-Tier-deployment)
+    * [Service mesh Lite topology](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
   * [OpenShift (using Red Hat Enterprise Linux VMs)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
 
