@@ -6,7 +6,7 @@ metadata:
    kubernetes.io/ingress.class: "vpx-frontend"
    ingress.citrix.com/insecure-termination: "disallow"
    ingress.citrix.com/frontend-ip: "10.105.158.196"
-#   ingress.citrix.com/secure_backend: '{"lb-service-frontend": "True"}'
+   ingress.citrix.com/secure_backend: '{"lb-service-frontend": "True"}'
 spec:
   tls:
   - secretName: frontend-secret
