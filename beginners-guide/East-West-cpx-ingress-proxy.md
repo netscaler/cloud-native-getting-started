@@ -91,6 +91,4 @@ Perform the following:
             
             kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/hotdrink-ingress.yaml
 
-For more information on the Citrix ingress controller, see [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller)
-
-For more tutorials, see [beginners-guides](https://github.com\/citrix/cloud-native-getting-started/tree/master/beginners-guide).
+For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).
