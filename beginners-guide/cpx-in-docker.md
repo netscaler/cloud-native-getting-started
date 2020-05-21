@@ -43,7 +43,6 @@ docker stop bbd6a95246a1
 docker rm bbd6a95246a1
 ```
 
-To know more about Citrix ADC CPX instance in docker,[ refer here](https://docs.citrix.com/en-us/citrix-adc-cpx/12/deploy-using-docker-image-file.html)
+For more information on Citrix ADC CPX instance in docker,see the [ deploy CPX using docker image](https://docs.citrix.com/en-us/citrix-adc-cpx/12/deploy-using-docker-image-file.html) documentation.
 
-For next tutorial, visit [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide)
-
+For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).
