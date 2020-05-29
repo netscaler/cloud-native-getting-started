@@ -21,5 +21,7 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
     * [Unified Ingress topology](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress)
     * [2-Tier Ingress topology](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/2-Tier-deployment)
     * [Service mesh Lite topology](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
-  * [OpenShift (using Red Hat Enterprise Linux VMs)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
+  * OpenShift (Red Hat Enterprise Linux VMs on xenserver)
+    * [Service mesh lite using Ingress rules](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
+    * [Unified Ingress using OpenShift routes and route sharding](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift/openshift-routes)
 
