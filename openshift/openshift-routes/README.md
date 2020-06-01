@@ -132,13 +132,13 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/route-reencrypt-hoddrink.yaml -n beverages
     ```
 
-    ii. Deploy edge termination route for colddrink beverage application
+    ii. Deploy edge termination route for guestbook application
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/edge_route_colddrink.yaml -n beverages
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/edge_route_guestbook.yaml -n beverages
     ```
-    iii. Deploy passthrough termination route for guestbook beverage application
+    iii. Deploy passthrough termination route for colddrink beverage application
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/route_passthrough_guestbook.yaml -n beverages
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/route_passthrough_colddrink.yaml -n beverages
     ```
     ![routes](images/routes.PNG)
 
