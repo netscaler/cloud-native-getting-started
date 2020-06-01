@@ -84,12 +84,12 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/team_hotdrink.yaml -n beverages
     ```
     
-    iii. Deploy hotdrink beverage microservice application
+    iii. Deploy colddrink beverage microservice application
     ```
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/team_colddrink.yaml -n beverages
     ```
     
-    iv. Deploy hotdrink beverage microservice application
+    iv. Deploy guestbook microservice application
     ```    
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/team_guestbook.yaml -n beverages
     ```
