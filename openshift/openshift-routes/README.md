@@ -159,7 +159,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     ```
     Lets access microservice app from local machine browser
 
-    ``https://hotdrink.beverages.com //enables end to end TLS communication as configured in route-reencrypt-hoddrink.yaml route
-      https://colddrink.beverages.com `` //enables frontend TLS communication as configured in edge_route_colddrink.yaml route 
+    ``https://hotdrink.beverages.com //enables end to end TLS communication as configured in route-reencrypt-hoddrink.yaml route  
+      https://colddrink.beverages.com //enables frontend TLS communication as configured in edge_route_colddrink.yaml route ``
 
 For more details on routes support for CPX, please refer to [OpenShift routes support documentation](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/deployment/openshift)
