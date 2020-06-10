@@ -1,15 +1,17 @@
 # Learn how to deploy Citrix ADC & microservices on Kubernetes on-prem cluster (Tier 1 ADC as Citrix ADC VPX, Tier 2 ADC as Citrix ADC CPX)
 
-This guide covers the below deployments
+In this guide you will learn:
+* What is service mesh lite deployment?
+* How to deploy microservice applications listening on different protocols
+* How to deploy a CPX in K8s cluster exposed as LoadBalancer, NodePort and Ingress type services.
+* How does a Citrix ADC CPX Load Balancer microservice applications.
+  * How does CPX Load balance North-South traffic received from Tier 1 ADC
+  * How does CPX Load balance East-West traffic without sidecar proxy deployment
+* How to isolate microservice application workload (microservice apps, CPX, CIC) using K8s namespace.
+* How to configure Citrix ADC VPX (Tier 1 ADC) using Citrix Ingress Controller to load balance north-South ingress traffic for each team
 
-| Section | Description |
-| ------- | ----------- |
-| [Section A] | Kubernetes NodePort type service solution to Deploy microservices |
-| [Section B] | Kubernetes Ingress solution to Deploy microservices |
-| [Section C] | Kubernetes LoadBalancer type service solution to Deploy microservices |
 
-Step by step demo
------------------
+## Pre-requisite before you start microservice deployment
 
 Citrix ADC works in the two-tier architecture deployment solution to load balance the enterprise grade applications deployed in microservices and access those through internet. Tier 1 can have traditional load balancers such as VPX/SDX/MPX, or CPX (containerized Citrix ADC) to manage high scale north-south traffic. Tier 2 has CPX deployment for managing microservices and load balances the north-south & east-west traffic.
 
