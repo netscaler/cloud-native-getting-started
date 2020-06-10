@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-colddrinks
+  labels:
+      name: frontend-colddrinks
+spec:
+  selector:
+    matchLabels:
+      app: frontend-colddrinks
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: frontend-colddrinks
+    spec:
+      containers:
+      - name: frontend-colddrinks
+        image: "quay.io/sample-apps/colddrinks:v1"
+        ports:
+        - name: colddrinks-80
+          containerPort: 80
+        - name: colddrinks-443
+          containerPort: 443
+#        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-colddrinks
+spec:
+  clusterIP: None
+  ports:
+  - name: colddrinks-80
+    port: 80
+    targetPort: 80
+  - name: colddrinks-443
+    port: 443
+    targetPort: 443
+  selector:
+    app: frontend-colddrinks
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: colddrinks-ingress
+  annotations:
+   kubernetes.io/ingress.class: "colddrink"
+   ingress.citrix.com/secure-service-type: "ssl_tcp"
+   ingress.citrix.com/secure_backend: '{"frontend-colddrinks": "True"}'
+spec:
+  tls:
+  - secretName: "colddrink-secret"
+  backend:
+    serviceName: frontend-colddrinks
+    servicePort: 443
+

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cic-vpx
+  labels:
+    app: cic-vpx
+spec: 
+      serviceAccountName: cpx
+      containers:
+      - name: cic-vpx
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+        env:
+         # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
+         - name: "NS_IP"
+           value: "x.x.x.x"
+         # Set username for Nitro
+         # Set log level
+         - name: "NS_ENABLE_MONITORING"
+           value: "YES"
+         - name: "NS_USER"
+           value: "abc"
+         - name: "NS_PASSWORD"
+           value: "abc"
+         - name: "EULA"
+           value: "yes"
+         - name: "LOGLEVEL"
+           value: "INFO"
+        args:
+          - --ingress-classes
+            vpx
+          - --feature-node-watch
+            true
+        imagePullPolicy: IfNotPresent
