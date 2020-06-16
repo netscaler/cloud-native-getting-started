@@ -48,14 +48,20 @@ Lets start deploying each microservices one by one (you can opt for deploying on
 
 ### Section A (Deploy colddrink beverage microservice application exposed as Load Balancer type service)
 
-1.  Deploy the colddrink beverage microservice application (LoadBalancer type service)
+1.	Lets authorize access to K8s resources and user by applying RBAC yaml
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/rbac.yaml 
+    ```
+    ![rbac](images/rbac.PNG)
+
+2.  Deploy the colddrink beverage microservice application (LoadBalancer type service)
     ```
     kubectl create namespace tier-2-adc
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink.yaml -n tier-2-adc
     ```
     ![colddrink-app](images/colddrink-app.PNG)
 
-2. Deploy IPAM CRD and IPAM to allocate IP address to access colddrink beverage microservice
+3. Deploy IPAM CRD and IPAM to allocate IP address to access colddrink beverage microservice
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/ipam-crd.yaml
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/ipam.yaml
@@ -70,31 +76,9 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     ```
      ![ipam](images/ipam.PNG)
 
-3. Access colddrink beverage microservice
-    ```
-    kubectl get svc -n tier-2-adc -o wide
-    ```
-    ![colddrink-svc](images/colddrink-svc.PNG)
-    Access to application from local browser using URL - http://< External-IP >:NodePort (e.g. http://10.105.158.196:31554)
+4. Deploy Citrix Ingress Controller to configure Tier 1 ADC
 
-### Section B (Deploy hotdrink beverage microservice application exposed as Ingress Type service)
-
-
-1.	Lets authorize access to K8s resources and user by applying RBAC yaml
-    ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/rbac.yaml 
-    ```
-    ![rbac](images/rbac.PNG)
-
-2.	Deploy hotdrink beverage microservice application (Ingress type service)
-
-    Deploy hotdrink microservice
-    ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink.yaml -n tier-2-adc
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-secret.yaml -n tier-2-adc
-    ```
-    ![hotdrink-app](images/hotdrink-app.PNG)
-    Deploy Citrix Ingress Controller to configure Tier 1 ADC (I have used VPX as my Tier 1 ADC, you can refer to https://github.com/citrix/cloud-native-getting-started/tree/master/VPX for setting up VPX in XenServer)
+    To configure Tier 1 ADC (I have used VPX as my Tier 1 ADC, you can refer to https://github.com/citrix/cloud-native-getting-started/tree/master/VPX for setting up VPX in XenServer)
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/tier-1-cic.yaml
     ```
@@ -104,7 +88,27 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     kubectl create -f tier-1-cic.yaml -n tier-2-adc
     ```
     ![cic](images/cic.PNG)
-    Deploy Ingress rule to send traffic to hotdrink beverages microservices
+
+4. Access colddrink beverage microservice
+    ```
+    kubectl get svc -n tier-2-adc -o wide
+    ```
+    ![colddrink-svc](images/colddrink-svc.PNG)
+    
+    You can even access colddrink application from local browser using URL - ``http://< External-IP for colddrink app >`` (e.g. http://10.105.158.196)
+
+### Section B (Deploy hotdrink beverage microservice application exposed as Ingress Type service)
+
+1.	Deploy hotdrink beverage microservice application (Ingress type service)
+
+    Deploy hotdrink microservice
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink.yaml -n tier-2-adc
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-secret.yaml -n tier-2-adc
+    ```
+    ![hotdrink-app](images/hotdrink-app.PNG)
+    
+2.  Deploy Ingress rule to send traffic to hotdrink beverages microservices
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/tier-1-ingress.yaml
     ```
