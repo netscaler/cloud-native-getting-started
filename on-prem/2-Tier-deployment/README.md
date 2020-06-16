@@ -70,6 +70,11 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
 
 4. Deploy Citrix ADC CPX to Load Balance N-S traffic for individual teams
     
+    You can directly pass the user name and password as environment variables to the Citrix ingress controller or use K8s secrets (recommended). If you want to use K8s secrets, create a secret for the user name and password using the following command:
+    ```
+    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n frontend-developers
+    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n mobile-developers
+    ```
     Deploy Citrix ADC CPX for Frontend-developers team
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-cpx.yaml -n frontend-developers
@@ -165,8 +170,22 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     ```
     Lets access microservice app from local machine browser
 
-    ``https://frontend.agiledevelopers.com
-      https://mobile.agiledevelopers.com ``
+    ```
+    https://frontend.agiledevelopers.com
+    https://mobile.agiledevelopers.com
+    ```
+## Clean up the deployment
+    ```
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-app.yaml -n frontend-developers
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-app.yaml -n mobile-developers
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-rbac.yaml -n frontend-developers
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-rbac.yaml -n mobile-developers
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-cpx.yaml -n frontend-developers
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-cpx.yaml -n mobile-developers
+    kubectl delete -f frontend-developers-cic.yaml -n frontend-developers
+    kubectl delete -f mobile-developers-cic.yaml -n mobile-developers
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/namespace.yaml
+    ```
 
 Please refer to Citrix ingress controller for more information, present at- https://github.com/citrix/citrix-k8s-ingress-controller
 

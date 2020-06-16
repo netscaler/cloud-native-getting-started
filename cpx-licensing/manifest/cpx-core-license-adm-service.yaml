@@ -90,7 +90,7 @@ spec:
           - name: "LS_IP"
             value: "10.105.158.166"
           - name: "LS_PORT"
-            value: "38000"
+            value: "27000"
           - name: "PLATFORM"
             value: "CP1000"
           - name: "CPX_CORES"
