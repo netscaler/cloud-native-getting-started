@@ -41,7 +41,7 @@ In this deployment guide, we will show you how to provision bandwidth and vCPU l
           - name: "LS_IP"
             value: "10.105.158.166" //ADM agent IP as mentioned in step 1
           - name: "LS_PORT"
-            value: "38000"          // port on which ADM license server listen
+            value: "27000"          // port on which ADM license server listen
           - name: "BANDWIDTH"
             value: "3000"           //capacity in Mbps wants to allocate to CPX
     ```
@@ -85,7 +85,7 @@ In this deployment guide, we will show you how to provision bandwidth and vCPU l
           - name: "LS_IP"
             value: "10.102.216.173" //ADM agent IP as mentioned in step 1
           - name: "LS_PORT"
-            value: "38000"          // port on which ADM license server listen
+            value: "27000"          // port on which ADM license server listen
           - name: "PLATFORM"
             value: "CORES"         // used for specifying type of pool licensing
           - name: "CPX_CORES"
@@ -206,4 +206,14 @@ In this deployment guide, we will show you how to provision bandwidth and CP1000
     ```
     You can also track the allocated vCPU capacity from ADM onprem portal.
 
+## Clean up the deployment
+
+```
+kubectl delete -f cpx-bandwidth-license-adm-service.yaml -n bandwidth
+kubectl delete -f cpx-core-license-adm-service.yaml -n core
+kubectl delete -f cpx-bandwidth-license-adm-onprem.yaml -n bandwidth
+kubectl delete -f cpx-core-license-adm-onprem.yaml -n core
+kubectl delete namespace bandwidth
+kubectl delete namespace core
+```
 

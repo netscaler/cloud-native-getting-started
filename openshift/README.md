@@ -188,6 +188,14 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
 
 ---
 
+## Clean up the deployment
+```
+oc delete -f rbac.yaml
+oc delete -f namespace.yaml
+oc delete -f crd_rewrite_responder.yaml
+```
+
+
 ### Packet Flow Diagrams
 --------------------
 

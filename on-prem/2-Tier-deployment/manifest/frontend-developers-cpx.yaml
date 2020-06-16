@@ -17,7 +17,7 @@ spec:
       serviceAccountName:  frontenddeveloper-cpx
       containers:
         - name: cpx-ingress
-          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103"
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
           securityContext:
              privileged: true
           env:
@@ -32,7 +32,7 @@ spec:
           imagePullPolicy: Always
         # Add cic as a sidecar
         - name: cic
-          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.7.6"
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
           env:
           - name: "EULA"
             value: "yes"
@@ -49,6 +49,16 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
+		  - name: "NS_USER"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: username
+          - name: "NS_PASSWORD"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: password
           - name: POD_NAME
             valueFrom:
               fieldRef:
