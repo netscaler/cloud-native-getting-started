@@ -44,6 +44,16 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
+		  - name: "NS_USER"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: username
+          - name: "NS_PASSWORD"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: password
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -130,6 +140,16 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
+		  - name: "NS_USER"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: username
+          - name: "NS_PASSWORD"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: password
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -215,6 +235,16 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
+		  - name: "NS_USER"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: username
+          - name: "NS_PASSWORD"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: password
           - name: POD_NAME
             valueFrom:
               fieldRef:

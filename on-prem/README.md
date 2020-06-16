@@ -36,12 +36,15 @@ kubectl get nodes
  
  (Screenshot above has Kubernetes cluster with one master and two worker node).
 
-2.	Set up a Kubernetes dashboard for deploying containerized applications.
+2.	[Optional] Set up a Kubernetes dashboard for deploying containerized applications.
 Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/ and follow the steps mentioned to bring the Kubernetes dashboard up as shown below.
 
 ![k8sdashboard](https://user-images.githubusercontent.com/42699135/50677396-99179180-101f-11e9-95a4-1d9aa1b9051b.png)
 
 3. Make sure that route configuration is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
+    
+    If you have K8s cluster and Tier 1 Citrix ADC in same subnet then you do not have to do anything, below example will take care of route info.
+    You need Citrix Node Controller configuration only when K8s cluster and Tier 1 ADC are in different subnet. Please refer to https://github.com/citrix/citrix-k8s-node-controller for Network configuration.
 
 
 **Note: Proceed with Microservice deployment either with NodePort, Ingress solution or LoadBalancer Type service.**
