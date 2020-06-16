@@ -26,7 +26,7 @@ spec:
          - name: "NS_APPS_NAME_PREFIX"
            value: "k8s150"
          - name: "LOGLEVEL"
-           value: "DEBUG"
+           value: "INFO"
         args:
           - --ingress-classes
             vpx
