@@ -29,7 +29,7 @@ spec:
           - --ingress-classes
             vpx
           - --feature-node-watch
-            false
+            true
           - --ipam
             citrix-ipam-controller
         imagePullPolicy: IfNotPresent

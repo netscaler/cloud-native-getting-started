@@ -29,7 +29,7 @@ In the Kubernetes cluster, pod gets deployed across worker nodes. Below screensh
     ``` 
     kubectl get nodes
     ```
-    ![getnodes](https://user-images.githubusercontent.com/42699135/50677393-987efb00-101f-11e9-8580-4d27746bb96a.png)
+    ![nodes](images/nodes.PNG)
  
     (Screenshot above has Kubernetes cluster with one master and two worker node).
 
@@ -50,9 +50,9 @@ Please select type of deployment (NodePort, Ingress solution or LoadBalancer Typ
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/blob/master/on-prem/README.md#section-a-deploy-microservices-using-kubernetes-nodeport-solution) | Expose CPX as NodePort type service |
-| [Section B](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/blob/master/on-prem/README.md#section-b-deploy-microservices-using-kubernetes-ingress-solution) | Expose CPX as Ingress type service |
-| [Section C](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/blob/master/on-prem/README.md#section-c-deploy-microservices-using-kubernetes-service-type-loadbalancer-solution) | Expose CPX as LoadBalancer type service |
+| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite#section-a-expose-cpx-as-nodeport-type-service) | Expose CPX as NodePort type service |
+| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite#section-b-expose-cpx-as-ingress-type-service) | Expose CPX as Ingress type service |
+| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite#section-c-expose-cpx-as-loadbalancer-type-service) | Expose CPX as LoadBalancer type service |
 
 
 ## Section A (Expose CPX as NodePort type service)
@@ -67,31 +67,41 @@ We deployed three CPXs to manage each application workload independently. Also w
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/namespace.yaml
     ```
+    ![namespace](images/namespace.PNG)
 
 2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
+    You can directly pass the user name and password as environment variables to the Citrix ingress controller or use K8s secrets (recommended). If you want to use K8s secrets, create a secret for the user name and password using the following command:
+    ```
+    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n tier-2-adc
+    ```
+    Lets deploy CPX now,
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/cpx.yaml -n tier-2-adc
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/hotdrink-secret.yaml -n tier-2-adc
     ```
+    ![nodeport-cpx](images/nodeport-cpx.PNG)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/team_hotdrink.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/hotdrink-secret.yaml -n team-hotdrink
     ```
+    ![nodeport-hotdrink](images/nodeport-hotdrink.PNG)
 
 4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/team_colddrink.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/colddrink-secret.yaml -n team-colddrink
     ```
+    ![nodeport-colddrink](images/nodeport-colddrink.PNG)
 
 5.	Deploy the guestbook no SQL type microservice application in team-guestbook namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/team_guestbook.yaml -n team-guestbook
     ```
+    ![nodeport-guestbook](images/nodeport-guestbook.PNG)
 
 6.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC
     
@@ -103,6 +113,7 @@ We deployed three CPXs to manage each application workload independently. Also w
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/ingress_vpx.yaml
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/cic_vpx.yaml
     ```
+    ![nodeport-cic](images/nodeport-cic.PNG)
     Update  ingress_vpx.yaml and cic_vpx.yaml with following configuration
 
     Go to ``ingress_vpx.yaml`` and change the IP address of ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver for accessing microservices.
@@ -116,6 +127,7 @@ We deployed three CPXs to manage each application workload independently. Also w
     kubectl create -f ingress_vpx.yaml -n tier-2-adc
     kubectl create -f cic_vpx.yaml -n tier-2-adc
     ```
+    ![nodeport-cic-config](images/nodeport-cic-config.PNG)
 
 8.	Yeah!!! Your application is successfully deployed and ready to access from Internet
 
@@ -151,31 +163,41 @@ We deployed three CPXs to manage each application workload independently. Also w
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/namespace.yaml
     ```
+    ![namespace](images/namespace.PNG)
 
 2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
+    You can directly pass the user name and password as environment variables to the Citrix ingress controller or use K8s secrets (recommended). If you want to use K8s secrets, create a secret for the user name and password using the following command:
+    ```
+    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n tier-2-adc
+    ```
+    Lets deploy CPX now,
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cpx.yaml -n tier-2-adc
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n tier-2-adc
     ```
+    ![ingress-cpx](images/ingress-cpx.PNG)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_hotdrink.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n team-hotdrink
     ```
+    ![ingress-hotdrink](images/ingress-hotdrink.PNG)
 
 4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_colddrink.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/colddrink-secret.yaml -n team-colddrink
     ```
+    ![ingress-colddrink](images/ingress-colddrink.PNG)
 
 5.	Deploy the guestbook no SQL type microservice application in team-guestbook namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_guestbook.yaml -n team-guestbook
     ```
+    ![ingress-guestbook](images/ingress-guestbook.PNG)
 
 6.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC
     
@@ -186,6 +208,8 @@ We deployed three CPXs to manage each application workload independently. Also w
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/ingress_vpx.yaml
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cic_vpx.yaml
     ```
+    ![ingress-cic](images/ingress-cic.PNG)
+
     Update  ingress_vpx.yaml and cic_vpx.yaml with following configuration
 
     Go to ``ingress_vpx.yaml`` and change the IP address of ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver for accessing microservices.
@@ -199,6 +223,7 @@ We deployed three CPXs to manage each application workload independently. Also w
     kubectl create -f ingress_vpx.yaml -n tier-2-adc
     kubectl create -f cic_vpx.yaml -n tier-2-adc
     ```
+    ![ingress-cic-config](images/ingress-cic-config.PNG)
 
 8.	Yeah!!! Your application is successfully deployed and ready to access from Internet
 
@@ -236,44 +261,56 @@ We deployed three CPXs to manage each application workload independently. Also w
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/namespace.yaml
     ```
+    ![namespace](images/namespace.PNG)
 
 2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
+    You can directly pass the user name and password as environment variables to the Citrix ingress controller or use K8s secrets (recommended). If you want to use K8s secrets, create a secret for the user name and password using the following command:
+    ```
+    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n tier-2-adc
+    ```
+    Lets deploy CPX now,
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/cpx.yaml -n tier-2-adc
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/hotdrink-secret.yaml -n tier-2-adc
     ```
+    ![lb-cpx](images/lb-cpx.PNG)
 
 3.	Deploy the IPAM CRD and IPAM controller for auto assigning the IP addresses to Kubernetes services
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/vip.yaml
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/ipam_deploy.yaml
     ```
+    ![lb-ipam](images/lb-ipam.PNG)
     Update ``ipam_deploy.yaml`` file, Change the IP range to your free VIP IP range for allocating IP from pool to access colddrink microservice
     
     e.g.        name: "VIP_RANGE"
                 value: '["10.221.36.189", "10.221.36.189-192", "10.221.36.180/32"]'
     ```
-    kubectl create -f ipam.yaml
+    kubectl create -f ipam_deploy.yaml
     ```
+    ![lb-ipam-deploy](images/lb-ipam-deploy.PNG)
 
 4.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/team_hotdrink.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/hotdrink-secret.yaml -n team-hotdrink
     ```
+    ![lb-hotdrink](images/lb-hotdrink.PNG)
 
 5.	Deploy the colddrink beverage microservice application in team-colddrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/team_colddrink.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/colddrink-secret.yaml -n team-colddrink
     ```
+    ![lb-colddrink](images/lb-colddrink.PNG)
 
 6.	Deploy the guestbook no SQL type microservice application in team-guestbook namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/team_guestbook.yaml -n team-guestbook
     ```
+    ![lb-guestbook](images/lb-guestbook.PNG)
 
 7.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC
 
@@ -291,6 +328,7 @@ We deployed three CPXs to manage each application workload independently. Also w
     ```
     kubectl create -f cic_vpx.yaml -n tier-2-adc
     ```
+    ![lb-cic](images/lb-cic.PNG)
 
 9.	Yeah!!! Your application is successfully deployed and ready to access from Internet
 
