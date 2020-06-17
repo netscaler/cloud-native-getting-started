@@ -44,7 +44,7 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-		  - name: "NS_USER"
+          - name: "NS_USER"
             valueFrom:
              secretKeyRef:
               name: nslogin
@@ -140,7 +140,7 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-		  - name: "NS_USER"
+          - name: "NS_USER"
             valueFrom:
              secretKeyRef:
               name: nslogin
@@ -234,7 +234,7 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-		  - name: "NS_USER"
+          - name: "NS_USER"
             valueFrom:
              secretKeyRef:
               name: nslogin
