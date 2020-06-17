@@ -151,7 +151,7 @@ We deployed three CPXs to manage each application workload independently. Also w
 
 
 ## Section B (Expose CPX as Ingress type service)
-Lets understand the Service Mesh lite topology where CPX is exposed as NodePort type service.
+Lets understand the Service Mesh lite topology where CPX is exposed as Ingress type service.
 
 ![SML-ingress](images/SML-ingress.PNG)
 
@@ -248,7 +248,7 @@ We deployed three CPXs to manage each application workload independently. Also w
 
 ## Section C (Expose CPX as LoadBalancer type service)
 
-Lets understand the Service Mesh lite topology where CPX is exposed as NodePort type service.
+Lets understand the Service Mesh lite topology where CPX is exposed as LoadBalancer type service.
 
 ![SML-LB](images/SML-LB.PNG)
 
