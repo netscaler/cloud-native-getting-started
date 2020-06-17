@@ -82,10 +82,6 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
-    protocol: TCP
-    name: http
-    targetPort: 80
   - port: 443
     protocol: TCP
     name: https
