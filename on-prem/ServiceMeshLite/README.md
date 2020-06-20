@@ -360,9 +360,10 @@ We deployed three CPXs to manage each application workload independently. Also w
     Update exporter container pod arguments:
 
     e.g. 
-    - "--target-nsip=<CPX hotdrink POD IP>:9080"
-    - "--target-nsip=<CPX colddrink POD IP>:9080"
-    - "--target-nsip=<CPX guestbook POD IP>:9080"
+    - "--target-nsip=< CPX hotdrink POD IP >:9080"
+    - "--target-nsip=< CPX colddrink POD IP >:9080"
+    - "--target-nsip=< CPX guestbook POD IP >:9080"
+    
     You can get the CPX pod IP using ``kubectl get pods -n tier-2-adc -o wide``
 
     ```
@@ -394,37 +395,58 @@ We deployed three CPXs to manage each application workload independently. Also w
     ![grafana_stats](https://user-images.githubusercontent.com/42699135/50677391-97e66480-101f-11e9-8d42-87c4a2504a96.png)
   
 
-## Configure Rewrite and Responder policies in Tier 1 ADC using Kubernetes CRD deployment
+## Configure Rewrite and Responder policies in Citrix ADC using Kubernetes CRD deployment
 
 Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) using the custom resource definition (CRD).
 
-**Note**: You can able to deploy CRD only if you have exposed CPX as Ingress or Nodeport service.
+**Note**: Rewrite responder CRD works with Ingress or Nodeport type service. You will find two sections below for configuring rewrite responder policy at Tier 1 and Tier 2 ADC. If you have deployed Section C (Expose CPX as LoadBalancer type service) then refer to ###### Deploy Rewrite and Responder policies in Tier 2 ADC - CPX section
+
+###### Deploy Rewrite and Responder policies in Tier 1 ADC
+This section is applicable to Section A (Expose CPX as NodePort type service) or Section B (Expose CPX as Ingress type service) deployment only.
 
 1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
 
    ```
-   kubectl create -f crd_rewrite_responder.yaml
+   kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/crd_rewrite_responder.yaml
    ```
 
-1. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
+2. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
 
    ```
-   kubectl create -f responderpolicy_hotdrink.yaml -n tier-2-adc
+   kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/responderpolicy_hotdrink.yaml -n tier-2-adc
    ```
 
    After you deploy the Responder policy, access the coffee page on `https://hotdrink.beverages.com/coffee.php`. Then you receive the following message.
    
    ![cpx-ingress-image16a](https://user-images.githubusercontent.com/48945413/55129538-7f2cad00-513d-11e9-9191-72a385fad377.png)
 
-1. **Header insertion** Configure the Rewrite policy on `https://colddrink.beverages.com` to insert the session ID in the header.
+3. **Header insertion** Configure the Rewrite policy on `https://colddrink.beverages.com` to insert the session ID in the header.
 
    ```
-   kubectl create -f rewritepolicy_colddrink.yaml -n tier-2-adc
+   kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/rewritepolicy_colddrink.yaml -n tier-2-adc
    ```
 
    After you deploy the Rewrite policy, access `colddrink.beverages.com` with developer mode enabled on the browser. In Chrome, press F12 and preserve the log in network category to see the session ID, which is inserted by the Rewrite policy on tier-1-adc (VPX).
 
    ![cpx-ingress-image16b](https://user-images.githubusercontent.com/48945413/55129567-9075b980-513d-11e9-9926-d1207d7d1e16.png)
+
+###### Deploy Rewrite and Responder policies in Tier 2 ADC - CPX
+This section is applicable to Section A (Expose CPX as NodePort type service), Section B (Expose CPX as Ingress type service) or  Section C (Expose CPX as LoadBalancer type service).
+
+1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
+
+   ```
+   kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/crd_rewrite_responder.yaml
+   ```
+
+2. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
+
+   ```
+   kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/responderpolicy_hotdrink.yaml -n team-hotdrink
+   ```
+
+    ![lb-responder](images/lb-responder.PNG)
+
 
 ## Clean up the deployment
 
