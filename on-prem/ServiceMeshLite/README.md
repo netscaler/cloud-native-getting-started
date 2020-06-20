@@ -399,7 +399,7 @@ We deployed three CPXs to manage each application workload independently. Also w
 
 Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) using the custom resource definition (CRD).
 
-**Note**: Rewrite responder CRD works with Ingress or Nodeport type service. You will find two sections below for configuring rewrite responder policy at Tier 1 and Tier 2 ADC. If you have deployed Section C (Expose CPX as LoadBalancer type service) then refer to ###### Deploy Rewrite and Responder policies in Tier 2 ADC - CPX section
+**Note**: Rewrite responder CRD works with Ingress or Nodeport type service. You will find two sections below for configuring rewrite responder policy at Tier 1 and Tier 2 ADC. If you have deployed Section C (Expose CPX as LoadBalancer type service) then refer to [Deploy Rewrite and Responder policies in Tier 2 ADC](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite#deploy-rewrite-and-responder-policies-in-tier-2-adc---cpx)
 
 ###### Deploy Rewrite and Responder policies in Tier 1 ADC
 This section is applicable to Section A (Expose CPX as NodePort type service) or Section B (Expose CPX as Ingress type service) deployment only.
