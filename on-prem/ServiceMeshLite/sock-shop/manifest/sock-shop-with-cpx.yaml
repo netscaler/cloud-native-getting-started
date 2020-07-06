@@ -1159,7 +1159,7 @@ spec:
           name: nitro-http
         - containerPort: 9443
           name: nitro-https
-        image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+        image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30"
         name: cpx
         imagePullPolicy: IfNotPresent
         readinessProbe:
@@ -1175,15 +1175,15 @@ spec:
         - value: 'yes'
           name: EULA
         - name: "NS_MGMT_SERVER"
-          value: "10.105.158.166"
+          value: "10.105.158.144"
         - name: "NS_MGMT_FINGER_PRINT"
-          value: "03:B4:61:76:1D:EE:1A:6C:D5:69:1C:44:9C:4B:0A:82:37:A8:28:08"
+          value: "04:01:68:89:03:53:19:96:E9:CF:8F:61:EC:C2:B4:D4:C2:2B:FB:07"
         - name: "NS_HTTP_PORT"
           value: "9080"
         - name: "NS_HTTPS_PORT"
           value: "9443"
         - name: "LOGSTREAM_COLLECTOR_IP"
-          value: "10.105.158.166"
+          value: "10.105.158.144"
         - value: ''
           name: KUBERNETES_TASK_ID
       - env:
@@ -1198,12 +1198,22 @@ spec:
         - value: SIDECAR
           name: NS_DEPLOYMENT_MODE
         - name: "NS_LOGPROXY"
-          value: "10.105.158.166"
+          value: "10.105.158.144"
         - name: "NS_DISTRIBUTED_TRACING"
           value: "yes"
+        - name: "NS_USER"
+          valueFrom:
+           secretKeyRef:
+            name: nslogin
+            key: username
+        - name: "NS_PASSWORD"
+          valueFrom:
+           secretKeyRef:
+            name: nslogin
+            key: password
         - value: 'YES'
           name: NS_ENABLE_MONITORING
-        image: quay.io/citrix/citrix-k8s-ingress-controller:1.7.6
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
         args:
         - --ingress-classes tier-2-cpx1
         name: cic
@@ -1222,15 +1232,15 @@ spec:
   - name: port-80
     targetPort: 80
     port: 80
-  - name: port-443
-    targetPort: 443
-    port: 443
   - name: port-9080
     targetPort: 9080
     port: 9080
   - name: port-9443
     targetPort: 9443
     port: 9443
+  - name: port-443
+    targetPort: 443
+    port: 443
   type: LoadBalancer
   selector:
     app: cpx-ingress1
@@ -1257,7 +1267,7 @@ spec:
           name: nitro-http
         - containerPort: 9443
           name: nitro-https
-        image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+        image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30"
         name: cpx
         imagePullPolicy: IfNotPresent
         readinessProbe:
@@ -1273,15 +1283,15 @@ spec:
         - value: 'yes'
           name: EULA
         - name: "NS_MGMT_SERVER"
-          value: "10.105.158.166"
+          value: "10.105.158.144"
         - name: "NS_MGMT_FINGER_PRINT"
-          value: "03:B4:61:76:1D:EE:1A:6C:D5:69:1C:44:9C:4B:0A:82:37:A8:28:08"
+          value: "04:01:68:89:03:53:19:96:E9:CF:8F:61:EC:C2:B4:D4:C2:2B:FB:07"
         - name: "NS_HTTP_PORT"
           value: "9080"
         - name: "NS_HTTPS_PORT"
           value: "9443"
         - name: "LOGSTREAM_COLLECTOR_IP"
-          value: "10.105.158.166"
+          value: "10.105.158.144"
         - value: ''
           name: KUBERNETES_TASK_ID
       - env:
@@ -1296,12 +1306,22 @@ spec:
         - value: SIDECAR
           name: NS_DEPLOYMENT_MODE
         - name: "NS_LOGPROXY"
-          value: "10.105.158.166"
+          value: "10.105.158.144"
         - name: "NS_DISTRIBUTED_TRACING"
           value: "yes"
+        - name: "NS_USER"
+          valueFrom:
+           secretKeyRef:
+            name: nslogin
+            key: username
+        - name: "NS_PASSWORD"
+          valueFrom:
+           secretKeyRef:
+            name: nslogin
+            key: password
         - value: 'YES'
           name: NS_ENABLE_MONITORING
-        image: quay.io/citrix/citrix-k8s-ingress-controller:1.7.6
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
         args:
         - --ingress-classes tier-2-cpx2
         name: cic
@@ -1354,7 +1374,7 @@ spec:
           name: nitro-http
         - containerPort: 9443
           name: nitro-https
-        image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+        image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30"
         name: cpx
         imagePullPolicy: IfNotPresent
         readinessProbe:
@@ -1372,15 +1392,15 @@ spec:
         - value: ''
           name: KUBERNETES_TASK_ID
         - name: "NS_MGMT_SERVER"
-          value: "10.105.158.166"
+          value: "10.105.158.144"
         - name: "NS_MGMT_FINGER_PRINT"
-          value: "03:B4:61:76:1D:EE:1A:6C:D5:69:1C:44:9C:4B:0A:82:37:A8:28:08"
+          value: "04:01:68:89:03:53:19:96:E9:CF:8F:61:EC:C2:B4:D4:C2:2B:FB:07"
         - name: "NS_HTTP_PORT"
           value: "9080"
         - name: "NS_HTTPS_PORT"
           value: "9443"
         - name: "LOGSTREAM_COLLECTOR_IP"
-          value: "10.105.158.166" 
+          value: "10.105.158.144" 
       - env:
         - value: 'yes'
           name: EULA
@@ -1393,12 +1413,22 @@ spec:
         - value: SIDECAR
           name: NS_DEPLOYMENT_MODE
         - name: "NS_LOGPROXY"
-          value: "10.105.158.166"
+          value: "10.105.158.144"
         - name: "NS_DISTRIBUTED_TRACING"
           value: "yes"
+        - name: "NS_USER"
+          valueFrom:
+           secretKeyRef:
+            name: nslogin
+            key: username
+        - name: "NS_PASSWORD"
+          valueFrom:
+           secretKeyRef:
+            name: nslogin
+            key: password
         - value: 'YES'
           name: NS_ENABLE_MONITORING
-        image: quay.io/citrix/citrix-k8s-ingress-controller:1.7.6
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
         args:
         - --ingress-classes tier-2-cpx3
         name: cic

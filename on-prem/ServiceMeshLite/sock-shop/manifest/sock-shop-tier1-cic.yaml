@@ -79,27 +79,32 @@ spec:
       serviceAccountName: cic-k8s-role
       containers:
       - name: cic-k8s-ingress-controller
-        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.7.6"
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
         env:
          # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
          - name: "NS_IP"
            value: "10.105.158.148"
          # Set username for Nitro
          - name: "NS_USER"
-           value: "nsroot"
-         # Set user password for Nitro
+           valueFrom:
+            secretKeyRef:
+             name: vpxlogin
+             key: username
          - name: "NS_PASSWORD"
-           value: "Toorsn123$"
+           valueFrom:
+            secretKeyRef:
+             name: vpxlogin
+             key: password
          # Set log level
          - name: "EULA"
            value: "yes"
          - name: "LOGLEVEL"
-           value: "TRACE"
+           value: "INFO"
         args:
           - --ingress-class
             tier-1-vpx
           - --feature-node-watch
-            false
+            true
           - --ipam
             citrix-ipam-controller
         imagePullPolicy: Always

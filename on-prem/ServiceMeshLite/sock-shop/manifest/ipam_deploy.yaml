@@ -60,6 +60,6 @@ spec:
         env:
         # This IPAM controller takes envirnment variable VIP_RANGE. IPs in this range are used to assign values for IP range
         - name: "VIP_RANGE"
-          value: '["10.105.158.195-10.105.158.199"]'
+          value: '["10.105.158.196-10.105.158.199"]'
         # The IPAM controller can also be configured with name spaces for which it would work through the environment variable
         # VIP_NAMESPACES, This expects a set of namespaces passed as space separated string

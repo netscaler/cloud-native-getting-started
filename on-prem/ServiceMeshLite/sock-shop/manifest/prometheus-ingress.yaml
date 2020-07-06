@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-vpx-monitoring
+  annotations:
+   kubernetes.io/ingress.class: "tier-1-vpx"
+#   ingress.citrix.com/insecure-termination: "allow"
+   ingress.citrix.com/frontend-ip: "10.105.158.195"
+   ingress.citrix.com/insecure-port: "8080"
+spec:
+  rules:
+  - host:  grafana.citrix.weavesocks
+    http:
+      paths:
+      - path: 
+        backend:
+          serviceName: grafana
+          servicePort: 3000
+  - host:  prometheus.citrix.weavesocks
+    http:
+      paths:
+      - path: 
+        backend:
+          serviceName: prometheus
+          servicePort: 9090
