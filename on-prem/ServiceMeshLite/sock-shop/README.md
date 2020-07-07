@@ -1,13 +1,17 @@
-﻿# Learn how to deploy Sock-Shop microservice application in Citrix Cloud Native Stack on Kubernetes on-prem cluster (Tier 1 ADC as Citrix ADC VPX, Tier 2 ADC as Citrix ADC CPX)
+﻿# Deploy Citrix Cloud Native Stack for a sample microservices app (sock-shop) 
 
-In this guide you will learn:
-* What is service mesh lite deployment?
+The aim of this example is to show Citrix's Cloud Native stack for a sample microservices app. Citrix's Cloud Native stack consists of Citrix ADCs (CPX/VPX/MPX/SDX/BLX), Citrix Ingress Controller, Citrix ADM, Citrix Observability Exporter. 
+
+In this example you will learn:
+
 * How to deploy sock shop microservice applications without Citrix ADC
 * How to insert Citrix ADC (VPX) in sock shop microservice applications for North South Load balancing
 * How to insert Citrix ADC (CPX) in sock shop microservice applications for East-West Load balancing
+* What is service mesh lite deployment?
 * Expose CPXs using LoadBalancer service for simplified solution 
 * Troubleshoot microservices using ADM service Graph
-* Send SRE observability time-series metrics to Prometheus end point
+* Send time-series metrics for better Observability to Prometheus 
+
 
 ## Pre-requisite before you start microservice deployment
 
@@ -44,6 +48,7 @@ In this guide you will learn:
 | [Section C](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-c-troubleshoot-sock-shop-microservices-using-adm-service-graph) | Troubleshoot Sock-shop microservices using ADM service graph |
 | [Section D](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-d-clean-up) | Clean Up |
 
+
 ## Section A (Deploy Sock-shop microservice application without Citrix ADC)
 
 Sock Shop is open source, (Apache License, Version 2.0) and is free to use for deployments. For more information refer to [Sock Shop-A Microservices Demo Application](https://microservices-demo.github.io/)
@@ -71,9 +76,9 @@ Sock Shop is open source, (Apache License, Version 2.0) and is free to use for d
     ![sock-shop-homepage](images/sock-shop-homepage.PNG)
 
 
-## Section B (Deploy Sock-shop microservice application using Citrix ADC)
+## Section B (Deploy Sock-shop microservice application using Citrix Cloud Native stack)
 
-Lets understand the sock-shop application topology having Citrix ADC to deliver best user experience in North-South and East-West Load balancing.
+Let's understand the sock-shop application topology having Citrix ADC to deliver best user experience in North-South and East-West Load balancing.
 
 ![sock-shop-topology](images/sock-shop-topology.PNG)
 
