@@ -1229,9 +1229,6 @@ metadata:
   name: cpx-ingress1
 spec:
   ports:
-  - name: port-80
-    targetPort: 80
-    port: 80
   - name: port-9080
     targetPort: 9080
     port: 9080
@@ -1241,6 +1238,9 @@ spec:
   - name: port-443
     targetPort: 443
     port: 443
+  - name: port-80
+    targetPort: 80
+    port: 80
   type: LoadBalancer
   selector:
     app: cpx-ingress1

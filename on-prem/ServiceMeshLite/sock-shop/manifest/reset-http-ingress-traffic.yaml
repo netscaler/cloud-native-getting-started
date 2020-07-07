@@ -1,18 +1,17 @@
 apiVersion: citrix.com/v1
 kind: rewritepolicy
 metadata:
-  name: whitelisturls
+  name: resethttptraffic
   namespace: default
 spec:
   responder-policies:
     - servicenames:
-#        - front-end-headless
         - cpx-ingress1
       responder-policy:
         respond-criteria: '!client.ip.src.TYPECAST_text_t.equals_any("allowlistip")'
-        comment: 'Allowlist a list of IP addresses'
-        drop:
+        comment: 'Reset HTTP traffic for Sock-shop application'
+        reset:
         
   patset:
     - name: allowlistip 
-      values: [ '172.17.128.129',  '10.105.158.195' ]
+      values: [ '172.17.128.129' ]
