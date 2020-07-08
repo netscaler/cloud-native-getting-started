@@ -24,5 +24,5 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
   * OpenShift (Red Hat Enterprise Linux VMs on xenserver)
     * [Service mesh lite using Ingress rules](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
     * [Unified Ingress using OpenShift routes and route sharding](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift/openshift-routes)
-  * Weave Socks Shop application integration
-    * Deploy socks-shop microservice application using Citrix Cloud Native solution
+* Cloud Native stack for Sock Shop application
+    * [Deploy Socks Shop microservice application using Citrix ADC](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/sock-shop)
