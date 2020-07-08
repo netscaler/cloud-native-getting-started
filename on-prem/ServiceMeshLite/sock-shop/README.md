@@ -81,7 +81,7 @@ Sock Shop is open source, (Apache License, Version 2.0) and is free to use for d
 
 Let's understand the sock-shop application topology having Citrix ADC to deliver best user experience in North-South and East-West Load balancing.
 
-![sock-shop-topology](images/sock-shop-topology.PNG)
+![sock-shop-topology](images/sock-shop-service-mesh-lite.png)
 
 In this topology, we have deployed 2 types of Citrix ADCs. One is VPX/MPX (non container proxy) for routing the North-South traffic for microservices. In this deployment, we have deployed VPX as Tier 1 ADC
 Second is CPX (container proxy) for routing North-South Tier 1 traffic and East-West microservice traffic.
