@@ -184,6 +184,10 @@ Lets deploy the sock shop application in Service mesh lite deployment where
     ```
 
     Check the status of your application deployment,
+    ```
+    kubectl get pods
+    ```
+
 
     ![sock-shop-cpx-pods](images/sock-shop-cpx-pods.PNG)
     
@@ -203,6 +207,12 @@ Lets deploy the sock shop application in Service mesh lite deployment where
 
     Login to Tier 1 ADC and verify that sock-shop application configuration correctly.
 
+    You can check External-IP for your cpx-ingress1 using below command:
+    ```
+    kubectl get svc
+    ```
+    ![external-ip](images/external-ip.PNG)
+
     Add the DNS entries in your local machine host files for accessing microservices though Internet
 
     Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
@@ -210,10 +220,7 @@ Lets deploy the sock shop application in Service mesh lite deployment where
     ```
     < External-IP from CPX service> citrix.weavesocks
     ```
-    You can check External-IP for your cpx-ingress1 using below command:
-    ```
-    kubectl get svc
-    ```
+    In my deployment External-IP is ``10.105.158.196`` which is exposed as frontend-IP in Tier 1 ADC
 
     Access `` https://citrix.weavesocks/ `` from browser and you will see sock-shop application running.
 
@@ -238,15 +245,21 @@ The Rewrite and Responder CRD provided by Citrix is designed to expose a set of 
     ```
     ![block-http](images/block-http.PNG)
 
+    
+    This is responder policy configuration applied to Tier 1 ADC.
+    You can verify configuration from VPX responder policy. Path in VPX to check responder policy details : VPX -> AppExpert -> Responder -> Policies -> Policy starting with ``k8s-`` prefix
+
+    ![responder-policy](images/responder-policy.PNG)   
+
 3. We have secured sock shop application from non-secure traffic.
 
     Access ``http://citrix.weavesocks/ `` from browser and Citrix ADC will RESET the connection. 
     You will find that responder policy hits will go up in Tier 1 ADC - VPX.
-
-    ![block-http-policy](images/block-http-policy.PNG)
     
-    This is responder polcy applied to Tier 1 ADC and you can observer that policy hit count increases after accessing ``http://citrix.weavesocks/ ``
- 
+    ![block-http-policy](images/block-http-policy.PNG)
+    Path in VPX to check responder policy hit count : VPX -> AppExpert -> Responder -> Policies -> Responder Policy starting with ``k8s`` prefix Hits column
+    
+
 #### Use Case 3: Allow controlled access only to trusted users using Citrix ADC (Allow white-listed IP addresses to access sock shop application)
 
 Whitelisting IP addresses allows you to create a list of trusted IP addresses or IP address ranges from which users can access your domains. It is a security feature that is often used to limit and control access only to trusted users.
@@ -258,11 +271,15 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
     ```
     ![whitelist-crd](images/whitelist-crd.PNG)
 
-    Now, try to access ``http://citrix.weavesocks/ `` from browser you will see than your access is blocked by Citrix ADC policy.
+    You can verify the configuration from CPX-ingress 1
+
+    ![whitelist-policy](images/whitelist-policy.PNG)
+
+    Now, try to access ``https://citrix.weavesocks/ `` from browser you will see than your access is blocked by Citrix ADC policy.
 
     **Note:** You can change the IP address list from ``allowlistip patset`` of ``whitelist-responder-policy.yaml``, as per your whitelisted IPs.
 
-![whitelist-crd-ui](images/whitelist-crd-ui.PNG)
+    ![whitelist-crd-ui](images/whitelist-crd-ui.PNG)
 
 #### Use Case 4: Block access to internal service for user in East-West traffic using Citrix ADC (Block access to one microservice getting accessed by other microservices)
 

@@ -1162,13 +1162,13 @@ spec:
         image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30"
         name: cpx
         imagePullPolicy: IfNotPresent
-        readinessProbe:
-          tcpSocket:
-            port: 9080
-          initialDelaySeconds: 60
-          successThreshold: 1
-          failureThreshold: 5
-          periodSeconds: 5
+#        readinessProbe:
+#          tcpSocket:
+#            port: 9080
+#          initialDelaySeconds: 60
+#          successThreshold: 1
+#          failureThreshold: 5
+#          periodSeconds: 5
         securityContext:
           privileged: true
         env:
@@ -1270,13 +1270,13 @@ spec:
         image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30"
         name: cpx
         imagePullPolicy: IfNotPresent
-        readinessProbe:
-          tcpSocket:
-            port: 9080
-          initialDelaySeconds: 60
-          successThreshold: 1
-          failureThreshold: 5
-          periodSeconds: 5
+#        readinessProbe:
+#          tcpSocket:
+#            port: 9080
+#          initialDelaySeconds: 60
+#          successThreshold: 1
+#          failureThreshold: 5
+#          periodSeconds: 5
         securityContext:
           privileged: true
         env:
@@ -1377,13 +1377,13 @@ spec:
         image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30"
         name: cpx
         imagePullPolicy: IfNotPresent
-        readinessProbe:
-          tcpSocket:
-            port: 9080
-          initialDelaySeconds: 60
-          successThreshold: 1
-          failureThreshold: 5
-          periodSeconds: 5
+#        readinessProbe:
+#          tcpSocket:
+#            port: 9080
+#          initialDelaySeconds: 60
+#          successThreshold: 1
+#          failureThreshold: 5
+#          periodSeconds: 5
         securityContext:
           privileged: true
         env:
