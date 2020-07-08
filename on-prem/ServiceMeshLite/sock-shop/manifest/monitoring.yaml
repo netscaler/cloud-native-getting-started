@@ -8,11 +8,11 @@ metadata:
 spec:
   containers:
     - name: exporter
-      image: "quay.io/citrix/citrix-adc-metrics-exporter:1.1"
+      image: "quay.io/citrix/citrix-adc-metrics-exporter:1.3"
       args:
-        - "--target-nsip=lb-service-hotdrinks.tier-2-adc.svc.cluster.local:9080"
-        - "--target-nsip=lb-service-colddrinks.tier-2-adc.svc.cluster.local:9080"
-        - "--target-nsip=lb-service-guestbook.tier-2-adc.svc.cluster.local:9080"
+        - "--target-nsip=10.244.1.13:9080"
+        - "--target-nsip=10.244.1.14:9080"
+        - "--target-nsip=10.244.1.15:9080"
         - "--port=8888"
       imagePullPolicy: Always
 ---
@@ -52,11 +52,14 @@ data:
       static_configs:
       - targets: ['exporter:8888']
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
 spec:
+  selector:
+    matchLabels:
+      app: prometheus
   replicas: 1
   template:
     metadata:
@@ -93,11 +96,14 @@ spec:
     - name: http
       port: 9090
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
 spec:
+  selector:
+    matchLabels:
+      app: grafana
   replicas: 1
   template:
     metadata:

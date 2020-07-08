@@ -44,9 +44,10 @@ In this example you will learn:
 | Section | Description |
 | ------- | ----------- |
 | [Section A](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-a-deploy-sock-shop-microservice-application-without-citrix-adc) | Deploy Sock-shop microservice application without Citrix ADC |
-| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-b-deploy-sock-shop-microservice-application-using-citrix-adc) | Deploy Sock-shop microservice application using Citrix ADC |
-| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-c-troubleshoot-sock-shop-microservices-using-adm-service-graph) | Troubleshoot Sock-shop microservices using ADM service graph |
-| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-d-clean-up) | Clean Up |
+| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-b-deploy-sock-shop-microservice-application-using-citrix-adc) | Secure, Optimize North South Sock-shop microservice application Traffic using Citrix ADC  |
+| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-c-deploy-sock-shop-microservice-application-using-citrix-adc) | Secure, Optimize East West Sock-shop microservice application Traffic using Citrix ADC |
+| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-c-troubleshoot-sock-shop-microservices-using-adm-service-graph) | Troubleshoot Sock-shop microservices using Observability tools - ADM Service graph, Grafana |
+| [Section E](https://github.com/citrix/cloud-native-getting-started/tree/sock-shop/on-prem/ServiceMeshLite/sock-shop#section-e-clean-up) | Clean Up |
 
 
 ## Section A (Deploy Sock-shop microservice application without Citrix ADC)
@@ -281,7 +282,11 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
 
     ![whitelist-crd-ui](images/whitelist-crd-ui.PNG)
 
-#### Use Case 4: Block access to internal service for user in East-West traffic using Citrix ADC (Block access to one microservice getting accessed by other microservices)
+
+## Section C (Secure, Optimize East West Sock-shop microservice application Traffic using Citrix ADC)
+Citrix ADC can protect, optimize your microservice to microservice (East West traffic) deployment.
+
+#### Use Case 1: Block access to internal service for user in East-West traffic using Citrix ADC (Block access to one microservice getting accessed by other microservices)
 
 Your deployment may contain one secured application such as payment gateway/ user db etc which should be be accessible to any user than Admin.
 In such scenarios, you can apply Citrix ADC policy for E-W traffic flow to block access for particular microservice.
@@ -307,7 +312,7 @@ In this use case, we will apply Citrix ADC policy to CPX for restricting the acc
     
     ![block-order-service-policy-1](images/block-order-service-policy-1.PNG)
 
-#### Use Case 5: Protect East-West microservices from DDos attack using Citrix ADC (Limit number of request sent to microservices)
+#### Use Case 2: Protect East-West microservices from DDos attack using Citrix ADC (Limit number of request sent to microservices)
 In a Kubernetes deployment, you can rate limit the requests to the resources on the back end server or services using rate limiting feature provided by the ingress Citrix ADC.
 Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Rate limit CRD that you can use with the Citrix ingress controller to configure the rate limiting configurations on the Citrix ADCs used as Ingress devices.
 
@@ -331,7 +336,7 @@ Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Rate li
     ![rate-limit-policy-1](images/rate-limit-policy-1.PNG)
 
 
-## Section C (Troubleshoot Sock-shop microservices using ADM service graph)
+## Section D (Troubleshoot Sock-shop microservices using Observability tools - ADM Service graph, Grafana)
 
 Troubleshooting of microservices involves multiple challenges such as:
 * Complexity adds up due to microservice to  microservice communication (East-West traffic)​
@@ -356,7 +361,7 @@ After successfully setting up ADM service graph, view the Service Graph from:
 
 ![sg-ui](images/sg-ui.PNG)
 
-#### Use Case 1: Microservice Details insights
+#### Use Case 1: Microservice Details insights using ADM service Graph
 
 Goto Kubernetes Service graph - > Hover on microservice to know more its details.
 
@@ -366,7 +371,7 @@ Example: In my Service Graph, I want to know the state of front-end headless mic
 
 It is visible that ``front-end headless `` microservice having *high ssl client errors* which need attention to be addressed.
 
-#### Use Case 2: Debugging microservice Transactional records
+#### Use Case 2: Debugging microservice Transactional records using ADM service Graph
 
 Goto Kubernetes Service graph - > Click on microservice - > Select transaction logs to debug microservice transactional data.
 
@@ -376,7 +381,7 @@ You can select the transaction based on filters provided on right panel. e.g. tr
 
 This view provides you an insights on complete microservice deployment
 
-#### Use Case 3:  Troubleshoot latency problems using Distributed Tracing
+#### Use Case 3:  Troubleshoot latency problems using Distributed Tracing using ADM service Graph
 
 Distributed tracing support helps you to understand the behavior of an application and troubleshoot problems.
  
@@ -385,6 +390,50 @@ Goto Kubernetes Service graph - > Click on microservice - > Select Trace info - 
 ![sg-usecase3](images/sg-usecase3.png)
 
 This view provides you an insights on each and every trace information and also summarizes number of microservices involved in E-W communication with detailed latency information.
+
+#### Use Case 4:  Visualize microservice time-series data using Prometheus, Grafana dashboards
+
+1.	Deploy the CNCF monitoring tools such as Prometheus and Grafana to collect ADC proxies’ stats. Monitoring ingress yaml will push the configuration automatically to Tier 1 ADC.
+    ```
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/sock-shop/on-prem/ServiceMeshLite/sock-shop/manifest/monitoring.yaml
+    ```
+
+    Update exporter container pod arguments:
+
+    e.g. 
+    - "--target-nsip=< CPX hotdrink POD IP >:9080"
+    - "--target-nsip=< CPX colddrink POD IP >:9080"
+    - "--target-nsip=< CPX guestbook POD IP >:9080"
+    
+    You can get the CPX pod IP using ``kubectl get pods -n tier-2-adc -o wide``
+
+    ```
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/sock-shop/on-prem/ServiceMeshLite/sock-shop/manifest/prometheus-ingress.yaml
+    ```
+    Update ``ingress_vpx_monitoring.yaml``file with ingress.citrix.com/frontend-ip: <Free IP used for exposing grafana dashboard through VPX>" 
+
+    ```
+    kubectl create -f monitoring.yaml -n monitoring
+    kubectl create -f ingress_vpx_monitoring.yaml -n monitoring
+    ```
+
+2.	Add the DNS entries in your local machine host files for accessing monitoring portals though Internet.
+    Path for host file: ``C:\Windows\System32\drivers\etc\hosts``
+    Add below entries in hosts file and save the file
+    ```
+    <frontend-ip from ingress_vpx_monitoring.yaml> grafana.beverages.com
+    <frontend-ip from ingress_vpx_monitoring.yaml> prometheus.beverages.com
+    ```
+3.	Login to ``http://grafana.beverages.com:8080`` and do the following one-time setup
+    Login to portal using admin/admin credentials.
+    Click on Add data source and select the Prometheus data source. Do the settings as shown below and click on save & test button.
+ 
+    ![grafana_webpage](https://user-images.githubusercontent.com/42699135/50677392-987efb00-101f-11e9-993a-cb1b65dd96cf.png)
+ 
+    From the left panel, select import option and upload the json file provided in folder yamlFiles ``/example-cpx-vpx-for-kubernetes-2-tier-microservices/config/grafana_config.json``
+    Now you can see the Grafana dashboard with basic ADC stats listed.
+ 
+    ![grafana_stats](https://user-images.githubusercontent.com/42699135/50677391-97e66480-101f-11e9-8d42-87c4a2504a96.png)
 
 
 ## Section D (Clean UP)
