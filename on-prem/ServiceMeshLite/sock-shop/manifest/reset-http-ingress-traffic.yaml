@@ -1,0 +1,17 @@
+apiVersion: citrix.com/v1
+kind: rewritepolicy
+metadata:
+  name: resethttptraffic
+  namespace: default
+spec:
+  responder-policies:
+    - servicenames:
+        - cpx-ingress1
+      responder-policy:
+        respond-criteria: '!client.ip.src.TYPECAST_text_t.equals_any("allowlistip")'
+        comment: 'Reset HTTP traffic for Sock-shop application'
+        reset:
+        
+  patset:
+    - name: allowlistip 
+      values: [ '172.17.128.129' ]
