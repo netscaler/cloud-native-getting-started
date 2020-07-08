@@ -1,0 +1,22 @@
+apiVersion: citrix.com/v1
+kind: rewritepolicy
+metadata:
+  name: blacklistservice
+  namespace: default
+spec:
+  responder-policies:
+    - servicenames:
+        - orders-headless
+      responder-policy:
+        respondwith: 
+          http-payload-string: '"HTTP/1.1 401 Access denied\r\n Server: nginx/1.8.1\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n<h1>Access Denied by Citrix ADC Responder Policy.
+"+"You are not authorized to access Customer Order Internal service. Please contact your administrator if you feel this is incorrect.\r\n</h1>"'
+#        respond-criteria: 'http.req.url.equals_any("blacklistUrls")'
+        respond-criteria: 'http.req.url.contains_any("blacklistUrls")'
+        comment: 'Block access to Internal Service'
+    
+        
+  patset:
+    - name: blacklistUrls 
+      values:
+        - 'orders'
