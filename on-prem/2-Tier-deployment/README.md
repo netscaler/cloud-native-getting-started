@@ -35,10 +35,12 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
 
     ![k8sdashboard](https://user-images.githubusercontent.com/42699135/50677396-99179180-101f-11e9-95a4-1d9aa1b9051b.png)
 
-3. Make sure that K8s cluster route information is present in Tier 1 ADC so that Ingress Citrix ADC should be able to reach Kubernetes pod network for seamless connectivity
+3. Add K8s CIDR routes to Tier 1 ADC to reach K8s network
 
+    Make sure that route configuration is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
     If you have K8s cluster and Tier 1 Citrix ADC in same subnet then you do not have to do anything, below example will take care of route info.
     You need Citrix Node Controller configuration only when K8s cluster and Tier 1 ADC are in different subnet. Please refer to https://github.com/citrix/citrix-k8s-node-controller for Network configuration.
+
 
 ###### Lets deploy 2-Tier ingress microservices
 1. Create two namespaces for each team

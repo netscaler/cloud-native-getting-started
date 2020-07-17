@@ -56,7 +56,7 @@ Sock Shop is open source, (Apache License, Version 2.0) and is free to use for d
 1. Lets deploy sock-shop application in K8s cluster
     ```
     kubectl create namespace sock-shop
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/sock-shop.yaml -n sock-shop
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secA1-sock-shop.yaml -n sock-shop
     ```
     ![sock-shop](images/sock-shop.PNG)
 
@@ -107,11 +107,11 @@ Lets deploy the sock shop application in Service mesh lite deployment where
 1. Lets deploy the sock-shop application with Citrix ADC to secure microservices from Internet.
 
     ```
-    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/sock-shop-with-cpx.yaml
-    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/sock-shop-tier1-cic.yaml
-    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/vip.yaml
-    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/ipam_deploy.yaml
-    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/sockshop-secret.yaml
+    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB1-sock-shop-with-cpx.yaml
+    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB2-sock-shop-vpx-cic.yaml
+    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB3-vip.yaml
+    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB4-ipam_deploy.yaml
+    wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB5-sockshop-secret.yaml
     ```
 
     Update ``sock-shop-with-cpx.yaml`` yaml file with following values:
@@ -156,7 +156,7 @@ Lets deploy the sock shop application in Service mesh lite deployment where
 
 3. Expose sock-shop application to Internet using External-IP
 
-    Citrix Cloud Native stack has internal IP management logic to assign external-IP address for services exposed via LoadBalancer type service called as IPAM solution.
+    Citrix Cloud Native stack has internal IP management logic to assign external-IP address for services exposed via LoadBalancer type service called as IP Address Management (IPAM) solution.
     We have created IPAM deployment using k8s native CRD infrastructure. Lets deploy CRD and provide IP range to external-IP selection.
 
     Update ``ipam_deploy.yaml`` yaml file with free IP list:
@@ -235,14 +235,14 @@ The Rewrite and Responder CRD provided by Citrix is designed to expose a set of 
 1. Deploy the Rewrite and Responder CRD in the Kubernetes cluster
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/rewrite-responder-policies-deployment.yaml
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB6-rewrite-responder-policies-deployment.yaml
     ```
 
 2. Reset the HTTP sock-shop application traffic using Citrix ADC responder policy
 
     We will deploy responder policy yaml file in K8s cluster for Tier 1 ADC - VPX and Citrix Ingress controller will configure this policy into VPX to block the HTTP traffic for sock-shop application.
     ```
-    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/reset-http-ingress-traffic.yaml
+    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB7-reset-http-ingress-traffic.yaml
     ```
     ![block-http](images/block-http.PNG)
 
@@ -268,7 +268,7 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
 
 1. Lets apply the responder policy at north-south CPX proxy to allow limited access for sock shop application
     ```
-    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/whitelist-responder-policy.yaml
+    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB8-whitelist-responder-policy.yaml
     ```
     ![whitelist-crd](images/whitelist-crd.PNG)
 
@@ -296,7 +296,7 @@ In this use case, we will apply Citrix ADC policy to CPX for restricting the acc
 1. Lets apply the responder policy at CPX for E-W service
 
     ```
-    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/block-service-responder-policy.yaml
+    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secC1-block-service-responder-policy.yaml
     ```
     ![block-order-service](images/block-order-service.PNG)
 
@@ -319,11 +319,11 @@ Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Rate li
 1. Lets apply the rate limiting CRD
 
     ```
-    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/ratelimit-crd.yaml
+    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secC2-ratelimit-crd.yaml
     ```
     In this use case, we will apply rate limiting policy at CPX -1 to limit the number of request landing on ``https://citrix.weavesocks/category.html`` web page. We are controlling the number of request sent to ``catalogue microservice`` to optimize service performance.
     ```
-    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/rate-limit-cart-api.yaml
+    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secC3-rate-limit-cart-api.yaml
     ```
     ![rate-limit](images/rate-limit.PNG)
     
@@ -395,7 +395,7 @@ This view provides you an insights on each and every trace information and also 
 
 1.	Deploy the CNCF monitoring tools such as Prometheus and Grafana to collect ADC proxies’ stats. Monitoring ingress yaml will push the configuration automatically to Tier 1 ADC.
     ```
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/monitoring.yaml
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secD1-monitoring.yaml
     ```
 
     Update exporter container pod arguments:
@@ -408,7 +408,7 @@ This view provides you an insights on each and every trace information and also 
     You can get the CPX pod IP using ``kubectl get pods -n tier-2-adc -o wide``
 
     ```
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/prometheus-ingress.yaml
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secD2-prometheus-ingress.yaml
     ```
     Update ``ingress_vpx_monitoring.yaml``file with ingress.citrix.com/frontend-ip: <Free IP used for exposing grafana dashboard through VPX>" 
 
