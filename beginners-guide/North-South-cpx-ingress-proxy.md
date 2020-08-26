@@ -21,48 +21,47 @@ Perform the following:
 
 
         
-        kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml
+       kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml
         
-        kubectl get pods -l app=frontend-colddrinks
+       kubectl get pods -l app=frontend-colddrinks
        
 
 3. Deploy an Ingress rule for colddrink app to access http://www.colddrink.com.
 
     
-        kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml
+       kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml
 
-        kubectl get ingress
+       kubectl get ingress
 
-        kubectl get svc cpx-service
+       kubectl get svc cpx-service
 
 
 4. Send some traffic to the `colddrink` microservice application.
 
-        curl -s -H "Host: www.colddrink.com" http://<MasterNode IP:<NodePort> | grep colddrink
+    curl -s -H "Host: www.colddrink.com" http://<MasterNode IP:<NodePort> | grep colddrink
 
+    ![colddrink-app](images/colddrink-app.PNG)
 
-
-        ![colddrink-app](images/colddrink-app.PNG)
-
-	    Add the DNS entries in your local machine host files for accessing microservices though Internet
-        Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
+	Add the DNS entries in your local machine host files for accessing microservices though Internet
+    Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
     
-        Add below entries in hosts file and save the file
-        ```
-        <MasterNode IP> www.colddrink.com
-        ```
-        Lets access microservice app from local machine browser
+    Add below entries in hosts file and save the file
+    ```
+    <MasterNode IP> www.colddrink.com
+    ```
+    Lets access microservice app from local machine browser
 
-        ```
-        http://www.colddrink.com
-        ```
+    ```
+    http://www.colddrink.com
+    ```
+
 5. (Optional) Clean up the deployments using the following commands.
 
-        kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cpx.yaml
+       kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cpx.yaml
 
-        kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml
+       kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml
        
-        kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml
+       kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml
 
 
 For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).
