@@ -182,11 +182,14 @@ Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Rate li
     ```
     kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/rate-limit-vpx.yaml -n tier-2-adc
     ```
-
+    ![ratelimit-vpx](images/ratelimit-vpx.PNG)
     
     Check the status of rate limiting policy in VPX.You will notice that *rate limiting policy is applied to both hotdrink and colddrink CPXs exposed as Ingress and Loadbalancer type service* respectively.
     
+    ![ratelimit-vpx-policy](images/ratelimit-vpx-policy.PNG)
  
+    You can also check the status from VPX GUI, Goto Traffic Management -> Load Balancing -> Virtual Servers -> hotdrink and colddrink beverage vservers will have responder policy bound to limit client request.
+
     Now try to access ``https://hotdrink.beverages.com`` ``https://colddrink.beverages.com`` from browser frequently and you will find that traffic sent to CPX services are throttled.
     
 
@@ -208,9 +211,15 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
     kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/whitelistIP-on-vpx.yaml -n tier-2-adc
     ```
 
+    ![whitelist-vpx](images/whitelist-vpx.PNG)
+
     You can verify the configuration from Tier 1 ADC -VPX. You will notice that *responder policy is applied to both hotdrink and colddrink CPXs exposed as Ingress and Loadbalancer type service* respectively.
 
+    ![whitelist-vpx-policy](images/whitelist-vpx-policy.PNG)
+
     Now, try to access ``https://hotdrink.beverages.com`` from local browser you will see than your access is blocked by Citrix ADC policy.
+
+    ![whitelist-vpx-policy-response](images/whitelist-vpx-policy-response.PNG)    
 
     **Note:** You can change the IP address list from ``allowlistip patset`` of ``whitelistIP-on-vpx.yaml``, as per your whitelisted IPs.
 
@@ -310,12 +319,15 @@ Topology:
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/content-routing-cpx.yaml -n tier-2-adc
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/drink-secret.yaml -n tier-2-adc
     ```
+    ![cr-cpx](images/cr-cpx.PNG)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/hotdrink-beverage.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/drink-secret.yaml -n team-hotdrink
     ```
+    ![cr-hotdrink-app](images/cr-hotdrink-app.PNG)
+
     Hotdrink beverage microservice is listening on port 443 (SSL app), here drink-secret acts as SSL server certificate for hotdrink app on CPX.
 
 4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
@@ -330,9 +342,7 @@ kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-
 
 5. Deploy Listener CRD 
 ```
-```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/.yaml -n tier-2-adc
-```
 ```
 
 6. Deploy HTTP Route CRD
