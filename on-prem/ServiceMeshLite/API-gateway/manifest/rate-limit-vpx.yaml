@@ -5,7 +5,7 @@ metadata:
 spec:
   servicenames:
     - lb-service-hotdrinks
-	- lb-service-colddrinks
+    - lb-service-colddrinks
   selector_keys:
    basic:
     per_client_ip: true

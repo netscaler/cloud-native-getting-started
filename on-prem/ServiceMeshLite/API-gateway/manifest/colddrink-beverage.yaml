@@ -47,12 +47,14 @@ metadata:
   name: colddrinks-ingress
   annotations:
    kubernetes.io/ingress.class: "colddrink"
-   ingress.citrix.com/secure-service-type: "ssl_tcp"
-   ingress.citrix.com/secure_backend: '{"frontend-colddrinks": "True"}'
+   ingress.citrix.com/secure-service-type: "HTTP"
 spec:
-  tls:
-  - secretName: "colddrink-secret"
-  backend:
-    serviceName: frontend-colddrinks
-    servicePort: 443
+  rules:
+  - host:  colddrink.beverages.com
+    http:
+      paths:
+      - path: 
+        backend:
+          serviceName: frontend-colddrinks
+          servicePort: 80
 
