@@ -1,0 +1,239 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpx-ingress-hotdrinks
+spec:
+  selector:
+    matchLabels:
+      app: cpx-ingress-hotdrinks
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-hotdrinks
+      labels:
+        app: cpx-ingress-hotdrinks
+        app1: exporter
+      annotations:
+        NETSCALER_AS_APP: "True"
+    spec:
+      serviceAccountName: api-gw
+      containers:
+        - name: cpx-ingress-hotdrinks
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+          securityContext: 
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: "NS_USER"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: username
+          - name: "NS_PASSWORD"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: password
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          args:
+            - --ingress-classes
+              hotdrink
+            - --default-ssl-certificate
+              $(POD_NAMESPACE)/vpx-secret
+          imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-hotdrinks
+  labels:
+    app: lb-service-hotdrinks
+spec:
+  type: ClusterIP
+  ports:
+  - port: 443
+    protocol: TCP
+    name: https
+    targetPort: 443
+  selector:
+    app: cpx-ingress-hotdrinks
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpx-ingress-colddrinks
+spec:
+  selector:
+    matchLabels:
+      app: cpx-ingress-colddrinks
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-colddrinks
+      labels:
+        app: cpx-ingress-colddrinks
+        app1: exporter
+      annotations:
+        NETSCALER_AS_APP: "True"
+    spec:
+      serviceAccountName: api-gw
+      containers:
+        - name: cpx-ingress-colddrinks
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+          securityContext: 
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: "NS_USER"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: username
+          - name: "NS_PASSWORD"
+            valueFrom:
+             secretKeyRef:
+              name: nslogin
+              key: password
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          args:
+            - --ingress-classes
+              colddrink
+          imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-colddrinks
+  labels:
+    app: lb-service-colddrinks
+  annotations:
+    service.citrix.com/service-type-0: 'SSL'
+    service.citrix.com/ssl-termination-0: 'EDGE'
+    service.citrix.com/ssl-certificate-data-0: |
+      -----BEGIN CERTIFICATE-----
+      MIIDpTCCAo2gAwIBAgIJAK1d51GLlmInMA0GCSqGSIb3DQEBCwUAMGkxCzAJBgNV
+      BAYTAlVTMQswCQYDVQQIDAJDQTEUMBIGA1UEBwwLU2FudGEgQ2xhcmExDzANBgNV
+      BAoMBkNpdHJpeDEMMAoGA1UECwwDQ1BYMRgwFgYDVQQDDA8qLmJldmVyYWdlcy5j
+      b20wHhcNMTkwNTMxMjM0NjE5WhcNMjAwNTMwMjM0NjE5WjBpMQswCQYDVQQGEwJV
+      UzELMAkGA1UECAwCQ0ExFDASBgNVBAcMC1NhbnRhIENsYXJhMQ8wDQYDVQQKDAZD
+      aXRyaXgxDDAKBgNVBAsMA0NQWDEYMBYGA1UEAwwPKi5iZXZlcmFnZXMuY29tMIIB
+      IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzfCzxJhzh3QXVQ/Co++ouW/b
+      ZVsrRuUNxQ18uHYBVb4e8aZg6Qn8quEHUNiE8A3PjZ68nk3sNtEgxtEbdIXkbWCO
+      6SXOy/zt4OQbivPwb9JloRoce+90Wgpp7CfW95lpKpMqgsLeBPjlfv7h9xzWVjxy
+      YAusGZIMWWOR7ZqcSLoFLkNmYJMmrQXjVY2fF5nOjEjkzG73ThhkD65n53X9aUV2
+      6eClr0uPUh3+5ghv4Kz62i9LULAIrT7QAnDYUj7qEnRdg0lMIUJfrbZ5GguSo6IN
+      sLo3Ef/V5MF6cr53c+rC7dvnTiBf9qHFQMKmcfDdOZtxgfGmLaT9X9Grqp3jlQID
+      AQABo1AwTjAdBgNVHQ4EFgQU6yC0Fb+hkyddg37bMqvbxqB8Kl4wHwYDVR0jBBgw
+      FoAU6yC0Fb+hkyddg37bMqvbxqB8Kl4wDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0B
+      AQsFAAOCAQEAN/JqP5WnESkqW+lk181Y/lKVCh1D8itUf8uQAws1Hs0dxHgi7kF/
+      vdiM4gDjnaJPaJZMpMRaFKJ+7i6YiIo7Wxe7xU1lFC8wXvNVxefyAgnXCNxeZ+EA
+      KHY4iMVnqnnEpqC+0RGGwPRsxIIfA08MpVfNbtoAfh6fnvoIpnQP5inmI5OzdK1A
+      RgsPdJG5mapp6gxw6Mkr6E6cC/0ASbQ1oKo1/OvBtRf5R0YM6Wv/kSSDP8Lgxgg1
+      Tz4bNvyXqednY8shLAfaFrS+nW4hyIDUMz/md/hLmHeYdtXKbkgV36WYgFW82b+L
+      XAvgD+atop7ghvGXI9ojM2YJE11a1t/alg==
+      -----END CERTIFICATE-----
+    service.citrix.com/ssl-key-data-0: |
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEowIBAAKCAQEAzfCzxJhzh3QXVQ/Co++ouW/bZVsrRuUNxQ18uHYBVb4e8aZg
+      6Qn8quEHUNiE8A3PjZ68nk3sNtEgxtEbdIXkbWCO6SXOy/zt4OQbivPwb9JloRoc
+      e+90Wgpp7CfW95lpKpMqgsLeBPjlfv7h9xzWVjxyYAusGZIMWWOR7ZqcSLoFLkNm
+      YJMmrQXjVY2fF5nOjEjkzG73ThhkD65n53X9aUV26eClr0uPUh3+5ghv4Kz62i9L
+      ULAIrT7QAnDYUj7qEnRdg0lMIUJfrbZ5GguSo6INsLo3Ef/V5MF6cr53c+rC7dvn
+      TiBf9qHFQMKmcfDdOZtxgfGmLaT9X9Grqp3jlQIDAQABAoIBAQDKCmPTdF2jflmF
+      sjia7PzzMLJl9dO3cfDYair6LYuRuzxQh5J8Drg8TRkIT+PcPzBpGFqkVH5yKSmm
+      5G+zGcjJJfoO8nC34CTgheofoMM6cYgTTbK0RHA6Bg11CoDz2SY8BrWmI9f9uNIu
+      jZDTBw+g+xya7diiHY7QA8ee/Bhnn5QWTgRfzEQcD8q3zAq54WyJASVdaWgq/fxq
+      kyf6c1D7eLrR0Di2CgraT9mL+p59BI0JBfnOoTmMmzZn+yj6ItUxf1I1Www48l9q
+      qQPOPDfU8Mm6zLfGZUKjVYIKlh0SRZTSb3IeMUpH/XFNp/lD8PvATrrdzLDe0BVL
+      t+fFrqzhAoGBAPu17KtBeTaGPH6/LX+RmVGL5yi44HEL0wtIoUTVmkfeXec03zrt
+      WbLzNubwNThnGHf8Eteajc6Ot8bryNKO+dxcqPgiZ9WmnheJQcHwX8Ay9Pbc73Tb
+      sX5ep3qFOO9VTS+m5OyuvD8ht3ZQxoDmJQ2VTmTfNJhXfuyIEkPpDUCbAoGBANFz
+      G0h+DTabu/S48Mm4eM1bK9CIFCf1GWR3GlBXie39iRfV1WL16tmEu6GUmBaaugaG
+      P9xklCnRvloDcWQvVKn+duBHgUsUbpvMouhxHdzBe+HPZwyr2q5BniKVSgAba3Fa
+      ofpYaOd95RRQ8H4tL0nKrG99BtSFBCBXAqHlmLePAoGAHgXoEdFAbQF7675P5fxu
+      5iwiyVer5a/8X0ctfTFhMptSZgaHbdbrsQ2Tid4y6uRZJc6aTL8xlOavAvoSvRKy
+      uNcQjHBGJFS4XKRRhJlwQlORpnRZ131w4VrW7SVA0kNBbqKggZ6h84HJCUK/Opa4
+      6rLZY+y/sEAXco0UaKc+nmsCgYBr0e6EleclamwKYb4Kib0eMcXPVo3Rt/m3Xxyb
+      qUSmz/Jn47syc1fPW+XfGwhj8oi63Rc41En1cTSlT8pqgXb6/7SgZg7n4H/EEkb2
+      k2yE/NFSABuTSVCMjdjjAqkSfwsDUl256xMtwABSQgxbV9VVDlFQHzOJ6WOjZkdD
+      olbIfwKBgARuXvFHGrXNgVPZQm3NAD/13GQJSz/3BIYx4ymFK3LncenNDB2ywcuZ
+      vwNtpz2HsFtSBJP1HWddoQPkHqMZ6oX/yIqSxBjCZiwDelnP3OdKWU/FOA/+fX1O
+      yamwhS2NHWJLC5VJJWHQBa0tBdw8cNfI8Zc02M5AW6Luy2HoA9mG
+      -----END RSA PRIVATE KEY-----
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 443
+    protocol: TCP
+    name: http
+    targetPort: 80
+#  - port: 443
+#    name: https
+#    targetPort: 443
+  selector:
+    app: cpx-ingress-colddrinks
+
+---

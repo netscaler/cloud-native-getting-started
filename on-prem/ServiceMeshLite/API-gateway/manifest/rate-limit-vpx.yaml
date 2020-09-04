@@ -1,0 +1,14 @@
+apiVersion: citrix.com/v1beta1
+kind: ratelimit
+metadata:
+  name: throttle-req-per-clientip
+spec:
+  servicenames:
+    - lb-service-hotdrinks
+	- lb-service-colddrinks
+  selector_keys:
+   basic:
+    per_client_ip: true
+  req_threshold: 2
+  timeslice: 60000
+  throttle_action: "RESPOND"
