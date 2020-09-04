@@ -9,9 +9,9 @@ In this guide you will learn:
 
 Citrix Cloud native solution ensures that SecOps requirements are taken into consideration.
 Citrix Cloud Native solution portfolio provides ``API Gateway for Kubernetes`` to secures applications with Citrix ADC policies exposed as Kubernetes APIs.
-Refer to [API gateway for Kubernetes](https://docs.citrix.com/en-us/citrix-adc/13/cloud-native-solution/citrix-api-gateway.html) to understand our deployment and key benefits of it. 
+Refer [API gateway for Kubernetes](https://docs.citrix.com/en-us/citrix-adc/13/cloud-native-solution/citrix-api-gateway.html) to understand our deployment and key benefits of it. 
 
-## Pre-requisite before you start API gateway deployment
+## Pre-requisite: Before you start API gateway deployment
 
 1.	Bring your own nodes (BYON)
 
@@ -24,7 +24,7 @@ Refer to [API gateway for Kubernetes](https://docs.citrix.com/en-us/citrix-adc/1
     ```
     ![nodes](images/nodes.PNG)
  
-    (Screenshot above has Kubernetes cluster with one master and two worker node).
+    (The following example is validated on open source on-prem Kubernetes cluster version 1.17.0).
 
 2.	<u>[Optional]</u> Set up a Kubernetes dashboard for deploying containerized applications.
     
@@ -39,17 +39,15 @@ Refer to [API gateway for Kubernetes](https://docs.citrix.com/en-us/citrix-adc/1
     
     You need Citrix Node Controller configuration only when K8s cluster and Tier 1 ADC are in different subnet. Please refer to https://github.com/citrix/citrix-k8s-node-controller for Network configuration.
 
-This guide is divided into two Sections, to demonstrate how does API gateway works for North-South and East-West traffic using different flavours of Citrix ADCs.
-
-**Note:** Section A is common for Section B & C; you can choose one section from B & C to learn Citrix API Gateway use cases.
+**Note:** Section A is common for Section B & C; you can choose either section B or C or both to learn Citrix API Gateway use cases. Section D can be tested with/without other sections.
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A]() | Deploy Service mesh lite topology |
-| [Section B]() | Citrix API gateway use cases for North-South API traffic |
-| [Section C]() | Citrix API gateway use cases for East-West API traffic |
-| [Section D]() | Advance Content routing Citrix API gateway use cases for API traffic |
-| [Section E]() | Clean Up |
+| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/API-gateway#section-a-deploy-service-mesh-lite-topology) | Deploy Service mesh lite topology |
+| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/API-gateway#section-b-citrix-api-gateway-use-cases-for-north-south-api-traffic) | Citrix API gateway use cases for North-South API traffic |
+| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/API-gateway#section-c-citrix-api-gateway-use-cases-for-east-west-api-traffic) | Citrix API gateway use cases for East-West API traffic |
+| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/API-gateway#section-d-advance-content-routing-citrix-api-gateway-use-cases-for-api-traffic) | Advance Content routing Citrix API gateway use cases for API traffic |
+| [Section E](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/API-gateway#section-d-clean-up) | Clean Up |
 
 ## Section A (Deploy Service mesh lite topology)
 
@@ -59,12 +57,14 @@ Lets understand the Service Mesh lite topology from below architecture
 There are two types of beverage microservice applications (hotdrink and colddrink beverages) deployed in K8s cluster. Each application is exposed on different protocol. In this demo you will learn how Citrix ADC secure and routes the different protocol level traffic.
 Each applications are deployed in different namespaces to isolate their workload from other k8s deployments.
 Citrix ADC outside K8s cluster manages North-South traffic and Citrix ADC - CPX deployed in K8s cluster can manage both North-South and East-West traffic. CPX managing hotdrink beverage workload is exposed as Ingress type service and CPX managing colddrink beverage workload is exposed as LoadBalancer type service.
-Know more from [Citrix Cloud native deployments](https://docs.citrix.com/en-us/citrix-adc/13/cloud-native-solution/ingress-solution.html).
+Know more about supported deployments from [Citrix Cloud native deployments](https://docs.citrix.com/en-us/citrix-adc/13/cloud-native-solution/ingress-solution.html).
 
 1. Create K8s namespaces to manage team beverages workload independently
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/namespace.yaml
     ```
+
+    ![namespace](images/namespace.PNG)
 
 2.	Deploy Two Citrix ADC CPXs for hotdrink and colddrink beverages microservice apps
 
@@ -80,6 +80,8 @@ Know more from [Citrix Cloud native deployments](https://docs.citrix.com/en-us/c
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/vpx-secret.yaml -n tier-2-adc
     ```
 
+    ![cpx](images/cpx.PNG)
+
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/hotdrink-beverage.yaml -n team-hotdrink
@@ -87,17 +89,21 @@ Know more from [Citrix Cloud native deployments](https://docs.citrix.com/en-us/c
     ```
     Coffee beverage microservice is listening on port 443 (SSL app), here vpx-secret acts as SSL server certificate for hotdrink app on CPX.
 
+    ![hotdrink-app](images/hotdrink-app.PNG)
+
 4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/colddrink-beverage.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/colddrink-secret.yaml -n team-colddrink
     ```
-    Colddrink beverage app is secured hence colddrink secret deployed on CPX to enable SSL communication.
+    Colddrink beverage app has end to end TLS enabled hence colddrink secret deployed on CPX to enable SSL communication.
+
+    ![colddrink-app](images/colddrink-app.PNG)
 
 5.	Deploy the IPAM CRD and IPAM controller for auto assigning the IP addresses to Kubernetes services
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-ipam.yaml
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/ipam-controller.yaml
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/ipam-controller.yaml
     ```
 
     Update ``ipam-controller.yaml`` file, Change the IP range to your free VIP IP range for allocating IP from pool to access colddrink microservice
@@ -107,6 +113,8 @@ Know more from [Citrix Cloud native deployments](https://docs.citrix.com/en-us/c
     ```
     kubectl create -f ipam-controller.yaml
     ```
+
+    ![ipam](images/ipam.PNG)
 
 6.	Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
     ```
@@ -126,6 +134,8 @@ Know more from [Citrix Cloud native deployments](https://docs.citrix.com/en-us/c
     kubectl create -f ingress-vpx.yaml -n tier-2-adc
     kubectl create -f cic-vpx.yaml -n tier-2-adc
     ```
+
+    ![cic-vpx](images/cic-vpx.PNG)
 
 7.	Yeah!!! Beverage microservice application is successfully deployed and ready to access from Internet
 
@@ -166,9 +176,11 @@ Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Rate li
     ```
     kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-ratelimit.yaml
     ```
+    ![ratelimit-crd](images/ratelimit-crd.PNG)
+
     In this use case, we will apply rate limiting policy at Tier 1 ADC - VPX to limit the number of request landing on ``https://hotdrink.beverages.com `` and "https://colddrink.beverages.com" web page. We are controlling the number of request sent to both hotdrink and colddrink beverage CPXs.
     ```
-    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/rate-limit-vpx.yaml
+    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/rate-limit-vpx.yaml -n tier-2-adc
     ```
 
     
@@ -189,16 +201,14 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-rewriteresponder.yaml
     ```
+    ![rewrite-crd](images/rewrite-crd.PNG)
 
 2. Lets apply the responder policy at Tier 1 ADC -VPX  to allow limited access for colddrink application
     ```
-    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/whitelistIP-on-vpx.yaml
+    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/whitelistIP-on-vpx.yaml -n tier-2-adc
     ```
 
-
     You can verify the configuration from Tier 1 ADC -VPX. You will notice that *responder policy is applied to both hotdrink and colddrink CPXs exposed as Ingress and Loadbalancer type service* respectively.
-
-
 
     Now, try to access ``https://hotdrink.beverages.com`` from local browser you will see than your access is blocked by Citrix ADC policy.
 
@@ -229,7 +239,7 @@ Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Rate li
     ```
     In this use case, we will apply rate limiting policy at Tier 2 ADC - CPX to limit the number of request landing on ``https://hotdrink.beverages.com/coffee.php `` from other beverage microservices.
     ```
-    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/rate-limit-cpx.yaml
+    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/rate-limit-cpx.yaml -n team-hotdrink
     ```
 
     
@@ -252,11 +262,11 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
 
 2. Lets apply the responder policy at Tier 2 ADC -CPX  to allow limited access for tea beverage application
     ```
-    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/whitelistIP-on-cpx.yaml
+    kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/whitelistIP-on-cpx.yaml -n team-hotdrink
     ```
 
 
-    You can verify the configuration from Tier 2 ADC -CPX. You will notice that *responder policy is applied to CPX managing Tea beverage microservice.
+    You can verify the configuration from Tier 2 ADC - CPX. You will notice that *responder policy is applied to CPX managing Tea beverage microservice.
 
 
 
@@ -366,7 +376,7 @@ kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-
     https://drink.beverages.com?drink=cold
     ```
 
-## Section D (Clean Up )
+## Section E (Clean Up)
 
 ```
 kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/namespace.yaml

@@ -31,7 +31,7 @@ In the Kubernetes cluster, pod gets deployed across worker nodes. Below screensh
     ```
     ![nodes](images/nodes.PNG)
  
-    (Screenshot above has Kubernetes cluster with one master and two worker node).
+    (Screenshot above has Kubernetes cluster with one master and one worker node).
 
 2.	<u>[Optional]</u> Set up a Kubernetes dashboard for deploying containerized applications.
     
