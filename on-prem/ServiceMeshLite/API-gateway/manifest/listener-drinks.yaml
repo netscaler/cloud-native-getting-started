@@ -1,0 +1,23 @@
+apiVersion: citrix.com/v1alpha1
+kind: Listener
+metadata:
+  annotations:
+  name: drinks
+spec:
+  certificates:
+  - secret:
+      name: "drink-secret"
+  defaultAction:
+    backend:
+      kube:
+        namespace: tier-2-adc
+        port: 80
+        service: default-service  
+  vip: "10.105.158.198"
+  protocol: https
+  port: 443
+  routes:
+  - name: hotdrinkroute
+    namespace: tier-2-adc
+  - name: colddrinkroute
+    namespace: tier-2-adc

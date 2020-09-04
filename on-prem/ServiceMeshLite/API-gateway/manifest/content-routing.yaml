@@ -1,0 +1,43 @@
+apiVersion: citrix.com/v1alpha1
+kind: HTTPRoute
+metadata:
+   name: hotdrinkroute 
+spec:
+  hostname:
+  - drink.beverages.com
+  rules:       
+  - name: contains 
+    match:
+    - queryParams:
+      - name: drink
+        contains: hot 
+    action:
+      backend:
+        kube:
+          service: cpx-cr-service-hotdrinks
+          port: 443
+          backendConfig:
+            secureBackend: true
+
+---
+
+apiVersion: citrix.com/v1alpha1
+kind: HTTPRoute
+metadata:
+   name: colddrinkroute
+spec:
+  hostname:
+  - drink.beverages.com
+  rules:
+  - name: contains
+    match:
+    - queryParams:
+      - name: drink
+        contains: cold
+    action:
+      backend:
+        kube:
+          service: cpx-cr-service-colddrinks
+          port: 80
+
+---
