@@ -58,3 +58,20 @@ spec:
           serviceName: frontend-colddrinks
           servicePort: 80
 
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: cr-colddrinks-ingress
+  annotations:
+   kubernetes.io/ingress.class: "cr-colddrink"
+   ingress.citrix.com/secure-service-type: "HTTP"
+spec:
+  rules:
+  - host:  drink.beverages.com
+    http:
+      paths:
+      - path: 
+        backend:
+          serviceName: frontend-colddrinks
+          servicePort: 80

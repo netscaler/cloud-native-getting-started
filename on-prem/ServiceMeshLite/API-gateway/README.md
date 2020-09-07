@@ -305,6 +305,7 @@ Topology:
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/namespace.yaml
     ```
+    ![namespace](images/namespace.PNG)
 
 2.	Deploy Two Citrix ADC CPXs for drink beverages content routing use case
 
@@ -334,41 +335,54 @@ Topology:
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/colddrink-beverage.yaml -n team-colddrink
     ```
+    ![cr-colddrink-app](images/cr-colddrink-app.PNG)
 
 5. Deploy sample backend application for default content routing action
-```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/docker-ui.yaml -n tier-2-adc
-```
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/docker-ui.yaml -n tier-2-adc
+    ```
+    ![cr-default-service](images/cr-default-service.PNG)
 
 5. Deploy Listener CRD 
-```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/.yaml -n tier-2-adc
-```
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-listener.yaml -n tier-2-adc
+    ```
+    ![cr-listener](images/cr-listener.PNG)
 
 6. Deploy HTTP Route CRD
-```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-listener.yaml -n tier-2-adc
-```
-7. Deploy HTTP Routes for drinks beverage application
-```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-httproute.yaml -n tier-2-adc
-```
-8. Lets deploy HTTP route for drinks beverage application where content routing will happen for hotdrink, colddrink beverage application using query param option.
-```
-wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/content-routing.yaml
-wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/listener-drinks.yaml
-```
-Update vip information in listener-drinks.yaml file with free IP that will be used as frontend IP in Tier 1 ADC - VPX
-```
-kubectl create -f content-routing.yaml -n tier-2-adc
-kubectl create -f listener-drinks.yaml -n tier-2-adc
-```
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-httproute.yaml -n tier-2-adc
+    ```
+    ![cr-httproute](images/cr-httproute.PNG)
 
+
+7. Lets deploy HTTP route for drinks beverage application where content routing will happen for hotdrink, colddrink beverage application using query param option.
+    ```
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/content-routing.yaml
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/listener-drinks.yaml
+    ```
+    ![routes](images/routes.PNG)
+
+    Update vip information in listener-drinks.yaml file with free IP that will be used as frontend IP in Tier 1 ADC - VPX
+    ```
+    kubectl create -f content-routing.yaml -n tier-2-adc
+    kubectl create -f listener-drinks.yaml -n tier-2-adc
+    ```
+    ![cr-policy](images/cr-policy.PNG)
 
 9. Deploy Citrix Ingress Controller to Configure Tier 1 ADC
-```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/cic-vpx.yaml -n tier-2-adc
-```
+
+    ```
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/cic-vpx.yaml
+    ```
+    Go to ``cic-vpx.yaml`` and change the NS_IP value to your VPX NS_IP and update VPX credentials.         
+    ``- name: "NS_IP"
+      value: "x.x.x.x"``
+    Now execute the following commands after completing above change.
+    ```
+    kubectl create -f cic-vpx.yaml -n tier-2-adc
+    ```
+
 9. Yeah!!! Your drink beverage application is ready to use
 
     Add the DNS entries in your local machine host files for accessing microservices though Internet
