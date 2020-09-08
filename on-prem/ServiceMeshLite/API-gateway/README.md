@@ -190,7 +190,7 @@ Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Rate li
  
     You can also check the status from VPX GUI, Goto Traffic Management -> Load Balancing -> Virtual Servers -> hotdrink and colddrink beverage vservers will have responder policy bound to limit client request.
 
-    Now try to access ``https://hotdrink.beverages.com`` ``https://colddrink.beverages.com`` from browser frequently and you will find that traffic sent to CPX services are throttled.
+    Now try to access ``https://hotdrink.beverages.com`` ``https://colddrink.beverages.com`` from browser frequently and you will find that traffic sent to CPX services is throttled.
     
 
 
@@ -217,7 +217,7 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
 
     ![whitelist-vpx-policy](images/whitelist-vpx-policy.PNG)
 
-    Now, try to access ``https://hotdrink.beverages.com`` from local browser you will see than your access is blocked by Citrix ADC policy.
+    Now, try to access ``https://hotdrink.beverages.com`` and ``https://colddrink.beverages.com`` from local browser you will see than your access is blocked by Citrix ADC policy.
 
     ![whitelist-vpx-policy-response](images/whitelist-vpx-policy-response.PNG)    
 
@@ -225,7 +225,7 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
 
 #### Use Case 3: Enforce access restrictions using Citrix Authentication policies
 
- use case being worked upon...
+coming soon...
 
 ## Section C (Citrix API gateway use cases for East-West API traffic)
 
@@ -252,10 +252,10 @@ Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Rate li
     ```
 
     
-    Check the status of rate limiting policy in CPX. You will notice that *rate limiting policy is applied to for coffee beverage application in CPX.
+    Check the status of rate limiting policy in CPX. You will notice that *rate limiting policy is applied to for coffee beverage and frontend hotdrink beverage applications* in CPX.
     
  
-    Now try to access ``https://hotdrink.beverages.com/coffee.php ``  from browser frequently and you will find that traffic sent to coffee beverage apps are throttled.
+    Now try to access ``https://hotdrink.beverages.com/ ``  from browser frequently and you will find that traffic sent to front-end hotdrink beverage app is throttled.
     
 
 #### Use Case 2: Allow secured API access to white-listed IPs using IP filtering policies
@@ -274,18 +274,15 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
     kubectl create -f  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/whitelistIP-on-cpx.yaml -n team-hotdrink
     ```
 
+    You can verify the configuration from Tier 2 ADC - CPX. You will notice that *responder policy is applied to CPX managing Tea beverage and frontend hotdrink beverage* microservice.
 
-    You can verify the configuration from Tier 2 ADC - CPX. You will notice that *responder policy is applied to CPX managing Tea beverage microservice.
-
-
-
-    Now, try to access ``https://hotdrink.beverages.com/tea.php `` from local browser you will see than your access is blocked by Citrix ADC policy.
+    Now, try to access ``https://hotdrink.beverages.com/ `` from local browser you will see than your access is blocked by Citrix ADC policy.
 
     **Note:** You can change the IP address list from ``allowlistip patset`` of ``whitelistIP-on-cpx.yaml``, as per your whitelisted IPs.
 
 #### Use Case 3: Enforce access restrictions using Citrix Authentication policies
 
- use case being worked upon...
+ coming soon...
 
 
 ## Section D (Advance Content routing Citrix API gateway use cases for API traffic)
