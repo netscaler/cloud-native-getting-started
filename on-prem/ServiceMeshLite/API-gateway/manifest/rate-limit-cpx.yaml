@@ -5,6 +5,7 @@ metadata:
 spec:
   servicenames:
     - coffee-beverage
+	- frontend-hotdrinks
   selector_keys:
    basic:
     per_client_ip: true
