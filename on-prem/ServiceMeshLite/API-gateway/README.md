@@ -347,13 +347,13 @@ Topology:
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-listener.yaml -n tier-2-adc
     ```
-    ![cr-listener](images/cr-listener.PNG)
+    ![crd-listener](images/crd-listener.PNG)
 
 6. Deploy HTTP Route CRD
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-httproute.yaml -n tier-2-adc
     ```
-    ![cr-httproute](images/cr-httproute.PNG)
+    ![crd-httproute](images/crd-httproute.PNG)
 
 
 7. Lets deploy HTTP route for drinks beverage application where content routing will happen for hotdrink, colddrink beverage application using query param option.

@@ -65,7 +65,6 @@ metadata:
   name: cr-colddrinks-ingress
   annotations:
    kubernetes.io/ingress.class: "cr-colddrink"
-   ingress.citrix.com/secure-service-type: "HTTP"
 spec:
   rules:
   - host:  drink.beverages.com
