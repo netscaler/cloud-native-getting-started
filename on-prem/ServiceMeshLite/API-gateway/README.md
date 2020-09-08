@@ -166,6 +166,8 @@ Lets deploy following API Gateway use cases on Tier 1 ADC - VPX for managing N-S
 * Ability to route ingress traffic using Citrix Content routing policies
 * Allow secured access using IP filtering policies
 
+![ns-api-topology](images/ns-api-topology.PNG)
+
 #### Use Case 1: Limit the North-South ingress traffic using Citrix ADC rate limiting policy
 
 In a Kubernetes deployment, you can rate limit the requests to the resources on the back end server or services using rate limiting feature provided by the API gateway Citrix ADC.
@@ -235,6 +237,7 @@ Lets deploy following API Gateway use cases on Tier 2 ADC - CPX for managing E-W
 * Ability to route ingress traffic using Citrix Content routing policies
 * Allow secured access using IP filtering policies. 
 
+![ew-api-topology](images/ew-api-topology.PNG)
 
 #### Use Case 1: Limit the East-West ingress traffic using Citrix ADC rate limiting policy
 
@@ -296,7 +299,7 @@ In this how to example, we will demonstrate how does Tier 1 Citrix ADC - VPX rou
 **Note:** This section will repeat few steps from Section A (for folks focusing on only this use case). In case you have completed Section A and B/C and continuing with Section D, then also you can follow below instructions. Few yamls will give you an error saying it already exists. Please ignore and follow rest of guide.
 
 
-Topology:
+![cr-topology](images/cr-topology.PNG)
 
 1. Create K8s namespaces to manage team beverages workload independently
     ```
