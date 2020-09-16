@@ -227,7 +227,30 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
 
 #### Use Case 3: Enforce access restrictions using Citrix Authentication policies
 
-coming soon...
+Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Auth CRD that you can use with the Citrix ingress controller to define authentication policies on the ingress Citrix ADC.
+
+1. Deploy Auth CRD
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/crd-auth.yaml
+    ```
+
+2. Lets do Basic Authentication for hotdrink beverage application on Tier 1 ADC - VPX
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/basic-auth-policy.yaml
+    ```
+    ![auth-policy](images/auth-policy.PNG)
+
+3. Lets create user account on Tier 1 ADC
+    
+    Lets add AAA user in Citrix ADC VPX so that Basic authentication is validated. Login to VPX and add below commands;
+    ```
+    add aaa user test -password test
+    set tmsessionparameter -defaultAuthorizationAction Allow
+    ```
+    You can also verify Auth policy applied on VPX. Goto : System -> Authentication -> Advanced Policies -> Authentication Policies	
+    
+    Now  access ``https://hotdrink.beverages.com`` from incognito mode (to avoid caches) and you will be prompeted for username and password. Provide credentials added as AAA user in VPX to access hotdrink beverage application. 
+    ![auth-response](images/auth-response.PNG)
 
 ## Section C (Citrix API gateway use cases for East-West API traffic)
 
@@ -282,10 +305,6 @@ Using a Citrix ADC responder policy, you can whitelist IP addresses and silently
     Now, try to access ``https://hotdrink.beverages.com/ `` from local browser you will see than your access is blocked by Citrix ADC policy.
 
     **Note:** You can change the IP address list from ``allowlistip patset`` of ``whitelistIP-on-cpx.yaml``, as per your whitelisted IPs.
-
-#### Use Case 3: Enforce access restrictions using Citrix Authentication policies
-
- coming soon...
 
 
 ## Section D (Advance Content routing Citrix API gateway use cases for API traffic)
