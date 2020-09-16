@@ -1,0 +1,21 @@
+apiVersion: citrix.com/v1beta1
+kind: authpolicy
+metadata:
+  name: authexample
+spec:
+    servicenames:
+    - lb-service-hotdrinks
+
+    auth_providers:
+
+        - name: "local-auth-provider"
+          basic-local-db:
+
+    auth_policies:
+
+        - resource:
+            path:
+              - '/tea.php'
+			  - '/'
+            method: [GET, POST]
+          provider: ["local-auth-provider"]
