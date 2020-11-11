@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cic-configmap
+  namespace: servicetypelb
+data:
+   NS_ANALYTICS_CONFIG: |
+     distributed_tracing:
+       enable: 'true'
+       samplingrate: 100
+     endpoint:
+       server: '192.168.10.20'
+     timeseries:
+       port: 30879
+       metrics:
+         enable: 'true'
+         mode: 'prometheus'
+       auditlogs:
+         enable: 'true'
+       events:
+         enable: 'true'
+     transactions:
+       enable: 'true'
+       port: 32583
