@@ -4,13 +4,13 @@ metadata:
   name: cic-vpx
   labels:
     app: cic-vpx
-spec: 
+spec:
       serviceAccountName: cpx
       containers:
       - name: cic-vpx
         image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
         env:
-         # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
+         # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
          - name: "NS_IP"
            value: "192.168.10.50"
          # Set username for Nitro
@@ -18,9 +18,15 @@ spec:
          - name: "NS_ENABLE_MONITORING"
            value: "YES"
          - name: "NS_USER"
-           value: "nsroot"
+           valueFrom:
+            secretKeyRef:
+             name: nslogin
+             key: username
          - name: "NS_PASSWORD"
-           value: "nsroot"
+           valueFrom:
+            secretKeyRef:
+             name: nslogin
+             key: password
          - name: "EULA"
            value: "yes"
          - name: "NS_APPS_NAME_PREFIX"
