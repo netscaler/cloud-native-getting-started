@@ -5,14 +5,10 @@ metadata:
 spec:
     servicenames:
     - lb-service-hotdrinks
-
     auth_providers:
-
         - name: "local-auth-provider"
           basic-local-db:
-
     auth_policies:
-
         - resource:
             path:
               - '/tea.php'
