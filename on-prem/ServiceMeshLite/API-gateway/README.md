@@ -236,7 +236,7 @@ Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Auth CR
 
 2. Lets do Basic Authentication for hotdrink beverage application on Tier 1 ADC - VPX
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/basic-auth-policy.yaml
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/basic-auth-policy.yaml -n tier-2-adc
     ```
     ![auth-policy](images/auth-policy.PNG)
 
