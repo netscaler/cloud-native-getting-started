@@ -16,6 +16,6 @@ spec:
         - resource:
             path:
               - '/tea.php'
-			  - '/'
+              - '/'
             method: [GET, POST]
           provider: ["local-auth-provider"]
