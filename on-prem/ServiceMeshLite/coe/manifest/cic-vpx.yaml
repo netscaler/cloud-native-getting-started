@@ -45,7 +45,7 @@ spec:
           - --ingress-classes
             citrix
           - --feature-node-watch
-            false
+            true
          ### added for COE
 # add back after bug fix for cpx#####
           - --configmap
