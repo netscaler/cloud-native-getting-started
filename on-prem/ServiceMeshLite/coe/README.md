@@ -50,9 +50,9 @@ Citrix Observability Exporter is a container which collects metrics and transact
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A]() | Deploy Service mesh lite topology |
-| [Section B]() | Deploy COE to visualize metrics, transactional information |
-| [Section E]() | Clean Up |
+| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-a-deploy-service-mesh-lite-topology) | Deploy Service mesh lite topology |
+| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-b-deploy-coe-to-visualize-metrics-transactional-information) | Deploy COE to visualize metrics, transactional information |
+| [Section E](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-c-clean-up) | Clean Up |
 
 ## Section A (Deploy Service mesh lite topology)
 
@@ -226,3 +226,10 @@ Lets begin observability stack deployment using yamls
 * Click on Import option (from top right corner) to upload ``https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/kibana-dashboard.ndjson``
 * Select ``App Trasanction Dashboard`` from panel to start monitoring logs information.
 ![kibana-dashboard](images/kibana-dashboard.png)
+
+
+## Section C (Clean Up)
+
+```
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/namespace.yaml
+```
