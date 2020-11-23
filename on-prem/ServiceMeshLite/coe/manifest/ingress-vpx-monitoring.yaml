@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-vpx-monitoring
+  annotations:
+   kubernetes.io/ingress.class: "citrix"
+#   ingress.citrix.com/insecure-termination: "allow"
+   ingress.citrix.com/frontend-ip: "10.105.158.195"
+   ingress.citrix.com/insecure-port: "8080"
+spec:
+  rules:
+  - host:  grafana.beverages.com
+    http:
+      paths:
+      - path: 
+        backend:
+          serviceName: grafana
+          servicePort: 3000
+  - host:  prometheus.beverages.com
+    http:
+      paths:
+      - path: 
+        backend:
+          serviceName: prometheus-server
+          servicePort: 9090
+  - host:  kibana.beverages.com
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: kibana
+          servicePort: 5601
+  - host:  zipkin.beverages.com
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: zipkin
+          servicePort: 9411
+  - host:  elasticsearch.beverages.com
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: elasticsearch
+          servicePort: 9200
