@@ -68,7 +68,7 @@ We deployed three CPXs to manage each application workload independently. Also w
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/namespace.yaml
     ```
-    ![namespace](images/namespace.PNG)
+    ![namespace](images/namespace.png)
 
 2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
@@ -78,27 +78,27 @@ We deployed three CPXs to manage each application workload independently. Also w
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/cpx.yaml -n tier-2-adc
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/hotdrink-secret.yaml -n tier-2-adc
     ```
-    ![ingress-cpx](images/ingress-cpx.PNG)
+    ![cpx](images/cpx.png)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/team-hotdrink.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/hotdrink-secret.yaml -n team-hotdrink
     ```
-    ![ingress-hotdrink](images/ingress-hotdrink.PNG)
+    ![ingress-hotdrink](images/ingress-hotdrink.png)
 
 4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/team-colddrink.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/colddrink-secret.yaml -n team-colddrink
     ```
-    ![ingress-colddrink](images/ingress-colddrink.PNG)
+    ![ingress-colddrink](images/ingress-colddrink.png)
 
 5.	Deploy the guestbook no SQL type microservice application in team-guestbook namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/team-guestbook.yaml -n team-guestbook
     ```
-    ![ingress-guestbook](images/ingress-guestbook.PNG)
+    ![ingress-guestbook](images/ingress-guestbook.png)
 
 6.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC
     
@@ -109,7 +109,7 @@ We deployed three CPXs to manage each application workload independently. Also w
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/ingress-vpx.yaml
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/cic-vpx.yaml
     ```
-    ![ingress-cic](images/ingress-cic.PNG)
+    ![ingress-cic](images/ingress-cic.png)
 
     Update  ingress-vpx.yaml and cic-vpx.yaml with following configuration
 
@@ -119,12 +119,18 @@ We deployed three CPXs to manage each application workload independently. Also w
     Go to ``cic-vpx.yaml`` and change the NS_IP value to your VPX NS_IP.         
     ``- name: "NS_IP"
       value: "x.x.x.x"``
-    Now execute the following commands after the above change.
+
+    Create a secret for the login into Tier 1 ADC, Update username and password for your Tier 1 ADC and execute below command
+
+    ```
+    kubectl create secret generic nsloginvpx --from-literal=username='userA' --from-literal=password='password' -n tier-2-adc
+    ```
+    Now deploy CIC to configure Tier 1 ADC.
     ```
     kubectl create -f ingress-vpx.yaml -n tier-2-adc
     kubectl create -f cic-vpx.yaml -n tier-2-adc
     ```
-    ![ingress-cic-config](images/ingress-cic-config.PNG)
+    ![ingress-cic-config](images/ingress-cic-config.png)
 
 8.	Yeah!!! Your application is successfully deployed and ready to access from Internet
 
@@ -156,13 +162,21 @@ Lets begin observability stack deployment using yamls
 1. Deploy Citrix Observability Exporter to receive log stream information from Citrix ADCs.
     Lets create your own K8s secret used for secure traffic
     ```
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/ingress.crt
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/ingress.key
     kubectl create secret tls ing --cert=ingress.crt --key=ingress.key -n monitoring
     ```
+    ![coe-secret](images/coe-secret.png)
+
     Lets deploy COE in K8s exposed as NodePort
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/coe.yaml -n monitoring
     ```
+    ![coe](images/coe.png)
+
     **Note** COE is exposed on pre-defined NodePort '30026' & '30071' for transactional & time series config respectively, this is optional step. You may go for auto selected NodePort by K8s.
+
+    ![coe-svc](images/coe-svc.png)
 
     Lets deploy a config-map to provide end point details.
     ```
@@ -172,10 +186,12 @@ Lets begin observability stack deployment using yamls
     Update cic-configmap with following details;
     * Update server end point to your one-of the k8s worker node IP. You can find k8s worker node IP using ``kubectl get nodes -o wide``
     * In case you are not using pre-defined NodePorts in coe deployment then update time-series, transactional port details to respective nodeport.
+    * cic-configmap is deployed in same namespace where CIC for Tier 1 and CPXs are deployed.
 
     ```
     kubectl create -f cic-configmap.yaml -n tier-2-adc
     ```
+    ![coe-configmap](images/coe-configmap.png)
 
 2. Deploy Observability/monitoring tools communicating with COE
 
@@ -188,6 +204,7 @@ Lets begin observability stack deployment using yamls
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/elasticsearch -n monitoring
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/kibana.yaml -n monitoring
     ```
+    ![monitoring-tool](images/monitoring-tool.png)
 
 3. Deploy ingress route for monitoring tools to start receiving metrics, logs
     Download ingress template for monitoring tools.
@@ -197,8 +214,9 @@ Lets begin observability stack deployment using yamls
 
     Update ``ingress.citrix.com/frontend-ip: `` to either same ingress IP as mentioned in ``ingress-vpx.yaml`` or assign new free IP.
     ```
-    kubectl create -f ingress-vpx-monitoring.yaml -n monitoring.yaml
+    kubectl create -f ingress-vpx-monitoring.yaml -n monitoring
     ```
+    ![coe-ingress](images/coe-ingress.png)
      
 4.	Yeah!!! Your monitoring dashboards are deployed successfully and ready to access from Internet
 
