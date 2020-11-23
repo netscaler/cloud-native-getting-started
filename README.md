@@ -28,7 +28,7 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
     * [Unified Ingress topology: Tier 1 ADC - MPX/BLX/VPX to load balance microservice applications (North-South traffic)](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress)
     * [2-Tier Ingress topology: Tier 1 ADC - MPX/BLX/VPX & Tier 2 ADC - CPX to load balance microservice applications (North-South traffic)](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/2-Tier-deployment)
     * [Service mesh Lite topology: Tier 1 ADC - MPX/BLX/VPX & Tier 2 ADC - CPX to load balance microservice applications (North-South as well as East-West traffic)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
-    * [Troubleshoote microservices using Citrix Observability Exporter](https://github.com/citrix/cloud-native-getting-started/blob/master/on-prem/ServiceMeshLite/coe/README.md)
+    * [Citrix Observability Exporter to troubleshoot microservices using Grafana, Kibana monitoring tools](https://github.com/citrix/cloud-native-getting-started/blob/master/on-prem/ServiceMeshLite/coe/README.md)
     * [API gateway use cases: Tier 1 ADC - MPX/BLX/VPX or Tier 2 ADC - CPX to provide Rate limit, Basic Auth, Content routing, IP filtering use cases](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/API-gateway)
   * OpenShift (Red Hat Enterprise Linux VMs on xenserver)
     * [Service mesh lite using Ingress rules](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
