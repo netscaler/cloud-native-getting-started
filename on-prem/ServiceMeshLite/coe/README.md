@@ -212,8 +212,11 @@ Lets begin observability stack deployment using yamls
      ```
 
 ### Setup Grafana Dashboard
-Login to ``http://grafana.beverages.com:8080`` and setup ADC health dashboard. Select Create>Import option to upload JSON file.
-You can import ADC health JSON from ``https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/Grafana-ADC-HealthDashboard.json`` and load the Prometheus dashboard to visualize ADC health metrics.
+* Login to ``http://grafana.beverages.com:8080`` and setup ADC health dashboard. 
+* Select Create>Import option to upload JSON file.
+* You can import ADC health JSON from ``https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/Grafana-ADC-HealthDashboard.json`` 
+* Load the Prometheus dashboard to visualize ADC health metrics.
+
 ![grafana-dashboard](images/grafana-dashboard.png)
 
 ### Setup Kibana Dashboard
