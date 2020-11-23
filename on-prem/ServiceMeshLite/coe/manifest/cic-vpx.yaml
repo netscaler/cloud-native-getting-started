@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cic-k8s-ingress-controller
+spec:
+  selector:
+    matchLabels:
+      app: cic-k8s-ingress-controller
+  replicas: 1
+  template:
+    metadata:
+      name: cic-k8s-ingress-controller
+      labels:
+        app: cic-k8s-ingress-controller
+      annotations:
+    spec: 
+      serviceAccountName: cic-k8s-role
+      containers:
+      - name: cic-k8s-ingress-controller
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.11.2"
+        env:
+         # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
+         - name: "NS_IP"
+           value: "10.105.158.148"
+         - name: "NS_PROTOCOL"
+           value: "HTTPS"
+         - name: "NS_PORT"
+           value: "443"
+         # Set username for Nitro
+         - name: "NS_USER"
+           valueFrom:
+            secretKeyRef:
+             name: nsloginvpx
+             key: username
+         # Set user password for Nitro
+         - name: "NS_PASSWORD"
+           valueFrom:
+            secretKeyRef:
+             name: nsloginvpx
+             key: password
+         # Set log level
+         - name: "EULA"
+           value: "yes"
+        args:
+          - --ingress-classes
+            citrix
+          - --feature-node-watch
+            false
+         ### added for COE
+# add back after bug fix for cpx#####
+          - --configmap
+            tier-2-adc/cic-configmap
+# remove after bug fix for cpx#####
+#        envFrom:
+#        - configMapRef:
+#            name: cic-configmap
+#############
+        imagePullPolicy: Always

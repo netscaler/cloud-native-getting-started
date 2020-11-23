@@ -1,0 +1,396 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cpx-ingress-k8s-role
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints", "ingresses", "pods", "secrets", "nodes", "routes", "namespaces", "configmaps"]
+    verbs: ["get", "list", "watch"]
+  # services/status is needed to update the loadbalancer IP in service status for integrating
+  # service of type LoadBalancer with external-dns
+  - apiGroups: [""]
+    resources: ["services/status"]
+    verbs: ["patch"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+  - apiGroups: ["extensions", "networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions", "networking.k8s.io"]
+    resources: ["ingresses/status"]
+    verbs: ["patch"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["citrix.com"]
+    resources: ["rewritepolicies", "continuousdeployments", "authpolicies", "ratelimits", "listeners", "httproutes", "wafs"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["citrix.com"]
+    resources: ["rewritepolicies/status", "continuousdeployments/status", "ratelimits/status", "authpolicies/status", "listeners/status", "httproutes/status", "wafs/status"]
+    verbs: ["get", "list", "patch"]
+  - apiGroups: ["citrix.com"]
+    resources: ["vips"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: ["route.openshift.io"]
+    resources: ["routes"]
+    verbs: ["get", "list", "watch"]
+
+---
+
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cpx-ingress-k8s-role
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cpx-ingress-k8s-role
+subjects:
+- kind: ServiceAccount
+  name: cpx-ingress-k8s-role
+  namespace: tier-2-adc
+apiVersion: rbac.authorization.k8s.io/v1
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cpx-ingress-k8s-role
+  namespace: tier-2-adc
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpx-ingress-hotdrinks
+  labels:
+    name: cpx-ingress-hotdrinks
+    app: cpx-ingress-hotdrinks
+spec:
+  selector:
+    matchLabels:
+      app: cpx-ingress-hotdrinks
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-hotdrinks
+      labels:
+        app: cpx-ingress-hotdrinks
+      annotations: null
+    spec:
+      serviceAccountName: cpx-ingress-k8s-role
+      containers:
+        - name: cpx-ingress
+          image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
+          securityContext:
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+            - mountPath: /cpx/conf/
+              name: cpx-volume1
+            - mountPath: /cpx/crash/
+              name: cpx-volume2
+        # Add cic as a sidecar
+        - name: cic
+          image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.2
+          volumeMounts:
+          - mountPath: /var/deviceinfo
+            name: shared-data
+          args:
+            - --ingress-classes
+              hotdrink
+            - --default-ssl-certificate
+              $(POD_NAMESPACE)/hotdrink-secret
+            - --configmap
+              tier-2-adc/cic-configmap
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: "LOGLEVEL"
+            value: "INFO"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          imagePullPolicy: Always
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume1
+        emptyDir: {}
+      - name: cpx-volume2
+        emptyDir: {}
+        
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpx-ingress-colddrinks
+  labels:
+    name: cpx-ingress-colddrinks
+    app: cpx-ingress-colddrinks
+spec:
+  selector:
+    matchLabels:
+      app: cpx-ingress-colddrinks
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-colddrinks
+      labels:
+        app: cpx-ingress-colddrinks
+      annotations: null
+    spec:
+      serviceAccountName: cpx-ingress-k8s-role
+      containers:
+        - name: cpx-ingress
+          image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
+          securityContext:
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+            - mountPath: /cpx/conf/
+              name: cpx-volume1
+            - mountPath: /cpx/crash/
+              name: cpx-volume2
+        # Add cic as a sidecar
+        - name: cic
+          image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.2
+          volumeMounts:
+          - mountPath: /var/deviceinfo
+            name: shared-data
+          args:
+            - --ingress-classes
+              colddrink
+            - --default-ssl-certificate
+              $(POD_NAMESPACE)/colddrink-secret
+            - --configmap
+              tier-2-adc/cic-configmap
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: "LOGLEVEL"
+            value: "INFO"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          imagePullPolicy: Always
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume1
+        emptyDir: {}
+      - name: cpx-volume2
+        emptyDir: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpx-ingress-guestbook
+  labels:
+    name: cpx-ingress-guestbook
+    app: cpx-ingress-guestbook
+spec:
+  selector:
+    matchLabels:
+      app: cpx-ingress-guestbook
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress-guestbook
+      labels:
+        app: cpx-ingress-guestbook
+      annotations: null
+    spec:
+      serviceAccountName: cpx-ingress-k8s-role
+      containers:
+        - name: cpx-ingress
+          image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
+          securityContext:
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+            - mountPath: /cpx/conf/
+              name: cpx-volume1
+            - mountPath: /cpx/crash/
+              name: cpx-volume2
+        # Add cic as a sidecar
+        - name: cic
+          image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.2
+          volumeMounts:
+          - mountPath: /var/deviceinfo
+            name: shared-data
+          args:
+            - --ingress-classes
+              guestbook
+            - --configmap
+              tier-2-adc/cic-configmap
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: "LOGLEVEL"
+            value: "INFO"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          imagePullPolicy: Always
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume1
+        emptyDir: {}
+      - name: cpx-volume2
+        emptyDir: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-hotdrinks
+  labels:
+    app: lb-service-hotdrinks
+spec:
+  clusterIP: None
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+    targetPort: 80
+  - port: 443
+    protocol: TCP
+    name: https
+    targetPort: 443
+  selector:
+    app: cpx-ingress-hotdrinks
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-colddrinks
+  labels:
+    app: lb-service-colddrinks
+spec:
+  clusterIP: None
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+    targetPort: 80
+  - port: 443
+    protocol: TCP
+    name: https
+    targetPort: 443
+  selector:
+    app: cpx-ingress-colddrinks
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-guestbook
+  labels:
+    app: lb-service-guestbook
+spec:
+  clusterIP: None
+  ports:
+  - port: 80
+    protocol: TCP
+    name: frontend
+    targetPort: 80
+  - port: 6379
+    protocol: TCP
+    name: guestbook
+    targetPort: 6379
+  selector:
+    app: cpx-ingress-guestbook
+
+---
+
+
