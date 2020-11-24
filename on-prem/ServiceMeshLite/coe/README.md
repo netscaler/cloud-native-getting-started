@@ -1,4 +1,4 @@
-# Learn how to troubleshoot microservices using Citrix Observability Exporter (COE)
+# Learn how to deploy Citrix Observability Exporter (COE) to monitor ADCs and microservices in cloud-native environment
 
 In this guide you will learn:
 * What is service mesh lite deployment?
@@ -52,13 +52,13 @@ Citrix Observability Exporter is a container which collects metrics and transact
 | ------- | ----------- |
 | [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-a-deploy-service-mesh-lite-topology) | Deploy Service mesh lite topology |
 | [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-b-deploy-coe-to-visualize-metrics-transactional-information) | Deploy COE to visualize metrics, transactional information |
-| [Section E](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-c-clean-up) | Clean Up |
+| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-c-clean-up) | Clean Up |
 
 ## Section A (Deploy Service mesh lite topology)
 
 Lets understand the Service Mesh lite topology where CPX is exposed as Ingress type service.
 
-![SML-ingress](images/SML-ingress.PNG)
+![topology](images/topology.png)
 
 We have three types of microservice applications (hotdrink, colddrink and guestbook beverages) deployed in K8s cluster. Each application is exposed on different protocol. In this demo you will learn how CPX load balances SSL, SSL-TCP and TCP type microservices.
 Each applications are deployed in different namespaces to isolate their workload from other k8s deployments.
@@ -68,7 +68,7 @@ We deployed three CPXs to manage each application workload independently. Also w
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/namespace.yaml
     ```
-    ![namespace](images/namespace.png)
+    ![namespace](images/namespace.PNG)
 
 2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
