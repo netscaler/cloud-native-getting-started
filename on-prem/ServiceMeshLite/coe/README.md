@@ -201,7 +201,7 @@ Lets begin observability stack deployment using yamls
     ```
     Lets deploy elastic-search and Kibana to visualize transactional data of Citrix ADCs
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/elasticsearch -n monitoring
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/elasticsearch.yaml -n monitoring
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/kibana.yaml -n monitoring
     ```
     ![monitoring-tool](images/monitoring-tool.png)
@@ -246,8 +246,10 @@ Lets begin observability stack deployment using yamls
 ![kibana-dashboard](images/kibana-dashboard.png)
 
 
+
 ## Section C (Clean Up)
 
 ```
 kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/namespace.yaml
 ```
+

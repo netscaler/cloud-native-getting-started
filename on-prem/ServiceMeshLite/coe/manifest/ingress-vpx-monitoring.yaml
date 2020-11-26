@@ -30,13 +30,6 @@ spec:
         backend:
           serviceName: kibana
           servicePort: 5601
-  - host:  zipkin.beverages.com
-    http:
-      paths:
-      - path:
-        backend:
-          serviceName: zipkin
-          servicePort: 9411
   - host:  elasticsearch.beverages.com
     http:
       paths:
