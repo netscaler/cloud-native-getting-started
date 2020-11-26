@@ -46,13 +46,6 @@ spec:
             citrix
           - --feature-node-watch
             true
-         ### added for COE
-# add back after bug fix for cpx#####
           - --configmap
             tier-2-adc/cic-configmap
-# remove after bug fix for cpx#####
-#        envFrom:
-#        - configMapRef:
-#            name: cic-configmap
-#############
         imagePullPolicy: Always
