@@ -53,6 +53,7 @@ Citrix Observability Exporter is a container which collects metrics and transact
 | [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-a-deploy-service-mesh-lite-topology) | Deploy Service mesh lite topology |
 | [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-b-deploy-coe-to-visualize-metrics-transactional-information) | Deploy COE to visualize metrics, transactional information |
 | [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-c-clean-up) | Clean Up |
+| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/coe#section-d-how-to-deploy-coe-video) | How to deploy COE video |
 
 ## Section A (Deploy Service mesh lite topology)
 
@@ -253,3 +254,6 @@ Lets begin observability stack deployment using yamls
 kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/namespace.yaml
 ```
 
+## Section D (How to deploy COE Video)
+
+[![coe-video](images/video.png)](https://youtu.be/nRcyxwqRNlA)
