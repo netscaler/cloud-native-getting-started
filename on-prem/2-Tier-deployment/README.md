@@ -184,6 +184,8 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-rbac.yaml -n mobile-developers
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-cpx.yaml -n frontend-developers
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-cpx.yaml -n mobile-developers
+    kubectl delete -f frontend-developers-ingress.yaml -n frontend-developers
+    kubectl delete -f mobile-developers-ingress.yaml -n mobile-developers
     kubectl delete -f frontend-developers-cic.yaml -n frontend-developers
     kubectl delete -f mobile-developers-cic.yaml -n mobile-developers
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/namespace.yaml
