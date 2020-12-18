@@ -51,6 +51,13 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
 
 2. Deploy microservice application for each team
     
+    Deploy k8s secret for frontend developer and mobile developer team to configure TLS certificate in Tier 1 ADC - VPX and Tier 2 ADC - CPX. Ingress kind for VPX and CPX configuration of each team specifies these secret names for TLS communication.
+     
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-secret.yaml -n frontend-developers
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-secret.yaml -n mobile-developers
+    ```
+    ![secret](images/secret.PNG)
     Deploy app for Frontend-developers team
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-app.yaml -n frontend-developers
@@ -136,12 +143,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     ```
     ![mobile-developers-ingress](images/mobile-developers-ingress.PNG)
 
-    Deploy k8s secret for each team to configure TLS certificate in Tier 1 ADC
-    ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-secret.yaml -n frontend-developers
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-secret.yaml -n mobile-developers
-    ```
-    ![secret](images/secret.PNG)
+
 
 7. Validate microservice deployment status for both teams
 
@@ -185,7 +187,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-cpx.yaml -n frontend-developers
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-cpx.yaml -n mobile-developers
     kubectl delete -f frontend-developers-ingress.yaml -n frontend-developers
-    kubectl delete -f mobile-developers-ingress.yaml -n mobile-developers
+    kubectl delete  -f mobile-developers-ingress.yaml -n mobile-developers
     kubectl delete -f frontend-developers-cic.yaml -n frontend-developers
     kubectl delete -f mobile-developers-cic.yaml -n mobile-developers
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/namespace.yaml
