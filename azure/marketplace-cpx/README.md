@@ -9,10 +9,10 @@ In this guide you will learn:
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A]() | Create K8s cluster in AKS |
-| [Section B]() | Create CPX, CIC Azure repository container images from marketplace |
-| [Section C]() | Load balance apps using CPX |
-| [Section D]() | Clean Up |
+| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/marketplace-cpx#section-a-create-k8s-cluster-in-aks) | Create K8s cluster in AKS |
+| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/marketplace-cpx#section-b-create-cpx-cic-azure-repository-container-images-from-marketplace) | Create CPX, CIC Azure repository container images from marketplace |
+| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/marketplace-cpx#section-c-load-balance-apps-using-cpx) | Load balance apps using CPX |
+| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/marketplace-cpx#section-d-clean-up) | Clean Up |
 
 ## Section A (Create K8s cluster in AKS)
 Azure has two options for deploying Kubernetes cluster in AKS, using Kubenet CNI and Azure CNI. In this demo, we will use Azure CNI for creating AKS k8s cluster.
@@ -21,8 +21,8 @@ You can create cluster either using Azure portal GUI or Azure CLI. Choose one op
 
 | Section | Description |
 | ------- | ----------- |
-| [Option A]() | Create AKS cluster using Azure cloud portal GUI |
-| [Option B]() | Create AKS cluster using Azure CLI|
+| [Option A](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/marketplace-cpx#option-a-create-aks-cluster-using-azure-cloud-portal-gui) | Create AKS cluster using Azure cloud portal GUI |
+| [Option B](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/marketplace-cpx#option-b-create-aks-cluster-using-azure-cli) | Create AKS cluster using Azure CLI|
 
 #### Option A (Create AKS cluster using Azure cloud portal GUI)
 
