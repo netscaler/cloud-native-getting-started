@@ -13,10 +13,10 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A]() | Deploy Citrix ADC VPX in Azure cloud|
-| [Section B]() | Deploy Azure K8s cluster (AKS) |
-| [Section C]() | Load balance beverage microservice apps using VPX|
-| [Section D]() | Clean Up |
+| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-a-deploy-citrix-adc-vpx-in-azure-cloud) | Deploy Citrix ADC VPX in Azure cloud|
+| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-b-deploy-azure-k8s-cluster-aks) | Deploy Azure K8s cluster (AKS) |
+| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-c-load-balance-beverage-microservice-apps-using-vpx) | Load balance beverage microservice apps using VPX|
+| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-d-clean-up) | Clean Up |
 
 ### Section A (Deploy Citrix ADC VPX in Azure cloud)
 
@@ -32,7 +32,7 @@ Lets deploy Citrix ADC VPX Express on Azure cloud using ARM template. For more d
 	![vpx-arm-1](images/vpx-arm-1.png)
 	![vpx-arm-2](images/vpx-arm-2.png)
 
-	* Resource group: You can create new resource group of your choice. I have created new resource group 'CN-marketplace-cpx-deployment 'before hand that used here.
+	* Resource group: You can create new resource group of your choice. I have created new resource group ''CN-marketplace-cpx-deployment'' before hand that used here.
 	* Provide Admin username and Admin password used for VPX login.
 	* Create a new vnet with details of Subnet. Please ensure that VPX and AKS subnet is not overlapping otherwise vnet peering will not work. Hence VPX is getting deployed in 172.11.0.0/24 subnet.
 
@@ -43,11 +43,11 @@ Lets deploy Citrix ADC VPX Express on Azure cloud using ARM template. For more d
 	It will take 2-3 mins for completing VPX Express deployment on Azure. 
 	![vpx-deployment](images/vpx-deployment.png)
 
-	Once deployment is complete, you can click on resource group. You will be redirected to 'CN-marketplace-cpx-deployment' resource group. In case not, then goto Resource group and select 'CN-marketplace-cpx-deployment' resource group to locate 'CitrixADCVPXExpress' VirtualMachine type.
+	Once deployment is complete, you can click on resource group. You will be redirected to "CN-marketplace-cpx-deployment" resource group. In case not, then goto Resource group and select "CN-marketplace-cpx-deployment" resource group to locate "CitrixADCVPXExpress" VirtualMachine type.
 
 5. Login to VPX Express
 
-	Click on 'CitrixADCVPXExpress' VirtualMachine type instance to note Public IP assigned to it.
+	Click on "CitrixADCVPXExpress" VirtualMachine type instance to note Public IP assigned to it.
 	![vpx-ip](images/vpx-ip.png)
 
 	You can login to VPX either through Browser or CLI. Below screenshot shows output of VPX login through CLI.
@@ -76,7 +76,7 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 	vnet peering between VPX and AKS cluster network is required to provide inbound and outbound reachability for pods deployed inside AKS cluster.
 	Since we have VPX being deployed before AKS deployment, VPX will have different subnet than AKS cluster. hence vnet peering is a solution to access hotdrink apps from Citrix ADC VPX.
 	otherwise you can have other deployment where Citrix ADC VPX can be deployed in the same resource group of AKS (starting with MC_) where vnet peering is not required.
-	**Note** When you deploy AKS cluster in one resource group then Azure creates another resource group strting with 'MC_' in which AKS workload is deployed. e.g. 'cpx-aks-cluster AKS cluster is created in CN-marketplace-cpx-deployment will create another resource group called MC_CN-marketplace-cpx-deployment_cpx-aks-cluster_southindia where actual k8s deployment takes place'
+	**Note** When you deploy AKS cluster in one resource group then Azure creates another resource group strting with ''MC_'' in which AKS workload is deployed. e.g. "cpx-aks-cluster AKS cluster is created in CN-marketplace-cpx-deployment will create another resource group called MC_CN-marketplace-cpx-deployment_cpx-aks-cluster_southindia where actual k8s deployment takes place".
 
 	* Goto Resource group - MC_CN-marketplace-cpx-deployment_cpx-aks-cluster_southindia -> aks-vnet-25189219 9virtual network) -> Click on Peering from left panel -> Click on Add 
 
@@ -114,7 +114,7 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 	```
 	wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/vpx-cic.yaml
 	```
-	Update 'NS_IP' from 'vpx-cic.yaml' file with Internal NetScaler IP(NSIP) of VPX shown in Section A step 5. In this deployment, 'NS_IP : 172.11.0.4' is used.
+	Update ''NS_IP'' from ''vpx-cic.yaml'' file with Internal NetScaler IP(NSIP) of VPX shown in Section A step 5. In this deployment, 'NS_IP : 172.11.0.4' is used.
 	```
 	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/rbac.yaml
 	kubectl create -f vpx-cic.yaml
@@ -125,7 +125,7 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 	```
 	wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/vpx-ingress.yaml
 	```
-	Update 'ingress.citrix.com/frontend-ip: "x.x.x.x"' with VIP IP address shown in Section A step 5. In this deployment, 'VIP: 172.11.0.5' is used.
+	Update ''ingress.citrix.com/frontend-ip: "x.x.x.x"'' with VIP IP address shown in Section A step 5. In this deployment, 'VIP: 172.11.0.5' is used.
 	```
 	kubectl create -f vpx-ingress.yaml
 	```
