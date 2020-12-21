@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cic-k8s-ingress-controller
+spec:
+  selector:
+    matchLabels:
+      app: cic-k8s-ingress-controller
+  replicas: 1
+  template:
+    metadata:
+      name: cic-k8s-ingress-controller
+      labels:
+        app: cic-k8s-ingress-controller
+      annotations:
+    spec: 
+      serviceAccountName: vpx-rbac
+      containers:
+      - name: cic-k8s-ingress-controller
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.11.3"
+        env:
+         # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
+         - name: "NS_IP"
+           value: "x.x.x.x"
+         # Set username for Nitro
+         - name: "NS_USER"
+           valueFrom:
+            secretKeyRef:
+             name: nslogin
+             key: username
+         - name: "LOGLEVEL"
+           value: "INFO"
+         # Set user password for Nitro
+         - name: "NS_PASSWORD"
+           valueFrom:
+            secretKeyRef:
+             name: nslogin
+             key: password
+         # Set log level
+         - name: "EULA"
+           value: "yes"
+        args:
+          - --ingress-classes
+            vpx
+          - --feature-node-watch
+            false
+        imagePullPolicy: Always
