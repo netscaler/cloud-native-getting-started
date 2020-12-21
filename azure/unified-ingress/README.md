@@ -93,13 +93,13 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 1. Deploy hotdrink beverage microservice app in AKS
 
 	```
-	kubectl create -f hotdrink.yaml
+	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/hotdrink.yaml
 	```
 
 2. Deploy Kubernetes secret to secure hotdrink apps from internet
 
 	```
-	kubectl create -f hotdrink-secret.yaml
+	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/hotdrink-secret.yaml
 	```
 
 3. Deploy Citrix Ingress Controller to configure Citrix ADC VPX
@@ -112,18 +112,18 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 
 	Download vpx-cic yaml file to update Citrix ADC VPX IP.
 	```
-	wget
+	wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/vpx-cic.yaml
 	```
 	Update 'NS_IP' from 'vpx-cic.yaml' file with Internal NetScaler IP(NSIP) of VPX shown in Section A step 5. In this deployment, 'NS_IP : 172.11.0.4' is used.
 	```
-	kubectl create -f rbac.yaml
+	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/rbac.yaml
 	kubectl create -f vpx-cic.yaml
 	```
 
 4. Deploy ingress route for VPX to make hotdrink app reachable over internet.
 
 	```
-	wget 
+	wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/vpx-ingress.yaml
 	```
 	Update 'ingress.citrix.com/frontend-ip: "x.x.x.x"' with VIP IP address shown in Section A step 5. In this deployment, 'VIP: 172.11.0.5' is used.
 	```
@@ -133,7 +133,7 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 5. Verify configuration in Citrix ADC VPX for hotdrink beverage microservice app.
 
 	You will find that Citrix Ingress Controller has configured Citrix ADC VPX automatically listensing to K8s event for hotdrink app.
-	 Login to Citrix ADC VPX and verify below config status.
+	Login to Citrix ADC VPX and verify below config status.
 	```
 	sh cs vserver
 	sh lb vserver
@@ -157,4 +157,7 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 ```
 kubectl delete -f vpx-ingress.yaml
 kubectl delete -f vpx-cic.yaml
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/hotdrink-secret.yaml
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/hotdrink.yaml
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/rbac.yaml
 ```
