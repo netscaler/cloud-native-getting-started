@@ -6,7 +6,7 @@ In this guide you will learn:
 * How to deploy a CPX in K8s cluster exposed as LoadBalancer, NodePort and Ingress type services.
 * How does a Citrix ADC CPX Load Balancer microservice applications.
   * How does CPX Load balance North-South traffic received from Tier 1 ADC
-  * How does CPX Load balance East-West traffic without sidecar proxy deployment
+  * How does CPX Load balance East-West traffic without sidecar proxy deployment. 
 * How to isolate microservice application workload (microservice apps, CPX, CIC) using K8s namespace.
 * How to configure Citrix ADC VPX (Tier 1 ADC) using Citrix Ingress Controller to load balance north-South ingress traffic for each team
 
@@ -159,6 +159,8 @@ We have three types of microservice applications (hotdrink, colddrink and guestb
 Each applications are deployed in different namespaces to isolate their workload from other k8s deployments.
 We deployed three CPXs to manage each application workload independently. Also we configured Tier 1 ADC - VPX to send ingress traffic to all microservices from individual CPXs.
 
+In this deployment, hotdrink application has three apps - frontend hotdrink, tea and coffee load balanced via single Citrix ADC CPX. Tea and coffee microservices apps do E-W communication via CPX. We have used headless service archtecture to enable E-W communication b/w tea and coffee.
+
 1. Create K8s namespaces to manage team beverages workload independently
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/namespace.yaml
@@ -180,6 +182,8 @@ We deployed three CPXs to manage each application workload independently. Also w
     ![ingress-cpx](images/ingress-cpx.PNG)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
+    Hotdrink beverage application has tea and coffee microserives having E-W communication enabled. Tea and Coffee beverage apps uses Citrix ADC CPX for E-W communication in ServiceMesh lite deployment. We create two service kinds for each tea and coffee services. One service will point to CPX where the FQDN of the microservice (for example, coffee) should point to the Citrix ADC CPX IP address instead of the Cluster IP of the target microservice (coffee). And another service as ``headless service`` to represent tea or coffee service. Detailed Service Mesh lite deployment using headless service is explained [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/ccf08da8d5b99b808a4762ce85e738e8fb16eef7/docs/deploy/service-mesh-lite.md)
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_hotdrink.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n team-hotdrink
