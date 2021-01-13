@@ -159,7 +159,7 @@ We have three types of microservice applications (hotdrink, colddrink and guestb
 Each applications are deployed in different namespaces to isolate their workload from other k8s deployments.
 We deployed three CPXs to manage each application workload independently. Also we configured Tier 1 ADC - VPX to send ingress traffic to all microservices from individual CPXs.
 
-In this deployment, hotdrink application has three apps - frontend hotdrink, tea and coffee load balanced via single Citrix ADC CPX. Tea and coffee microservices apps do E-W communication via CPX. We have used headless service archtecture to enable E-W communication b/w tea and coffee.
+In this deployment, hotdrink application has three apps - frontend hotdrink, tea and coffee load balanced via single Citrix ADC CPX. Tea and coffee microservices apps do E-W communication via CPX. We have used ``headless service architecture`` to enable E-W communication b/w tea and coffee.
 
 1. Create K8s namespaces to manage team beverages workload independently
     ```
