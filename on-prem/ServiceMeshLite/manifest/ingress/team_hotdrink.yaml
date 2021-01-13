@@ -24,10 +24,11 @@ spec:
           containerPort: 443
 #        imagePullPolicy: Always
 ---
+# headless tea service
 apiVersion: v1
 kind: Service
 metadata:
-  name: tea-beverage
+  name: tea-beverage 
 spec:
   clusterIP: None
   ports:
@@ -67,6 +68,7 @@ spec:
           containerPort: 443 
 #        imagePullPolicy: Always
 ---
+# headless coffee service
 apiVersion: v1
 kind: Service
 metadata:
@@ -153,14 +155,14 @@ spec:
       paths:
       - path: 
         backend:
-          serviceName: tea-beverage
+          serviceName: tea-beverage # headless tea service
           servicePort: 80
   - host:  coffee
     http:
       paths:
       - path: 
         backend:
-          serviceName: coffee-beverage
+          serviceName: coffee-beverage # headless coffee service
           servicePort: 443
 
 ---
@@ -170,13 +172,14 @@ apiVersion: v1
 metadata:
   name: coffee
 spec:
-  type: ExternalName
-  externalName: lb-service-hotdrinks.tier-2-adc.svc.cluster.local
+  type: clusterIP
   ports:
   - name: http
     port: 80
   - name: ssl
     port: 443
+  selector:
+    app: cpx-ingress-hotdrinks
 
 ---
 
@@ -185,11 +188,12 @@ apiVersion: v1
 metadata:
   name: tea
 spec:
-  type: ExternalName
-  externalName: lb-service-hotdrinks.tier-2-adc.svc.cluster.local
+  type: clusterIP
   ports:
   - name: http
     port: 80
   - name: ssl
     port: 443
+  selector:
+    app: cpx-ingress-hotdrinks
 
