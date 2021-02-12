@@ -23,6 +23,9 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
   * [Deep dive on K8s features with Citrix ADC CPX](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/k8s-features-deepdive-using-cpx.md)
   * [Leverage ConfigMap for changing CIC log levels](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/configmap-for-loglevels.md)
 * Citrix Cloud Native Advanced Guides
+  * Azure
+    * [Citrix ADC VPX & Ingress Controller as External LoadBalancer/Ingress for Azure Kubernetes Service](/azure/unified-ingress)
+    * [Citrix ADC CPX & Ingress Controller for Azure Kubernetes Service](/azure/marketplace-cpx)
   * [GCP (Google Cloud Platform)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/gcp)
   * On-Prem (using VMs on Xenserver)
     * [Unified Ingress topology: Tier 1 ADC - MPX/BLX/VPX to load balance microservice applications (North-South traffic)](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress)
