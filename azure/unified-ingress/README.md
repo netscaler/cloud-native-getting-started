@@ -98,9 +98,11 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 
 2. Deploy Kubernetes secret to secure hotdrink apps from internet
 
+	**Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 	```
 	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/hotdrink-secret.yaml
 	```
+
 
 3. Deploy Citrix Ingress Controller to configure Citrix ADC VPX
 

@@ -106,6 +106,7 @@ Lets deploy the sock shop application in Service mesh lite deployment where
 
 1. Lets deploy the sock-shop application with Citrix ADC to secure microservices from Internet.
 
+    **Note:** Please upload your TLS certificate and TLS key into secB5-sockshop-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
     ```
     wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB1-sock-shop-with-cpx.yaml
     wget  https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/sock-shop/manifest/secB2-sock-shop-vpx-cic.yaml
@@ -149,6 +150,8 @@ Lets deploy the sock shop application in Service mesh lite deployment where
     ```
 
 2. Lets deploy SSL certificate to secure North-South traffic
+
+    **Note:** Please upload your TLS certificate and TLS key into sockshop-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
     ```
     kubectl create -f sockshop-secret.yaml

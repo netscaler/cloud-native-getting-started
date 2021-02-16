@@ -227,6 +227,8 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
      ![GCP](./media/gcp-free-tier-image-9.png)
 
 6. Deploy a unqiue CPX for each application hotdrink, colddrink, and guestbook microservices
+    
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
      ```gcloudsdkkubectl
      kubectl create -f cpx.yaml -n tier-2-adc
@@ -243,6 +245,8 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
 7. Deploy hotdrink beverage application microservices-- SSL type microservice with hair-pin architecture
 
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
      ```gcloudsdkkubectl
      kubectl create -f team_hotdrink.yaml -n team-hotdrink
      kubectl create -f hotdrink-secret.yaml -n team-hotdrink
@@ -258,6 +262,7 @@ Citrix ADC offers the two-tier architecture deployment solution to load balance 
 
 8. Deploy colddrink beverage application microservice-- SSL_TCP type microservice
 
+    **Note:** Please upload your TLS certificate and TLS key into colddrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
      ```gcloudsdkkubectl
      kubectl create -f team_colddrink.yaml -n team-colddrink
      kubectl create -f colddrink-secret.yaml -n team-colddrink

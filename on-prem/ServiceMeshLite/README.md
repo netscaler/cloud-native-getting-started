@@ -76,6 +76,8 @@ We deployed three CPXs to manage each application workload independently. Also w
     kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n tier-2-adc
     ```
     Lets deploy CPX now,
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/cpx.yaml -n tier-2-adc
@@ -84,6 +86,9 @@ We deployed three CPXs to manage each application workload independently. Also w
     ![nodeport-cpx](images/nodeport-cpx.PNG)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/team_hotdrink.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/hotdrink-secret.yaml -n team-hotdrink
@@ -91,6 +96,9 @@ We deployed three CPXs to manage each application workload independently. Also w
     ![nodeport-hotdrink](images/nodeport-hotdrink.PNG)
 
 4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into colddrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/team_colddrink.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/colddrink-secret.yaml -n team-colddrink
@@ -174,6 +182,8 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n tier-2-adc
     ```
     Lets deploy CPX now,
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cpx.yaml -n tier-2-adc
@@ -184,6 +194,8 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
     Hotdrink beverage application has tea and coffee microserives having E-W communication enabled. Tea and Coffee beverage apps uses Citrix ADC CPX for E-W communication in ServiceMesh lite deployment. We create two service kinds for each tea and coffee services. One service will point to CPX where the FQDN of the microservice (for example, coffee) should point to the Citrix ADC CPX IP address instead of the Cluster IP of the target microservice (coffee). And another service as ``headless service`` to represent tea or coffee service. Detailed Service Mesh lite deployment using headless service is explained [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/ccf08da8d5b99b808a4762ce85e738e8fb16eef7/docs/deploy/service-mesh-lite.md)
 
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_hotdrink.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n team-hotdrink
@@ -191,6 +203,8 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     ![ingress-hotdrink](images/ingress-hotdrink.PNG)
 
 4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into colddrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_colddrink.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/colddrink-secret.yaml -n team-colddrink
@@ -274,6 +288,8 @@ We deployed three CPXs to manage each application workload independently. Also w
     kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n tier-2-adc
     ```
     Lets deploy CPX now,
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/cpx.yaml -n tier-2-adc
@@ -297,6 +313,9 @@ We deployed three CPXs to manage each application workload independently. Also w
     ![lb-ipam-deploy](images/lb-ipam-deploy.PNG)
 
 4.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/team_hotdrink.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/hotdrink-secret.yaml -n team-hotdrink
@@ -304,6 +323,9 @@ We deployed three CPXs to manage each application workload independently. Also w
     ![lb-hotdrink](images/lb-hotdrink.PNG)
 
 5.	Deploy the colddrink beverage microservice application in team-colddrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into colddrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/team_colddrink.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/colddrink-secret.yaml -n team-colddrink

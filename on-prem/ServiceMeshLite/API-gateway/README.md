@@ -74,6 +74,8 @@ Know more about supported deployments from [Citrix Cloud native deployments](htt
     ```
     Lets deploy two CPXs now; one CPX exposed as Ingress service load balancing hotdrink beverage app and another CPX exposed as LoadBalancer service load balancing colddrink beverage app.
 
+    **Note:** Please upload your TLS certificate and TLS key into vpx-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/cpx.yaml -n tier-2-adc
@@ -83,6 +85,8 @@ Know more about supported deployments from [Citrix Cloud native deployments](htt
     ![cpx](images/cpx.PNG)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into vpx-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/hotdrink-beverage.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/vpx-secret.yaml -n team-hotdrink
@@ -92,6 +96,9 @@ Know more about supported deployments from [Citrix Cloud native deployments](htt
     ![hotdrink-app](images/hotdrink-app.PNG)
 
 4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into colddrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/colddrink-beverage.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/colddrink-secret.yaml -n team-colddrink
@@ -334,6 +341,8 @@ In this how to example, we will demonstrate how does Tier 1 Citrix ADC - VPX rou
     ```
     Lets deploy two CPXs now; one CPX exposed as Ingress service load balancing hotdrink beverage app and another CPX exposed as LoadBalancer service load balancing colddrink beverage app.
 
+    **Note:** Please upload your TLS certificate and TLS key into drink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/content-routing-cpx.yaml -n tier-2-adc
@@ -342,6 +351,9 @@ In this how to example, we will demonstrate how does Tier 1 Citrix ADC - VPX rou
     ![cr-cpx](images/cr-cpx.PNG)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into drink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/hotdrink-beverage.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/drink-secret.yaml -n team-hotdrink
