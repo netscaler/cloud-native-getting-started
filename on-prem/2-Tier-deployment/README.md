@@ -52,7 +52,8 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
 2. Deploy microservice application for each team
     
     Deploy k8s secret for frontend developer and mobile developer team to configure TLS certificate in Tier 1 ADC - VPX and Tier 2 ADC - CPX. Ingress kind for VPX and CPX configuration of each team specifies these secret names for TLS communication.
-     
+    **Note:** Please upload your TLS certificate and TLS key into frontend-developers-secret.yaml & mobile-developers-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+    
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-secret.yaml -n frontend-developers
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-secret.yaml -n mobile-developers

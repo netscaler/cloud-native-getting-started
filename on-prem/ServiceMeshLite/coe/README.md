@@ -74,6 +74,8 @@ We deployed three CPXs to manage each application workload independently. Also w
 2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
     Lets deploy CPX now,
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/cpx.yaml -n tier-2-adc
@@ -82,6 +84,9 @@ We deployed three CPXs to manage each application workload independently. Also w
     ![cpx](images/cpx.png)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/team-hotdrink.yaml -n team-hotdrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/hotdrink-secret.yaml -n team-hotdrink
@@ -89,6 +94,9 @@ We deployed three CPXs to manage each application workload independently. Also w
     ![ingress-hotdrink](images/ingress-hotdrink.png)
 
 4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
+
+    **Note:** Please upload your TLS certificate and TLS key into colddrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/team-colddrink.yaml -n team-colddrink
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/colddrink-secret.yaml -n team-colddrink
@@ -162,6 +170,8 @@ Lets begin observability stack deployment using yamls
 
 1. Deploy Citrix Observability Exporter to receive log stream information from Citrix ADCs.
     Lets create your own K8s secret used for secure traffic
+    **Note:** Please upload your TLS certificate and TLS key into secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/ingress.crt
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/ingress.key

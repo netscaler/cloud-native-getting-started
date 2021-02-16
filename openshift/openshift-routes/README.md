@@ -127,6 +127,8 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
 3. Lets deploy routes to configure Tier 1 ADC
 
+    **Note:** Please upload your TLS certificate and TLS key into routes.yamls. We have updated our security policies and removed SSL certificate from guides.
+
     i. Deploy re-encryption termination route for hotdrink beverage application
     ```
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/route-reencrypt-hoddrink.yaml -n beverages

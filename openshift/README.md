@@ -74,20 +74,25 @@ CPX runs as a privileged container. Hence you need to add the CPX service accoun
 oc adm policy add-scc-to-user privileged system:serviceaccount:tier-2-adc:cpx
 ```
 
-6.	Deploy the CPX for hotdrink, colddrink and guestbook microservices using following commands,
+6.	Deploy the CPX for hotdrink, colddrink and guestbook microservices using following commands
 
+**Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 ```
 oc create -f cpx.yaml -n tier-2-adc
 oc create -f hotdrink-secret.yaml -n tier-2-adc
 ```
 
 7.	Deploy the three types of hotdrink beverage microservices using following commands
+**Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
 ```
 oc create -f team_hotdrink.yaml -n team-hotdrink
 oc create -f hotdrink-secret.yaml -n team-hotdrink
 ```
 
 8.	Deploy the colddrink beverage microservice using following commands
+**Note:** Please upload your TLS certificate and TLS key into colddrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+
 ```
 oc create -f team_colddrink.yaml -n team-colddrink
 oc create -f colddrink-secret.yaml -n team-colddrink
