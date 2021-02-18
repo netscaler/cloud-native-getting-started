@@ -59,6 +59,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/mobile-developers-secret.yaml -n mobile-developers
     ```
     ![secret](images/secret.PNG)
+
     Deploy app for Frontend-developers team
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-app.yaml -n frontend-developers
@@ -104,6 +105,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-cic.yaml
     ```
     Edit 'NS_IP' variable from 'frontend-developers-cic.yaml' file with Tier 1 ADC NSIP.
+    
     Change username 'NS_USER' and password 'NS_PASSWORD' as per user credentials used for Tier 1 ADC .
     ```
     kubectl create -f frontend-developers-cic.yaml -n frontend-developers
