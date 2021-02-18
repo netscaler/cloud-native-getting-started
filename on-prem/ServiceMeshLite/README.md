@@ -128,8 +128,9 @@ We deployed three CPXs to manage each application workload independently. Also w
     e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.160"``
 
     Go to ``cic_vpx.yaml`` and change the NS_IP value to your VPX NS_IP.         
-    ``- name: "NS_IP"
-      value: "x.x.x.x"``
+    1.  ``- name: "NS_IP"
+        value: "x.x.x.x"``
+    2.  Update VPX crednetails in cic_vpx.yaml file 
     Now execute the following commands after the above change.
     ```
     kubectl create -f ingress_vpx.yaml -n tier-2-adc
@@ -234,8 +235,9 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.160"``
 
     Go to ``cic_vpx.yaml`` and change the NS_IP value to your VPX NS_IP.         
-    ``- name: "NS_IP"
-      value: "x.x.x.x"``
+    1.  ``- name: "NS_IP"
+        value: "x.x.x.x"``
+    2.  Update VPX crednetails in cic_vpx.yaml file 
     Now execute the following commands after the above change.
     ```
     kubectl create -f ingress_vpx.yaml -n tier-2-adc
@@ -348,8 +350,9 @@ We deployed three CPXs to manage each application workload independently. Also w
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/cic_vpx.yaml
     ```
     Update ``cic_vpx.yaml`` with  NS_IP value to your VPX NS_IP.         
-    ``- name: "NS_IP"
-      value: "x.x.x.x"``
+    1.  ``- name: "NS_IP"
+        value: "x.x.x.x"``
+    2.  Update VPX crednetails in cic_vpx.yaml file 
     Now execute the following commands after the above change.
     ```
     kubectl create -f cic_vpx.yaml -n tier-2-adc

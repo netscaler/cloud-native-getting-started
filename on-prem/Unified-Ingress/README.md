@@ -83,7 +83,8 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/tier-1-cic.yaml
     ```
-    Change "NS_IP" = <Tier 1 ADC NSIP> used in your deployment
+    Change "NS_IP" = <Tier 1 ADC NSIP> used in your deployment.
+    
     Change username and password as per user credentials used for Tier 1 ADC.
     ```
     kubectl create -f tier-1-cic.yaml -n tier-2-adc
