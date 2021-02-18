@@ -42,7 +42,3 @@ Refer to [How to deploy CPX and beverage apps in AKS guide](https://github.com/c
 ### Section D (Clean Up)
 
 
-
-
-### Section D (Clean Up)
-
