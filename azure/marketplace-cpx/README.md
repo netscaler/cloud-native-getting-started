@@ -4,7 +4,7 @@ In this guide you will learn:
 * How to deploy Azure K8s cluster (AKS)
 * How to create container deployable image for CPX, CIC from Azure marketplace
 * How to deploy a CPX in AKS cluster exposed as LoadBalancer type services
-* Load balance hotdrink beveage microservice app using AKS
+* Load balance hotdrink beverage microservice app using AKS
 
 
 | Section | Description |
