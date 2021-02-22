@@ -1,4 +1,4 @@
-# # Deploy Citrix Cloud native Unified Ingress topology in Azure cloud (Tier 1 ADC as Citrix ADC VPX, Tier 2 as microservice applications on AKS)
+# Deploy Citrix Cloud native Unified Ingress topology in Azure cloud (Tier 1 ADC as Citrix ADC VPX, Tier 2 as microservice applications on AKS)
 
 In this guide you will learn:
 * What is Unified Ingress topology?
