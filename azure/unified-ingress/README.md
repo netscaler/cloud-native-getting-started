@@ -90,13 +90,15 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 	![vnet-peering-3](images/vnet-peering-3.png)
 
 ### Section C (Load balance beverage microservice apps using VPX)
-1. Deploy hotdrink beverage microservice app in AKS
+1. Deploy beverage microservice apps in AKS
+	Lets deploy hotdrink and colddrink beverage microservice based apps to AKS.
 
 	```
 	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/hotdrink.yaml
+	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/colddrink.yaml
 	```
 
-2. Deploy Kubernetes secret to secure hotdrink apps from internet
+2. Deploy Kubernetes secret to secure beverage apps from internet
 
 	**Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 	```
@@ -122,7 +124,7 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 	kubectl create -f vpx-cic.yaml
 	```
 
-4. Deploy ingress route for VPX to make hotdrink app reachable over internet.
+4. Deploy ingress route for VPX to make hotdrink app & colddrink app reachable over internet.
 
 	```
 	wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/vpx-ingress.yaml
@@ -132,23 +134,25 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 	kubectl create -f vpx-ingress.yaml
 	```
 
-5. Verify configuration in Citrix ADC VPX for hotdrink beverage microservice app.
+5. Verify configuration in Citrix ADC VPX for hotdrink and colddrink beverage microservice app.
 
 	You will find that Citrix Ingress Controller has configured Citrix ADC VPX automatically listensing to K8s event for hotdrink app.
 	Login to Citrix ADC VPX and verify below config status.
 	```
 	sh cs vserver
 	sh lb vserver
+	sh servicegroup
 	```
 	![vpx-config](images/vpx-config.png)
 
-6. Yeah!!! Hotdrink beverage application is available to access securedly overfrom Internet using Citrix ADC VPX load balancer.
+6. Yeah!!! Beverage application is available to access securely from Internet using Citrix ADC VPX load balancer.
 
 	Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
 	Add below entries in hosts file and save the file
 
 	```
 	<Public IP from CitrixADCVPXExpress-vip > hotdrink.beverages.com
+	<Public IP from CitrixADCVPXExpress-vip > colddrink.beverages.com
 	```
 	**Note** CitrixADCVPXExpress-vip can be found in Resource group as Public IP address type created by VPX ARM template in Section A.
 
@@ -161,5 +165,6 @@ kubectl delete -f vpx-ingress.yaml
 kubectl delete -f vpx-cic.yaml
 kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/hotdrink-secret.yaml
 kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/hotdrink.yaml
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/colddrink.yaml
 kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/azure/unified-ingress/manifest/rbac.yaml
 ```

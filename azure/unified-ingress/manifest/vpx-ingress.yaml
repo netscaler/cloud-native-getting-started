@@ -18,3 +18,10 @@ spec:
         backend:
           serviceName: frontend-hotdrinks
           servicePort: 80
+  - host:  colddrink.beverages.com
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: frontend-colddrinks
+          servicePort: 80
