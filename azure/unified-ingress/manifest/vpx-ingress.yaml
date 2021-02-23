@@ -6,7 +6,7 @@ metadata:
    kubernetes.io/ingress.class: "vpx"
    ingress.citrix.com/insecure-termination: "redirect"
    ingress.citrix.com/frontend-ip: "x.x.x.x"
-#   ingress.citrix.com/secure_backend: '{"lb-service-hotdrinks": "True"}'
+   ingress.citrix.com/secure_backend: '{"frontend-hotdrinks": "True"}'
 spec:
   tls:
   - secretName: hotdrink-secret
@@ -17,7 +17,7 @@ spec:
       - path: 
         backend:
           serviceName: frontend-hotdrinks
-          servicePort: 80
+          servicePort: 443
   - host:  colddrink.beverages.com
     http:
       paths:
