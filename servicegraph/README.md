@@ -90,7 +90,7 @@ Lets deploy the Netflix application in Service mesh lite deployment where
 * Tier 2 ADC - CPX to route East-West traffic from Netflix application.
 
 
-**Tier 1 ADC** - VPX to ingress Secure North-South traffic. You can have MPX/BLX as TIer 1 ADC also.
+**Tier 1 ADC** - VPX to ingress Secure North-South traffic. You can have MPX/BLX as Tier 1 ADC also.
 
 ```
 wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/citrix-cloud-native.yaml
