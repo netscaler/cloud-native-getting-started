@@ -10,11 +10,9 @@ C. [Deploy Netflix application on Kubernetes Cluster ](#deploy-application)
 
 D. [Citrix Cloud Native Dual Tier Topology ](#deploy-citrix-cloud-native-stack)
 
-E. [Visualize Servicegraph in Citrix ADM](#servicegraph)
+E. [Send Traffic](#send-traffic) 
 
-F. [Send Traffic](#send-traffic)
-
-G. [Trace](#trace)
+F. [Visualize Servicegraph in Citrix ADM](#servicegraph)
 
 # Prerequisites.
 - An ADM Agent
@@ -154,15 +152,10 @@ Update VIP with Virtual IP use to expose the Netflix app in `traffic.sh` and sta
 In ADM goto >Application > Service Graph > MicroServices
 ![](images/servicegraph.png)
 
-## <a name="trace">G) Tracing </a>
-On selecting "Trace Info" on any of the service graph node (say recommendation-engine), you can see all the transactions (aka spans) that the selected service has taken part in for a selected duration. 
-![](images/trace-info.png)
 
-![](images/trace-transactions.png)
+![](images/servicegraph-detail.png)
 
-On Drilling down on each transaction span by clicking the arrow in each row, you'll see the details of the trace corresponding to that span transaction.
+We can view transation logs as well in the servicegraph.
 
-![](images/trace-drilldown-on-graph.png)
+![](images/transactionlog.png)
 
-A user can select "See Trace Details" to visualize the entire trace in the form of a chart of all transactions which are part of the trace 
-![](images/trace-view.png)
