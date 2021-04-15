@@ -22,25 +22,6 @@ data:
   LOGLEVEL: 'info'
   NS_PROTOCOL: 'http'
   NS_PORT: '80'
-  NS_HTTP2_SERVER_SIDE: 'ON'
-  NS_ANALYTICS_CONFIG: |
-    distributed_tracing:
-      enable: 'true'
-      samplingrate: 100
-    endpoint:
-      server: 'A.B.C.D'
-    timeseries:
-      port: 5563
-      metrics:
-        enable: 'true'
-        mode: 'avro'
-      auditlogs:
-        enable: 'true'
-      events:
-        enable: 'true'
-    transactions:
-      enable: 'true'
-      port: 5557
 ---
 # Source: citrix-cloud-native/charts/cpx/templates/configmap.yaml
 apiVersion: v1
@@ -51,25 +32,6 @@ data:
   LOGLEVEL: 'info'
   NS_PROTOCOL: 'http'
   NS_PORT: '80'
-  NS_HTTP2_SERVER_SIDE: 'ON'
-  NS_ANALYTICS_CONFIG: |
-    distributed_tracing:
-      enable: 'true'
-      samplingrate: 100
-    endpoint:
-      server: 'A.B.C.D'
-    timeseries:
-      port: 5563
-      metrics:
-        enable: 'true'
-        mode: 'avro'
-      auditlogs:
-        enable: 'true'
-      events:
-        enable: 'true'
-    transactions:
-      enable: 'true'
-      port: 5557
 ---
 # Source: citrix-cloud-native/charts/cic/templates/rbac.yaml
 kind: ClusterRole
