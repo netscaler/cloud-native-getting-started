@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: netflix-frontend-service
+spec:
+  ports:
+  - name: netflix-frontend-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: adc-netflix-cpx
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: tv-shows-service
+spec:
+  ports:
+  - name: tv-shows-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: adc-netflix-cpx
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: movies-service
+spec:
+  ports:
+  - name: movies-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: adc-netflix-cpx
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: metadata-store-service
+spec:
+  ports:
+  - name: metadata-store-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: adc-netflix-cpx
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendation-engine-service
+spec:
+  ports:
+  - name: recommendation-engine-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: adc-netflix-cpx
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: similarity-calculator-service
+spec:
+  ports:
+  - name: similarity-calculator-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: adc-netflix-cpx
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mutual-friends-interests-service
+spec:
+  ports:
+  - name: mutual-friends-interests-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: adc-netflix-cpx
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: trending-service
+spec:
+  ports:
+  - name: trending-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: adc-netflix-cpx
+    
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: telemetry-store-service
+spec:
+  ports:
+  - name: telemetry-store-80
+    port: 80
+    targetPort: 80
+  selector:
+    app: adc-netflix-cpx
+    
+---

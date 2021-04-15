@@ -1,0 +1,361 @@
+---
+# Source: citrix-cloud-native/charts/cic/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: adc-netflix-cic
+  namespace: default
+---
+# Source: citrix-cloud-native/charts/cpx/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: adc-netflix-cpx
+  namespace: default
+---
+# Source: citrix-cloud-native/charts/cic/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adc-netflix-cic-configmap
+data:
+  LOGLEVEL: "info"
+  NS_PROTOCOL: "https"
+  NS_PORT: "443"
+---
+# Source: citrix-cloud-native/charts/cpx/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adc-netflix-cpx-cic-configmap
+data:
+  LOGLEVEL: "info"
+  NS_PROTOCOL: "http"
+  NS_PORT: "80"
+---
+# Source: citrix-cloud-native/charts/cic/templates/rbac.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: adc-netflix-cic
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "nodes", "namespaces", "configmaps"]
+    verbs: ["get", "list", "watch"]
+  # services/status is needed to update the loadbalancer IP in service status for integrating
+  # service of type LoadBalancer with external-dns
+  - apiGroups: [""]
+    resources: ["services/status"]
+    verbs: ["patch"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+  - apiGroups: ["extensions","networking.k8s.io"]
+    resources: ["ingresses", "ingressclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions","networking.k8s.io"]
+    resources: ["ingresses/status"]
+    verbs: ["patch"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["citrix.com"]
+    resources: ["rewritepolicies", "continuousdeployments", "authpolicies", "ratelimits", "listeners", "httproutes", "wafs", "apigatewaypolicies", "bots"]
+    verbs: ["get", "list", "watch", "create", "delete", "patch"]
+  - apiGroups: ["citrix.com"]
+    resources: ["rewritepolicies/status", "continuousdeployments/status", "authpolicies/status", "ratelimits/status", "listeners/status", "httproutes/status", "wafs/status", "apigatewaypolicies/status", "bots/status"]
+    verbs: ["get", "list", "patch"]
+  - apiGroups: ["citrix.com"]
+    resources: ["vips"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: ["crd.projectcalico.org"]
+    resources: ["ipamblocks"]
+    verbs: ["get", "list", "watch"]
+---
+# Source: citrix-cloud-native/charts/cpx/templates/rbac.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: adc-netflix-cpx
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "nodes", "namespaces", "configmaps"]
+    verbs: ["get", "list", "watch"]
+  # services/status is needed to update the loadbalancer IP in service status for integrating
+  # service of type LoadBalancer with external-dns
+  - apiGroups: [""]
+    resources: ["services/status"]
+    verbs: ["patch"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+  - apiGroups: ["extensions","networking.k8s.io"]
+    resources: ["ingresses", "ingressclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions","networking.k8s.io"]
+    resources: ["ingresses/status"]
+    verbs: ["patch"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["citrix.com"]
+    resources: ["rewritepolicies", "continuousdeployments", "authpolicies", "ratelimits", "listeners", "httproutes", "wafs", "apigatewaypolicies", "bots"]
+    verbs: ["get", "list", "watch", "create", "delete", "patch"]
+  - apiGroups: ["citrix.com"]
+    resources: ["rewritepolicies/status", "continuousdeployments/status", "authpolicies/status", "ratelimits/status", "listeners/status", "httproutes/status", "wafs/status", "apigatewaypolicies/status", "bots/status"]
+    verbs: ["get", "list", "patch"]
+  - apiGroups: ["citrix.com"]
+    resources: ["vips"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: ["crd.projectcalico.org"]
+    resources: ["ipamblocks"]
+    verbs: ["get", "list", "watch"]
+---
+# Source: citrix-cloud-native/charts/ipam/templates/serviceaccount.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: adc-netflix-ipam
+rules:
+- apiGroups:
+  - citrix.com
+  resources:
+  - vips
+  verbs:
+  - '*'
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - '*'
+---
+# Source: citrix-cloud-native/charts/cic/templates/rbac.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: adc-netflix-cic
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: adc-netflix-cic
+subjects:
+- kind: ServiceAccount
+  name: adc-netflix-cic
+  namespace: default
+apiVersion: rbac.authorization.k8s.io/v1
+---
+# Source: citrix-cloud-native/charts/cpx/templates/rbac.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: adc-netflix-cpx
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: adc-netflix-cpx
+subjects:
+- kind: ServiceAccount
+  name: adc-netflix-cpx
+  namespace: default
+apiVersion: rbac.authorization.k8s.io/v1
+---
+# Source: citrix-cloud-native/charts/ipam/templates/serviceaccount.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: adc-netflix-ipam
+subjects:
+- kind: ServiceAccount
+  name: adc-netflix-ipam
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: adc-netflix-ipam
+---
+# Source: citrix-cloud-native/charts/cpx/templates/citrix-k8s-cpx-ingress.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: adc-netflix-cpx-service
+  labels:
+    app: cpx-service
+    service-type: adc-netflix-citrix-adc-cpx-svcmon
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: adc-netflix-cpx
+---
+# Source: citrix-cloud-native/charts/cic/templates/citrix-k8s-ingress.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adc-netflix-cic
+spec:
+  selector:
+    matchLabels:
+      app: adc-netflix-cic
+  replicas: 1
+  template:
+    metadata:
+      name: cic
+      labels:
+        app: adc-netflix-cic
+    spec:
+      serviceAccountName: adc-netflix-cic
+      containers:
+      - name: cic
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.13.20"
+        imagePullPolicy: IfNotPresent
+        args:
+          - --configmap
+            default/adc-netflix-cic-configmap
+          - --ingress-class
+            netflix-vpx
+          - --feature-node-watch
+            true
+        env:
+        - name: "NS_IP"
+          value: "10.106.170.7"
+        - name: "NS_USER"
+          valueFrom:
+            secretKeyRef:
+              name: nslogin
+              key: username
+        - name: "NS_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: nslogin
+              key: password
+        - name: "EULA"
+          value: "Yes"
+        - name: "NS_APPS_NAME_PREFIX"
+          value: netflix
+---
+# Source: citrix-cloud-native/charts/cpx/templates/citrix-k8s-cpx-ingress.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adc-netflix-cpx
+spec:
+  selector:
+    matchLabels:
+      app: adc-netflix-cpx
+  replicas: 1
+  template:
+    metadata:
+      name: adc-netflix-cpx
+      labels:
+        app: adc-netflix-cpx
+      annotations:
+    spec:
+      serviceAccountName: adc-netflix-cpx
+      containers:
+        - name: cpx-ingress
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29"
+          imagePullPolicy: IfNotPresent
+          tty: true
+          securityContext:
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "Yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          - name: "LS_IP"
+            value: "10.103.216.58"
+          - name: "LS_PORT"
+            value: "27000"
+          - name: "MGMT_HTTP_PORT"
+            value: "9080"
+          - name: "MGMT_HTTPS_PORT"
+            value: "9443"
+          - name: "NS_MGMT_SERVER"
+            value: "10.103.216.58"
+          - name: "NS_MGMT_FINGER_PRINT"
+            value: "D0:D7:FF:72:2C:C0:97:B0:F8:C7:07:E6:A7:3C:43:AE:0E:96:02:5D"
+          - name: "NS_HTTP_PORT"
+            value: "9080"
+          - name: "NS_HTTPS_PORT"
+            value: "9443"
+          - name: "LOGSTREAM_COLLECTOR_IP"
+            value: "10.103.216.58"
+#To povision bandwidth based licensing to Citrix ADC CPX from ADM, needs bandwidth
+#for multiple-PE support, need to set CPX_CORES
+          - name: NS_MGMT_USER
+            valueFrom:
+              secretKeyRef:
+                name: admlogin
+                key: username
+          - name: NS_MGMT_PASS
+            valueFrom:
+              secretKeyRef:
+                name: admlogin
+                key: password
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+            - mountPath: /cpx/
+              name: cpx-volume
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.13.20"
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: "EULA"
+            value: "Yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_APPS_NAME_PREFIX"
+            value: cetflix
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
+          args:
+            - --configmap
+              default/adc-netflix-cpx-cic-configmap
+            - --ingress-class
+              netflix-cpx
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+      volumes:
+        - name: shared-data
+          emptyDir: {}
+        - name: cpx-volume
+          emptyDir: {}
