@@ -12,7 +12,9 @@ D. [Citrix Cloud Native Dual Tier Topology ](#deploy-citrix-cloud-native-stack)
 
 E. [Visualize Servicegraph in Citrix ADM](#servicegraph)
 
-F. [Trace](trace)
+F. [Send Traffic](#send-traffic)
+
+G. [Trace](#trace)
 
 # Prerequisites.
 - An ADM Agent
@@ -109,6 +111,9 @@ i. NS_MGMT_SERVER -> With Citrix ADM agent IP
 ii. "NS_MGMT_FINGER_PRINT" -> Citrix ADM agent fingerprint 
 iii. "LOGSTREAM_COLLECTOR_IP" -> With Citrix ADM agent IP 
 iv. "NS_LOGPROXY" -> With Citrix ADM agent IP 
+
+Update `endpoint.server` with the Citrix ADM Agent IP in `adc-netflix-cic-configmap` and `adc-netflix-cpx-cic-configmap` in `citrix-cloud-native.yaml` file under `NS_ANALYTICS_CONFIG`. 
+
 After updating above environment variables, deploy tier-2 CPX using 
 ```
     kubectl apply -f citrix-cloud-native.yaml
@@ -136,7 +141,7 @@ Now enable  [Auto-select Virtual Servers](https://docs.citrix.com/en-us/citrix-a
  
 Finally enable the  [Web transaction and TCP transaction settings](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/sg-service-mesh-dual-tier-topology.html#enable-web-transaction-and-tcp-transaction-settings)  to  **All**  for Citrix ADM agent to get HTTP and TCP transactions.
 
-## <a name="send-traffic"> D) Send Traffic </a>
+## <a name="send-traffic"> E) Send Traffic </a>
 Send traffic using helper script
 ```
 	wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/traffic.sh
@@ -145,5 +150,19 @@ Update VIP with Virtual IP use to expose the Netflix app in `traffic.sh` and sta
 ```
     nohup sh traffic.sh > log &
 ```
-## <a name="servicegraph"> E) Visualize Service Graph in Citrix ADM</a>
+## <a name="servicegraph"> F) Visualize Service Graph in Citrix ADM</a>
 In ADM goto >Application > Service Graph > MicroServices
+![](images/servicegraph.png)
+
+## <a name="trace">G) Tracing </a>
+On selecting "Trace Info" on any of the service graph node (say recommendation-engine), you can see all the transactions (aka spans) that the selected service has taken part in for a selected duration. 
+![](images/trace-info.png)
+
+![](images/trace-transactions.png)
+
+On Drilling down on each transaction span by clicking the arrow in each row, you'll see the details of the trace corresponding to that span transaction.
+
+![](images/trace-drilldown-on-graph.png)
+
+A user can select "See Trace Details" to visualize the entire trace in the form of a chart of all transactions which are part of the trace 
+![](images/trace-view.png)
