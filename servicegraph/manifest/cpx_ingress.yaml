@@ -1,0 +1,75 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: netflix
+  annotations:
+   ingress.citrix.com/insecure-termination: "allow"
+   kubernetes.io/ingress.class: "netflix-cpx"
+   #ingress.citrix.com/analyticsprofile: '{"webinsight": {"httpurl":"ENABLED", "httpuseragent":"ENABLED", "httphost":"ENABLED", "httpmethod":"ENABLED", "httpcontenttype":"ENABLED"}, "tcpinsight": {"tcpBurstReporting":"DISABLED"}}'
+spec:
+      tls:
+      - hosts:
+      rules:
+       - host: netflix-frontend-service
+         http:
+          paths:
+          - path:
+            backend:
+              serviceName: netflix-frontend
+              servicePort: 5000
+       - host: tv-shows-service
+         http:
+          paths:
+          - path:
+            backend:
+              serviceName: tv-shows
+              servicePort: 5000
+       - host: movies-service
+         http:
+          paths:
+          - path:
+            backend:
+              serviceName: movies
+              servicePort: 5000
+       - host: metadata-store-service
+         http:
+          paths:
+          - path:
+            backend:
+              serviceName: metadata-store
+              servicePort: 5000
+       - host: recommendation-engine-service
+         http:
+          paths:
+          - path: 
+            backend:
+              serviceName: recommendation-engine
+              servicePort: 5000
+       - host: similarity-calculator-service
+         http:
+          paths:
+          - path: 
+            backend:
+              serviceName: similarity-calculator
+              servicePort: 5000
+       - host: mutual-friends-interests-service
+         http:
+          paths:
+          - path: 
+            backend:
+              serviceName: mutual-friends-interests
+              servicePort: 5000
+       - host: trending-service
+         http:
+          paths:
+          - path: 
+            backend:
+              serviceName: trending
+              servicePort: 5000
+       - host: telemetry-store-service
+         http:
+          paths:
+          - path: 
+            backend:
+              serviceName: telemetry-store
+              servicePort: 5000
