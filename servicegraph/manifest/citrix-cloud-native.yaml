@@ -161,25 +161,6 @@ rules:
     resources: ["ipamblocks"]
     verbs: ["get", "list", "watch"]
 ---
-# Source: citrix-cloud-native/charts/ipam/templates/serviceaccount.yaml
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: adc-netflix-ipam
-rules:
-- apiGroups:
-  - citrix.com
-  resources:
-  - vips
-  verbs:
-  - '*'
-- apiGroups:
-  - apiextensions.k8s.io
-  resources:
-  - customresourcedefinitions
-  verbs:
-  - '*'
----
 # Source: citrix-cloud-native/charts/cic/templates/rbac.yaml
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -209,20 +190,6 @@ subjects:
   name: adc-netflix-cpx
   namespace: default
 apiVersion: rbac.authorization.k8s.io/v1
----
-# Source: citrix-cloud-native/charts/ipam/templates/serviceaccount.yaml
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: adc-netflix-ipam
-subjects:
-- kind: ServiceAccount
-  name: adc-netflix-ipam
-  namespace: default
-roleRef:
-  kind: ClusterRole
-  apiGroup: rbac.authorization.k8s.io
-  name: adc-netflix-ipam
 ---
 # Source: citrix-cloud-native/charts/cpx/templates/citrix-k8s-cpx-ingress.yaml
 apiVersion: v1
