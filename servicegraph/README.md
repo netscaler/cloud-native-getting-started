@@ -70,7 +70,7 @@ To create the system user account, do the following:
 Follow [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html) link to deploy Citrix ADM agent.
 
 ## <a name="register-adm-agent"> B) Add Cluster in Citrix ADM</a>
- Refer [this]( https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/sg-unified-single-ingress-topology.html#add-kubernetes-cluster-in-citrix-adm) for adding cluster in Citrix ADM.
+ Refer [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/sg-service-mesh-dual-tier-topology.html#add-kubernetes-cluster-in-citrix-adm) for adding cluster in Citrix ADM.
 
 ## <a name="deploy-application"> C) Deploy Netflix application on Kubernetes Cluster </a> 
 Run following to deploy Netflix application on your Kubernetes Cluster 
