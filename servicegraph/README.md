@@ -1,12 +1,18 @@
 # Citrix ADM Service Graph Distributed Tracing
 The aim of this example is to help visualising the request flow between different microservices using Citrix ADM
 # Table of Contents
+
 A. [Deploy and register Citrix ADM Agent](#deploy-register-citrix-adm-agent)
+
 B. [Add Cluster in Citrix ADM](#register-adm-agent)
+
 C. [Deploy Netflix application on Kubernetes Cluster ](#deploy-application)
+
 D. [Citrix Cloud Native Dual Tier Topology ](#deploy-citrix-cloud-native-stack)
 E. [Visualize Servicegraph in Citrix ADM](#servicegraph)
+
 F. [Trace](trace)
+
 # Prerequisites.
 - An ADM Agent
 -  The [Kubernetes](https://kubernetes.io/) version 1.6 or later
