@@ -113,6 +113,10 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     ![hotdrink-app](images/hotdrink-app.PNG)
     
 2.  Deploy Ingress rule to send traffic to hotdrink beverages microservices
+
+    **Note:** In case you have directly started from Section B and have not followed the Section A, then you need to deploy Citrix Ingress Controller and RBAC from Section A to make Section B work independently.
+    Deploy Step 1 and Step 4 from Section A.
+
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/tier-1-ingress.yaml
     ```
@@ -145,6 +149,9 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/guestbook.yaml -n tier-2-adc
     ```
      ![guestbook](images/guestbook.PNG)
+
+    **Note:** In case you have directly started from Section C and have not followed the Section B, then you need to deploy Citrix Ingress Controller and RBAC from Section A and Ingress from Section B to make Section C work independently.
+    
  
 2.	Add the DNS entries in your local machine host files for accessing microservices though Internet
     Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
