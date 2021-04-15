@@ -14,6 +14,8 @@ E. [Send Traffic](#send-traffic)
 
 F. [Visualize Servicegraph in Citrix ADM](#servicegraph)
 
+G. [Tracing](#trace)
+
 # Prerequisites.
 - An ADM Agent
 -  The [Kubernetes](https://kubernetes.io/) version 1.6 or later
@@ -158,4 +160,10 @@ In ADM goto >Application > Service Graph > MicroServices
 We can view transation logs as well in the servicegraph.
 
 ![](images/transactionlog.png)
+
+## <a name="trace">G) Tracing </a>
+
+A user can select "See Trace Details" to visualize the entire trace in the form of a chart of all transactions which are part of the trace.
+
+![](images/tracing.png)
 
