@@ -98,18 +98,21 @@ Lets deploy the Netflix application in Service mesh lite deployment where
 wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/citrix-cloud-native.yaml
 ```
 
-Update `NS_IP` in `citrix-cloud-native.yaml` yaml file with Citrix ADC Management IP in 
+Update `NS_IP` in `citrix-cloud-native.yaml` yaml file with Citrix ADC Management IP.
 
 ```
     - name: "NS_IP"
       value: "A.B.C.D"  
 ```
-**Tier-2 ADC** - CPX to route North-South traffic from Tier 1 ADC to frontend Netflix microservice applicatio and route East-West traffic from Netflix microservices
+**Tier-2 ADC** - CPX to route North-South traffic from Tier 1 ADC to frontend Netflix microservice application and route East-West traffic from Netflix microservices
 
 Update below Environment variables in `citrix-cloud-native.yaml` file for service graph generation
 i. NS_MGMT_SERVER -> With Citrix ADM agent IP 
+
 ii. "NS_MGMT_FINGER_PRINT" -> Citrix ADM agent fingerprint 
+
 iii. "LOGSTREAM_COLLECTOR_IP" -> With Citrix ADM agent IP 
+
 iv. "NS_LOGPROXY" -> With Citrix ADM agent IP 
 
 Update `endpoint.server` with the Citrix ADM Agent IP in `adc-netflix-cic-configmap` and `adc-netflix-cpx-cic-configmap` in `citrix-cloud-native.yaml` file under `NS_ANALYTICS_CONFIG`. 
