@@ -1,7 +1,7 @@
 apiVersion: citrix.com/v1
 kind: rewritepolicy
 metadata:
-  name: block-ie-traffic
+  name: blockietraffic
 spec:
   responder-policies:
     - servicenames:
