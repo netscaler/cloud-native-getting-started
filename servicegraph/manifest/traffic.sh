@@ -1,4 +1,4 @@
-export VIP=<VirtualIP>
+export VIP=$1
 #!/bin/sh
 while true
 do

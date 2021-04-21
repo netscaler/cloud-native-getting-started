@@ -22,6 +22,24 @@ data:
   LOGLEVEL: 'info'
   NS_PROTOCOL: 'http'
   NS_PORT: '80'
+  NS_ANALYTICS_CONFIG: |
+     distributed_tracing:
+       enable: 'true'
+       samplingrate: 100
+     endpoint:
+       server: 'A.B.C.D'
+     timeseries: 
+       port: 5563 
+       metrics:
+         enable: 'true'
+         mode: 'avro' 
+       auditlogs:
+         enable: 'false'
+       events: 
+         enable: 'false'
+     transactions:
+       enable: 'true'
+       port: 5557
 ---
 # Source: citrix-cloud-native/charts/cpx/templates/configmap.yaml
 apiVersion: v1
@@ -32,6 +50,25 @@ data:
   LOGLEVEL: 'info'
   NS_PROTOCOL: 'http'
   NS_PORT: '80'
+  NS_ANALYTICS_CONFIG: |
+     distributed_tracing:
+       enable: 'true'
+       samplingrate: 100
+     endpoint:
+       server: 'A.B.C.D'
+     timeseries: 
+       port: 5563 
+       metrics:
+         enable: 'true'
+         mode: 'avro' 
+       auditlogs:
+         enable: 'false'
+       events: 
+         enable: 'false'
+     transactions:
+       enable: 'false'
+       port: 5557
+
 ---
 # Source: citrix-cloud-native/charts/cic/templates/rbac.yaml
 kind: ClusterRole
@@ -198,8 +235,6 @@ spec:
             default/adc-netflix-cic-configmap
           - --ingress-class
             netflix-vpx
-          - --feature-node-watch
-            true
         env:
         - name: "NS_IP"
           value: "A.B.C.D"
@@ -259,7 +294,7 @@ spec:
           - name: "NS_MGMT_SERVER"
             value: "A.B.C.D"
           - name: "NS_MGMT_FINGER_PRINT"
-            value: "xxxxxxxxxxxxxxxx"
+            value: "AB.CD.EF.GH.IJ"
           - name: "NS_HTTP_PORT"
             value: "9080"
           - name: "NS_HTTPS_PORT"
