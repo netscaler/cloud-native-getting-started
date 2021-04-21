@@ -235,6 +235,8 @@ spec:
             default/adc-netflix-cic-configmap
           - --ingress-class
             netflix-vpx
+          - --feature-node-watch
+            false  
         env:
         - name: "NS_IP"
           value: "A.B.C.D"

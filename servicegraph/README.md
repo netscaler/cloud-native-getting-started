@@ -21,15 +21,47 @@ H. [Tracing](#trace)
 # Prerequisites.
 -  Citrix ADM Cloud Service Account
 
--  The [Kubernetes](https://kubernetes.io/) version 1.6 or later
+- The [Kubernetes](https://kubernetes.io/) version 1.6 or later
 
--  The user name and password of the Citrix ADC VPX or MPX appliance used as the ingress device for Tier-1. The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that Citrix ingress controller can configure the Citrix ADC VPX or MPX appliance. For instructions to create the system user account on Citrix ADC, see [Create System User Account for CIC in Citrix ADC](#create-system-user-account-for-cic-in-citrix-adc).
+  The user name and password of the Citrix ADC VPX or MPX appliance used as the ingress device for Tier-1. The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that Citrix ingress controller can configure the Citrix ADC VPX or MPX appliance. For instructions to create the system user account on Citrix ADC, see [Create System User Account for CIC in Citrix ADC](#create-system-user-account-for-cic-in-citrix-adc).
     You can pass user name and password using Kubernetes secrets. Create a Kubernetes secret for the user name and password using the following command:
-    ```
-       kubectl create secret generic nslogin --from-literal=username='cic' --from-literal=password='mypassword'
-    ```
 
-### Create system User account for Citrix ingress controller in Citrix ADC
+```
+    kubectl create secret generic nslogin --from-literal=username='cic' --from-literal=password='mypassword'
+```
+- **Route Addition in MPX/VPX**
+
+    For seamless functioning of services deployed in the Kubernetes cluster, it is essential that Ingress Citrix ADC device should be able to reach the underlying overlay network over which Pods are running.
+    `feature-node-watch` knob of Citrix Ingress Controller can be used for automatic route configuration on Citrix ADC towards the pod network. Refer [Static Route Configuration](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) for further details regarding the same.
+
+    By default, `feature-node-watch` is false. It needs to be explicitly set to true if auto route configuration is required.
+
+    This can also be achieved by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+
+    Or you can configure static routes manually on Citrix ADC VPX or MPX to reach the pods inside the cluster. Please follow below steps:
+    ### For Kubernetes:
+    1. Obtain podCIDR using below options:
+     ```
+       kubectl get nodes -o yaml | grep podCIDR
+    ```
+    * podCIDR: 10.244.0.0/24
+    * podCIDR: 10.244.1.0/24
+    * podCIDR: 10.244.2.0/24
+
+    2. Log on to the Citrix ADC instance.
+
+    3. Add Route in Citrix ADC VPX/MPX
+   ```
+        add route <podCIDR_network> <podCIDR_netmask> <node_HostIP>
+   ```
+    4. Ensure that Ingress MPX/VPX has a SNIP present in the host-network (i.e. network over which K8S nodes communicate with each other. Usually eth0 IP is from this network).
+
+    Example:
+    * Node1 IP = 192.0.2.1
+    * podCIDR  = 10.244.1.0/24
+    * add route 10.244.1.0 255.255.255.0 192.0.2.1
+
+### <a name="create-system-user-account-for-cic-in-citrix-adc"> Create system User account for Citrix ingress controller in Citrix ADC</a>
 
 Citrix ingress controller configures the Citrix ADC using a system user account of the Citrix ADC. The system user account should have certain privileges so that the CIC has permission configure the following on the Citrix ADC:
 -  Add, Delete, or View Content Switching (CS) virtual server
@@ -61,10 +93,11 @@ To create the system user account, do the following:
     ```
        add cmdpolicy cic-policy ALLOW "(^\S+\s+cs\s+\S+)|(^\S+\s+lb\s+\S+)|(^\S+\s+service\s+\S+)|(^\S+\s+servicegroup\s+\S+)|(^stat\s+system)|(^show\s+ha)|(^\S+\s+ssl\s+certKey)|(^\S+\s+ssl)|(^\S+\s+route)|(^\S+\s+monitor)|(^show\s+ns\s+ip)|(^\S+\s+system\s+file)"
     ```
-4.  Bind the policy to the system user account using the following command:
+    Bind the policy to the system user account using the following command:
     ```
        bind system user cic cic-policy 0
     ```    
+
 ## <a name="deploy-register-citrix-adm-agent">A) Deploy and register Citrix ADM Agent</a>
 Follow [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html) link to deploy Citrix ADM agent.
 
@@ -119,7 +152,8 @@ d. Select the agent from the list.
 e. Click Create.
 
 
-**NOTE** **To register Citrix ADC CPX in ADM**: To obtain [servicegraph](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html), you will have to create a Kubernetes secret using ADM Agent credentials. Create a Kubernetes secret for the user name and password using the following command:
+**NOTE:** 
+**To register Citrix ADC CPX in ADM**: To obtain [servicegraph](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html), you will have to create a Kubernetes secret using ADM Agent credentials. Create a Kubernetes secret for the user name and password using the following command:
 
   ```
   kubectl create secret generic admlogin --from-literal=username=<adm-username> --from-literal=password=<adm-password> 
@@ -188,7 +222,8 @@ After updating above environment variables, deploy CIC for Tier-1 VPX and tier-2
 ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/vpx_ingress.yaml
 ``` 
-**NOTE** Update `ingress.citrix.com/frontend-ip` in `vpx_ingress.yaml` with Virtual IP with which you want to expose Netflix Application.
+
+**Update** `ingress.citrix.com/frontend-ip` in `vpx_ingress.yaml` with Virtual IP with which you want to expose Netflix Application.
 
 ```
     kubectl apply -f vpx_ingress.yaml
