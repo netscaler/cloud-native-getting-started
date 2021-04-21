@@ -236,7 +236,7 @@ spec:
           - --ingress-class
             netflix-vpx
           - --feature-node-watch
-            false  
+            true  
         env:
         - name: "NS_IP"
           value: "A.B.C.D"
