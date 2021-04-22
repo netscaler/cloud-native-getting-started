@@ -23,6 +23,8 @@ The aim of this example is to help visualising the request flow between differen
 
   H. [Tracing](#trace)
 
+  I. [Clean Up the deployment](#clean-upsI)
+
 ## <a name="prerequisite">Prerequisites</a>
  - Citrix ADM. To start using Citrix ADM, you must first create a Citrix Cloud company account or join an existing one that someone else in your company has created. For detailed processes and instructions on how to proceed, see [Signing Up for Citrix Cloud](https://docs.citrix.com/en-us/citrix-cloud/overview/signing-up-for-citrix-cloud/signing-up-for-citrix-cloud). 
 
@@ -136,10 +138,19 @@ To add cluster using Agent, follow the below steps:
       ![](images/describe-token.png)
 
     d. Select the **agent** from the list.
+    
+    **To get the agent IP**
 
-      ![](images/addcluster.png)
+    Use `Application ID` mentioned in `Step A.7.a` to list the service IP for Citrix Agent.
+  
+        kubectl get svc <application-id> -o wide
+    
+    The IP mentioned under `Cluster-IP` is the service IP for the agent. Alternatively, you can navigate to `Networks > Agents` in Citrix ADM to view the agent IP.
 
     e. Click **Create**.
+
+     ![](images/addcluster.png)
+
 
 ### Create Kubernetes Secret using Citrix ADM credentials
 
@@ -217,9 +228,9 @@ Citrix ADC VPX is used to ingress North-South traffic. To add Citrix ADC VPX in 
 
     a. **Profile Name**: Specify a profile name for the Citrix ADC instance.
 
-    b. **User Name**: Specify a user name to log on to the Citrix ADC instance.
+    b. **User Name**: Specify the user name to log on to the Citrix ADC instance.
 
-    c. **Password:** Specify a password to log on to the Citrix ADC instance.
+    c. **Password:** Specify the password to log on to the Citrix ADC instance.
 
     d. **SSH Port**: Specify the port for SSH communication between Citrix ADM and the Citrix ADC instance.
 
@@ -241,7 +252,7 @@ Citrix ADC VPX is used to ingress North-South traffic. To add Citrix ADC VPX in 
 
 The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that Citrix ingress controller (CIC) can configure the Citrix ADC VPX. For instructions to create the system user account on Citrix ADC, see [Create System User Account for CIC in Citrix ADC](#create-system-user-account-for-cic-in-citrix-adc).
 
-You can pass user name and password using Kubernetes secrets. Create a Kubernetes secret for the user name and password using the following command:
+Create a Kubernetes secret for the user name and password using the following command:
 
     kubectl create secret generic nslogin --from-literal=username='cic' --from-literal=password='mypassword'
 
@@ -260,7 +271,7 @@ Update `NS_IP` under the deployment name `adc-netflix-cic`  `citrix-cloud-native
 
 Citrix ADC CPX is used to route North-South traffic from Tier 1 ADC to frontend Netflix microservice application and route East-West traffic from Netflix microservices  
 
-Below mentioned `Environment variables` in `citrix-cloud-native.yaml` file needs to be updated for service graph generation with Citrix ADM Agent Service IP.
+Few `Environment variables` in `citrix-cloud-native.yaml` file needs to be updated for service graph generation with Citrix ADM Agent Service IP.
 
 Use `Application ID` mentioned in `Step A.7.a` to list the service IP for Citrix Agent.
 
@@ -282,7 +293,7 @@ Update Fingerprint in below environment variable in `citrix-cloud-native.yaml`
 
 #### To get the `Citrix ADM agent Fingerprint`
 
-Navigate to `Networks > Agents`in Citrix ADM. Select the Agent from the list and click the `View Fingerprint`.
+Navigate to `Networks > Agents` in Citrix ADM. Select the Agent from the list and click the `View Fingerprint`.
 
    ![](images/fingerprint.png)
 
@@ -337,6 +348,17 @@ We can view **transation logs** as well in the servicegraph.
 A user can select **See Trace Details** to visualize the entire trace in the form of a chart of all transactions which are part of the trace.
 
   ![](images/tracing.png)
+
+## <a name="clean-up">I) Clean Up the deployment </a>
+
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/cpx_ingress.yaml
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/smlite_services.yaml
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/netflix.yaml
+    kubectl delete -f vpx_ingress.yaml
+    kubectl delete -f citrix-cloud-native.yaml
+    kubectl delete secret nslogin
+    kubectl delete secret admlogin
+
 
 ### <a name="create-system-user-account-for-cic-in-citrix-adc"> Create system User account for Citrix ingress controller in Citrix ADC</a>
 
