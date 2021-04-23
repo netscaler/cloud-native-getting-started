@@ -23,7 +23,7 @@ The aim of this example is to help visualising the request flow between differen
 
   H. [Tracing](#trace)
 
-  I. [Clean Up the deployment](#clean-ups)
+  I. [Clean Up the deployment](#clean-up)
 
   J. [Debugging](#debugging)
 
