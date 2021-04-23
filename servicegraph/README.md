@@ -23,7 +23,9 @@ The aim of this example is to help visualising the request flow between differen
 
   H. [Tracing](#trace)
 
-  I. [Clean Up the deployment](#clean-upsI)
+  I. [Clean Up the deployment](#clean-ups)
+
+  J. [Debugging](#debugging)
 
 ## <a name="prerequisite">Prerequisites</a>
  - Citrix ADM. To start using Citrix ADM, you must first create a Citrix Cloud company account or join an existing one that someone else in your company has created. For detailed processes and instructions on how to proceed, see [Signing Up for Citrix Cloud](https://docs.citrix.com/en-us/citrix-cloud/overview/signing-up-for-citrix-cloud/signing-up-for-citrix-cloud). 
@@ -331,6 +333,7 @@ Provide VIP which was used to expose the Netflix app in `traffic.sh` and start t
     nohup sh traffic.sh <VIP> > log &
 
 ## <a name="servicegraph"> G) Visualize Service Graph in Citrix ADM</a>
+Before visualizing the Service Graph, you can check if the vservers configured in ADC are properly discovered and licensed. For this check the section [debugging](#debugging)
 
 In ADM navigate  `Application > Service Graph > MicroServices` .
 
@@ -358,6 +361,71 @@ A user can select **See Trace Details** to visualize the entire trace in the for
     kubectl delete -f citrix-cloud-native.yaml
     kubectl delete secret nslogin
     kubectl delete secret admlogin
+
+## <a name="debugging">J) Debugging </a>
+
+Service Graph will not be populated if vserver configuration of Tier 2 ADC are not populated in ADM. Also, the vserver in Tier-1 ADC need to be licensed. Following sections will guide on licensing vserver in Tier-1 Citrix ADC VPX and discovering the vserver configuration on Tier 2 Citrix ADC CPX.
+
+#### Licensing vserver of Tier-1 Citrix ADC VPX
+
+1. Navigate to `Networks > Instances > Citrix ADC` and choose `VPX` in Citrix ADM.
+
+2. Select the `VPX IP` of your Tier-1 ADC and choose `Configure Analytics` under `Select Action`.
+
+   ![](images/vpx-analytics.png)
+
+3. Vserver configured on the VPX will be listed.
+
+4. License the vserver with name `netflix-<VIP IP>_80_http`, if it is not licensed. To license, select the `vserver` and Click `License`.
+
+   ![](images/vserver-list.png)
+
+   ![](images/licensed-vserver.png)
+
+
+#### Disovering Vserver Configuration of Tier-2 Citrix ADC CPX
+
+1. Navigate to `Networks > Instances > Citrix ADC` and choose `CPX` instance with name prefix with `adc-netflix-cpx` in Citrix ADM.
+
+2. Select the `CPX` fromt the list and choose `Configure Analytics` under `Select Action`.
+
+   ![](images/cpx-analytics.png)
+
+3. Citrix ADM polls the CPX in the interval of 10mins. If the page does not list vserver then you can manually poll the CPX.
+
+   ![](images/cpx-analytics-blank.png)
+
+4. For manual Polling CPX:
+
+    a. Navigate to `Networks > Networking Functions` and click `Poll Now`.
+   
+    ![](images/poll-page.png)
+
+    b. Click `Select Instances`. You will get list of Instances. 
+   
+    ![](images/poll-now.png)
+
+    c. Choose the `CPX` instance from the list.
+
+    ![](images/poll-cpx.png)
+
+    d. Click `Start Polling`
+    
+    ![](images/polling.png)
+
+    e. Polling takes couple of minutes to complete.
+
+    ![](images/poll-successful.png)
+
+     Once polling is completed, navigate to `Networks > Instances > Citrix ADC` and choose `CPX` instance with name prefix with `adc-netflix-cpx` in Citrix ADM. 
+     
+     Select the `CPX` from the list and choose `Configure Analytics` under `Select Action`. 
+     
+     Now you will get the list of Vservers configured on CPX.
+
+    ![](images/cpx-vservers.png)
+
+    You can now view the servicegraph by navigating to `Applications > Service Graph > Microservices ` in Citrix ADM.
 
 
 ### <a name="create-system-user-account-for-cic-in-citrix-adc"> Create system User account for Citrix ingress controller in Citrix ADC</a>
