@@ -26,6 +26,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frontend-colddrinks
+  annotations:
+    service.citrix.com/service-type-0: 'HTTP'
+    service.citrix.com/service-type-1: 'SSL'
 spec:
   type: LoadBalancer
   ports:
@@ -38,3 +41,4 @@ spec:
   selector:
     app: frontend-colddrinks
 ---
+

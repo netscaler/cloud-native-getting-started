@@ -47,23 +47,23 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 | [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) | Deploy colddrink beverage microservice application exposed as Load Balancer Type service |
 | [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) | Deploy hotdrink beverage microservice application exposed as Ingress Type service |
 | [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-c-deploy-guestbook-microservice-application-exposed-as-nodeport-type-service) | Deploy Guestbook microservice application exposed as NodePort Type service |
-| [Section D]() | Configure Responder policy (L7 policy) on VPX using rewrite-responder CRDs |
-| [Section E]() | Configure WAF policies on VPX using WAF CRDs |
-| [Section F]() | Clean Up |
+| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-d-configure-responder-policy-l7-policy-on-vpx-using-rewrite-responder-crds) | Configure Responder policy (L7 policy) on VPX using rewrite-responder CRDs |
+| [Section E](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-e-configure-waf-policies-on-vpx-using-waf-crds) | Configure WAF policies on VPX using WAF CRDs |
+| [Section F](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-f-clean-up-unified-ingress-deployment) | Clean Up |
 
 ### Section A (Deploy colddrink beverage microservice application exposed as Load Balancer type service)
 
-1.	Lets create a K8s namespace and define role based access using RBAC yaml
+1.	Lets create a K8s namespace ``unified-ingress`` and define role based access using RBAC yaml
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/rbac.yaml 
     ```
-    ![rbac](images/.PNG)
+    ![rbac](images/rbac.PNG)
 
 2.  Deploy the colddrink beverage microservice application (LoadBalancer type service)
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink.yaml -n unified-ingress
     ```
-    ![colddrink-app](images/.PNG)
+    ![colddrink-app](images/colddrink-app.PNG)
 
 3. Deploy IPAM CRD and IPAM to allocate IP address to access colddrink beverage microservice
     ```
@@ -78,7 +78,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     ```
     kubectl create -f ipam.yaml
     ```
-     ![ipam](images/.PNG)
+     ![ipam](images/ipam.PNG)
 
 4. Deploy Citrix Ingress Controller to configure Tier 1 ADC
 
@@ -86,13 +86,19 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/tier-1-cic.yaml
     ```
-    Change "NS_IP" = <Tier 1 ADC NSIP> used in your deployment.
+    Change "NS_IP" = <Tier 1 ADC NSIP> used in your deployment. Comment out "NS_PROTOCOL", "NS_PORT" fields in case TLS is not enabled for VPX login.
     
-    Change username and password as per user credentials used for Tier 1 ADC.
+    Add kubernetes secret as VPX login credentials. Change username and password field in below command.
+    ```
+    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='paswword' -n unified-ingress
+    ```
+
+    Now, deploy Citrix Ingress Controller!
+
     ```
     kubectl create -f tier-1-cic.yaml -n unified-ingress
     ```
-    ![cic](images/.PNG)
+    ![cic](images/cic.PNG)
 
 5. Access colddrink beverage microservice
     ```
@@ -178,7 +184,7 @@ We will configure Responder policy on VPX for hotdrink beverage application depl
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/responder-hotdrink.yaml
     ```
-     ![crd](images/crd.PNG)
+     ![responder-policy.PNG](images/responder-policy.PNG)
 
     Now try to access `https://hotdrink.beverages.com ` and you will see that responder policy has blocked the access to hotdrink beverage microservice application.
 
@@ -200,6 +206,12 @@ kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-waf-policy.yaml -n unified-ingress
 ```
+
+![waf-hotdrink-policy.PNG](images/waf-hotdrink-policy.PNG)
+
+Now, lets check the VPX and find WAF policy is present on LB vserver corresponds to hotdrink app.
+
+![waf-hotdrink-policy-success.PNG](images/waf-hotdrink-policy-success.PNG)
 
 3. Configure URL filtering rules for colddrink beverage application to prevent repeated attempts to access random URLs on a web site
 
