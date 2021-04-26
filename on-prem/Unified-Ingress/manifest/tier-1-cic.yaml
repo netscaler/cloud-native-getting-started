@@ -1,32 +1,46 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: cic-vpx
-  labels:
-    app: cic-vpx
-spec: 
-      serviceAccountName: cpx
+spec:
+  selector:
+    matchLabels:
+      app: cic-vpx
+  replicas: 1
+  template:
+    metadata:
+      name: cic-vpx
+      labels:
+        app: cic-vpx
+      annotations:
+    spec: 
+      serviceAccountName: vpx-ingress-k8s-role
       containers:
       - name: cic-vpx
-        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.13.15"
         env:
          # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
          - name: "NS_IP"
            value: "10.105.158.148"
+         - name: "NS_PROTOCOL"
+           value: "HTTPS"
+         - name: "NS_PORT"
+           value: "443" 
          # Set username for Nitro
-         # Set log level
-         - name: "NS_ENABLE_MONITORING"
-           value: "YES"
          - name: "NS_USER"
-           value: "abc"
+           valueFrom:
+            secretKeyRef:
+             name: nsvpxlogin
+             key: username
+         # Set user password for Nitro
          - name: "NS_PASSWORD"
-           value: "abc"
+           valueFrom:
+            secretKeyRef:
+             name: nsvpxlogin
+             key: password
+         # Set log level
          - name: "EULA"
            value: "yes"
-         - name: "NS_APPS_NAME_PREFIX"
-           value: "k8s150"
-         - name: "LOGLEVEL"
-           value: "INFO"
         args:
           - --ingress-classes
             vpx
@@ -34,4 +48,4 @@ spec:
             true
           - --ipam
             citrix-ipam-controller
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always

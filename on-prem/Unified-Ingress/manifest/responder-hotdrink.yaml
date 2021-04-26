@@ -2,7 +2,7 @@ apiVersion: citrix.com/v1
 kind: rewritepolicy
 metadata:
   name: blacklisturls
-  namespace: tier-2-adc
+  namespace: unified-ingress
 spec:
   responder-policies:
     - servicenames:

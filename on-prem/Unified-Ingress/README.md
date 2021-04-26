@@ -5,6 +5,8 @@ In this guide you will learn:
 * How to deploy a microservice application exposed as Load Balancer type service.
 * How to deploy a microservice application exposed as NodePort type service.
 * How to configure Citrix ADC VPX (Tier 1 ADC) using Citrix Ingress Controller to load balance all above three services.
+* How to configure Rewrite Responder policy on Tier 1 ADC - VPX using CRDs
+* How to configure WAF on Tier 1 ADC - VPX using WAF CRDs.
 
 Citrix ADC supports Unified Ingress architecture to load balance an enterprise grade applications deployed as microservices. Citrix load balancers can be VPX/SDX/MPX/BLX, or CPX (containerized Citrix ADC) to manage high scale north-south traffic. Lets understand the Unified Ingress topology using below diagram.
 
@@ -39,28 +41,29 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     If you have K8s cluster and Tier 1 Citrix ADC in same subnet then you do not have to do anything, below example will take care of route info.
     You need Citrix Node Controller configuration only when K8s cluster and Tier 1 ADC are in different subnet. Please refer to https://github.com/citrix/citrix-k8s-node-controller for Network configuration.
 
-Lets start deploying each microservices one by one (you can opt for deploying one or more sections from below as per your choice),
 
 | Section | Description |
 | ------- | ----------- |
 | [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) | Deploy colddrink beverage microservice application exposed as Load Balancer Type service |
 | [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) | Deploy hotdrink beverage microservice application exposed as Ingress Type service |
 | [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-c-deploy-guestbook-microservice-application-exposed-as-nodeport-type-service) | Deploy Guestbook microservice application exposed as NodePort Type service |
+| [Section D]() | Configure Responder policy (L7 policy) on VPX using rewrite-responder CRDs |
+| [Section E]() | Configure WAF policies on VPX using WAF CRDs |
+| [Section F]() | Clean Up |
 
 ### Section A (Deploy colddrink beverage microservice application exposed as Load Balancer type service)
 
-1.	Lets authorize access to K8s resources and user by applying RBAC yaml
+1.	Lets create a K8s namespace and define role based access using RBAC yaml
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/rbac.yaml 
     ```
-    ![rbac](images/rbac.PNG)
+    ![rbac](images/.PNG)
 
 2.  Deploy the colddrink beverage microservice application (LoadBalancer type service)
     ```
-    kubectl create namespace tier-2-adc
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink.yaml -n tier-2-adc
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink.yaml -n unified-ingress
     ```
-    ![colddrink-app](images/colddrink-app.PNG)
+    ![colddrink-app](images/.PNG)
 
 3. Deploy IPAM CRD and IPAM to allocate IP address to access colddrink beverage microservice
     ```
@@ -75,7 +78,7 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     ```
     kubectl create -f ipam.yaml
     ```
-     ![ipam](images/ipam.PNG)
+     ![ipam](images/.PNG)
 
 4. Deploy Citrix Ingress Controller to configure Tier 1 ADC
 
@@ -87,13 +90,13 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     
     Change username and password as per user credentials used for Tier 1 ADC.
     ```
-    kubectl create -f tier-1-cic.yaml -n tier-2-adc
+    kubectl create -f tier-1-cic.yaml -n unified-ingress
     ```
-    ![cic](images/cic.PNG)
+    ![cic](images/.PNG)
 
-4. Access colddrink beverage microservice
+5. Access colddrink beverage microservice
     ```
-    kubectl get svc -n tier-2-adc -o wide
+    kubectl get svc -n unified-ingress -o wide
     ```
     ![colddrink-svc](images/colddrink-svc.PNG)
     
@@ -102,35 +105,33 @@ Lets start deploying each microservices one by one (you can opt for deploying on
 ### Section B (Deploy hotdrink beverage microservice application exposed as Ingress Type service)
 
 1.	Deploy hotdrink beverage microservice application (Ingress type service)
-
-    Deploy hotdrink microservice
+    
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
     
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink.yaml -n tier-2-adc
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-secret.yaml -n tier-2-adc
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink.yaml -n unified-ingress
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-secret.yaml -n unified-ingress
     ```
     ![hotdrink-app](images/hotdrink-app.PNG)
     
 2.  Deploy Ingress rule to send traffic to hotdrink beverages microservices
 
     **Note:** In case you have directly started from Section B and have not followed the Section A, then you need to deploy Citrix Ingress Controller and RBAC from Section A to make Section B work independently.
-    Deploy Step 1 and Step 4 from Section A.
+    ``Deploy Step 1 and Step 4 from Section A.``
 
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/tier-1-ingress.yaml
     ```
     Change "ingress.citrix.com/frontend-ip:" to free IP that you want to use as Ingress IP.
     ```
-    kubectl create -f tier-1-ingress.yaml -n tier-2-adc
+    kubectl create -f tier-1-ingress.yaml -n unified-ingress
     ```
     ![ingress](images/ingress.PNG)
     
-    Note: tier-1-ingress.yaml contains the ingress rule for guestbook microservice deployment (Section C)
+    Note: tier-1-ingress.yaml also contains the ingress rule for guestbook microservice deployment (Section C)
 
-3.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify that hotdrink microservice application configuration has been pushed through Citrix Ingress Controller
     
-4.	Add the DNS entries in your local machine host files for accessing microservices though Internet
+3.	Add the DNS entries in your local machine host files for accessing microservices though Internet
     Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
     Add below entries in hosts file and save the file
 
@@ -138,7 +139,7 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     <frontend-ip from ingress_vpx.yaml> hotdrink.beverages.com
     ```
   
-5.	Lets access hotdrink beverage microservice app from local machine browser
+4.	Lets access hotdrink beverage microservice app from local machine browser
     e.g. ``https://hotdrink.beverages.com``
 
 
@@ -146,11 +147,11 @@ Lets start deploying each microservices one by one (you can opt for deploying on
 
 1.  Deploy the guestbook microservice application (NodePort type service)
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/guestbook.yaml -n tier-2-adc
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/guestbook.yaml -n unified-ingress
     ```
      ![guestbook](images/guestbook.PNG)
 
-    **Note:** In case you have directly started from Section C and have not followed the Section B, then you need to deploy Citrix Ingress Controller and RBAC from Section A and Ingress from Section B to make Section C work independently.
+    **Note:** In case you have directly started from Section C and have not followed the Section A/B, then you need to deploy Citrix Ingress Controller and RBAC from Section A (Step 1 and Step 4) and Ingress rule from Section B (Step 2) to make Section C work independently.
     
  
 2.	Add the DNS entries in your local machine host files for accessing microservices though Internet
@@ -165,11 +166,11 @@ Lets start deploying each microservices one by one (you can opt for deploying on
     e.g. ``https://guestbook.beverages.com``
 
 
-### Configure Rewrite and Responder policies in Tier 1 ADC using Kubernetes CRD deployment
+### Section D (Configure Responder policy (L7 policy) on VPX using rewrite-responder CRDs)
 
-Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) using the custom resource definition (CRD).
+We will configure Responder policy on VPX for hotdrink beverage application deployment. In case you have not deployed hotdrink app, follow [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here.
 
-1. Deploy the CRD to push the Rewrite and Responder policies in to tier-2-adc in default namespace
+1. Deploy the CRD for Rewrite and Responder policies in default namespace
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/rewrite-responder-crd.yaml
     ```
@@ -180,20 +181,49 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
      ![crd](images/crd.PNG)
 
     Now try to access `https://hotdrink.beverages.com ` and you will see that responder policy has blocked the access to hotdrink beverage microservice application.
+
+
+### Section E (Configure WAF policies on VPX using WAF CRDs)
+
+Here we will configure Web Application Firewall policies on VPX for hotdrink beevrage application and colddrink beverage applications using WAF CRD. Know more about WAF CRD from [developer-docs](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/crds/waf/)
+
+1. Deploy WAF CRD
+
+```
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/waf-crd.yaml
+```
+
+2. Enable cross-site scripting and SQL injection attacks protection for hotdrink beverage application
+
+**Note:** In case you have not deployed hotdrink app, follow [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here. 
+
+```
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-waf-policy.yaml -n unified-ingress
+```
+
+3. Configure URL filtering rules for colddrink beverage application to prevent repeated attempts to access random URLs on a web site
+
+**Note:** In case you have not deployed colddrink app, follow [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) and continue here. 
+
+```
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink-waf-policy.yaml -n unified-ingress
+```
+
    
-### Clean UP deployment
+### Section F (Clean UP Unified Ingress deployment)
     ```
-    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink.yaml -n tier-2-adc
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink.yaml -n unified-ingress
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/ipam-crd.yaml
     kubectl delete -f ipam.yaml
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/rbac.yaml 
-    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink.yaml -n tier-2-adc
-    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-secret.yaml -n tier-2-adc
-    kubectl delete -f tier-1-ingress.yaml -n tier-2-adc
-    kubectl delete -f tier-1-cic.yaml -n tier-2-adc
-    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/guestbook.yaml -n tier-2-adc
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink.yaml -n unified-ingress
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-secret.yaml -n unified-ingress
+    kubectl delete -f tier-1-ingress.yaml -n unified-ingress
+    kubectl delete -f tier-1-cic.yaml -n unified-ingress
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/guestbook.yaml -n unified-ingress
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/rewrite-responder-crd.yaml
-    kubectl delete namespace tier-2-adc  
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/waf-crd.yaml
+    kubectl delete namespace unified-ingress
     ```
 
 

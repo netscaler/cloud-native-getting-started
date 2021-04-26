@@ -1,0 +1,13 @@
+apiVersion: citrix.com/v1
+kind: waf
+metadata:
+    name: wafhtmlxsssql
+spec:
+    servicenames:
+        - frontend-hotdrinks
+    application_type: HTML
+    html_page_url: "http://10.217.14.99/crd/error_page.html"
+    security_checks:
+        html:
+          cross_site_scripting: "on"
+          sql_injection: "on"

@@ -5,7 +5,7 @@ metadata:
   annotations:
    kubernetes.io/ingress.class: "vpx"
    ingress.citrix.com/insecure-termination: "redirect"
-   ingress.citrix.com/frontend-ip: "10.221.36.190"
+   ingress.citrix.com/frontend-ip: "10.105.158.195"
 #   ingress.citrix.com/secure_backend: '{"lb-service-hotdrinks": "True"}'
 spec:
   tls:
