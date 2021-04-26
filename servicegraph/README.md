@@ -442,6 +442,7 @@ Citrix ingress controller configures the Citrix ADC using a system user account 
  - Add system file (for uploading SSL certkeys from Kubernetes)
  - Configure Virtual IP address (VIP)
  - Check the status of the Citrix ADC appliance
+ 
 **Note:**
 > The system user account would have privileges based on the command policy that you define.
 
