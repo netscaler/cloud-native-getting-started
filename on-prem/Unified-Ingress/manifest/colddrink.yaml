@@ -29,6 +29,8 @@ metadata:
   annotations:
     service.citrix.com/service-type-0: 'HTTP'
     service.citrix.com/service-type-1: 'SSL'
+    service.citrix.com/secret: 'hotdrink-secret'
+    service.citrix.com/ssl-termination-1: 'REENCRYPT'
 spec:
   type: LoadBalancer
   ports:

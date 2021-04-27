@@ -197,35 +197,43 @@ We will configure Responder policy on VPX for hotdrink beverage application depl
 
 Here we will configure Web Application Firewall policies on VPX for hotdrink beevrage application and colddrink beverage applications using WAF CRD. Know more about WAF CRD from [developer-docs](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/crds/waf/)
 
+**Note:** Ensure you have licensed VPX to configure WAF features.
+
 1. Deploy WAF CRD
 
-```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/waf-crd.yaml
-```
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/waf-crd.yaml
+    ```
 
 2. Enable cross-site scripting and SQL injection attacks protection for hotdrink beverage application
 
-**Note:** In case you have not deployed hotdrink app, follow [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here. 
+    **Note:** In case you have not deployed hotdrink app, follow [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here. 
 
-```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-waf-policy.yaml -n unified-ingress
-```
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-waf-policy.yaml -n unified-ingress
+    ```
 
-![waf-hotdrink-policy.PNG](images/waf-hotdrink-policy.PNG)
+    ![waf-hotdrink-policy.PNG](images/waf-hotdrink-policy.PNG)
 
-Now, lets check the VPX and find WAF policy is present on LB vserver corresponds to hotdrink app.
+    Now, lets check the VPX and find WAF policy is present on LB vserver corresponds to hotdrink app.
 
-![waf-hotdrink-policy-success.PNG](images/waf-hotdrink-policy-success.PNG)
+    ![waf-hotdrink-policy-success.PNG](images/waf-hotdrink-policy-success.PNG)
 
 3. Configure URL filtering rules for colddrink beverage application to prevent repeated attempts to access random URLs on a web site
 
-**Note:** In case you have not deployed colddrink app, follow [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) and continue here. 
+    **Note:** In case you have not deployed colddrink app, follow [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) and continue here. 
 
-```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink-waf-policy.yaml -n unified-ingress
-```
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink-waf-policy.yaml -n unified-ingress
+    ```
 
-   
+    ![waf-colddrink-policy.PNG](images/waf-colddrink-policy.PNG)
+
+    Now, lets check the VPX and find WAF policy is present on LB vserver corresponds to colddrink app.
+
+    ![waf-colddrink-policy-success.PNG](images/waf-colddrink-policy-success.PNG)
+       
+
 ### Section F (Clean UP Unified Ingress deployment)
     ```
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink.yaml -n unified-ingress

@@ -46,7 +46,7 @@ Perform the following:
 
 4. Send some traffic to the `colddrink` microservice application.
 
-    curl -s -H "Host: www.colddrink.com" http://<MasterNode IP:<NodePort> | grep colddrink
+    curl -s -H "Host: www.colddrink.com" http:// MasterNode IP : NodePort | grep colddrink
 
     ![colddrink-app](images/colddrink-app.PNG)
 
@@ -67,13 +67,16 @@ Perform the following:
     
     Deploy WAF CRD
   
+    ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/waf-crd.yaml
-    
+    ```
 
     Enable cross-site scripting and SQL injection attacks protection for hotdrink beverage application
 
+    ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-waf-policy.yaml
-
+    ```
+    ![waf-colddrink-policy](images/waf-colddrink-policy.PNG)
 
 6. Clean up the deployments using the following commands.
 
