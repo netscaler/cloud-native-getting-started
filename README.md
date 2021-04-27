@@ -34,9 +34,11 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
     * [Service mesh Lite topology: Tier 1 ADC - MPX/BLX/VPX & Tier 2 ADC - CPX to load balance microservice applications (North-South as well as East-West traffic)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
     * [Citrix Observability Exporter to troubleshoot microservices using Grafana, Kibana monitoring tools](https://github.com/citrix/cloud-native-getting-started/blob/master/on-prem/ServiceMeshLite/coe/README.md)
     * [API gateway use cases: Tier 1 ADC - MPX/BLX/VPX or Tier 2 ADC - CPX to provide Rate limit, Basic Auth, Content routing, IP filtering use cases](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/API-gateway)
+    * [Configure WAF policies on Tier 1 ADC VPX in Unified Ingress deployment](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-e-configure-waf-policies-on-vpx-using-waf-crds)
+
   * OpenShift (Red Hat Enterprise Linux VMs on xenserver)
     * [Service mesh lite using Ingress rules](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
     * [Unified Ingress using OpenShift routes and route sharding](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift/openshift-routes)
-    * [Configure WAF policies on Tier 1 ADC VPX in Unified Ingress deployment](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-e-configure-waf-policies-on-vpx-using-waf-crds)
+
 * Cloud Native stack for Sock Shop application
     * [Deploy Socks Shop microservice application using Citrix ADC](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/sock-shop)
