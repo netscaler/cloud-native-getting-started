@@ -207,7 +207,7 @@ Here we will configure Web Application Firewall policies on VPX for hotdrink bee
 
 2. Enable cross-site scripting and SQL injection attacks protection for hotdrink beverage application
 
-    **Note:** In case you have not deployed hotdrink app, follow [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here. 
+    **Note:** In case you have not deployed hotdrink app, follow [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here. 
 
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-waf-policy.yaml -n unified-ingress
@@ -221,7 +221,7 @@ Here we will configure Web Application Firewall policies on VPX for hotdrink bee
 
 3. Configure URL filtering rules for colddrink beverage application to prevent repeated attempts to access random URLs on a web site
 
-    **Note:** In case you have not deployed colddrink app, follow [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) and continue here. 
+    **Note:** In case you have not deployed colddrink app, follow [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) and continue here. 
 
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink-waf-policy.yaml -n unified-ingress
@@ -267,4 +267,5 @@ Client sends the traffic to Tier 1 ADC through Content Switching virtual server 
 ![colddrink-packetflow](images/colddrink-packetflow.gif)
 
 Please refer to Citrix ingress controller for more information, present at- https://github.com/citrix/citrix-k8s-ingress-controller
+
 For next tutorial, visit [cloud-native-getting-started](https://github.com/citrix/cloud-native-getting-started)
