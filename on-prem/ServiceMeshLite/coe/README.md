@@ -252,7 +252,7 @@ Lets begin observability stack deployment using yamls
 * Login to ``http://kibana.beverages.com:8080`` and setup App transaction dashboard. 
 * Select Connect to your Elasticsearch index from Use Elasticsearch data to create index pattern. 
 * Goto Saved Objects from left panel to import app trasanctional ndjson
-* Click on Import option (from top right corner) to upload ``https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/kibana-dashboard.ndjson``
+* Click on Import option (from top right corner) to upload ``https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/KibanaAppTrans.ndjson``
 * Select ``App Trasanction Dashboard`` from panel to start monitoring logs information.
 ![kibana-dashboard](images/kibana-dashboard.png)
 
