@@ -107,6 +107,9 @@ spec:
         # Add cic as a sidecar
         - name: cic
           image: "quay.io/citrix/citrix-k8s-ingress-controller:1.13.20"
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data          
           env:
           - name: "EULA"
             value: "yes"

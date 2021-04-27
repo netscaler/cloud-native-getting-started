@@ -186,6 +186,10 @@ We will configure Responder policy on VPX for hotdrink beverage application depl
     ```
      ![responder-policy.PNG](images/responder-policy.PNG)
 
+     Now, lets check the VPX and find responder policy is present on LB vserver corresponds to hotdrink app.
+
+    ![responder-hotdrink-policy-success.PNG](images/responder-hotdrink-policy-success.PNG)
+
     Now try to access `https://hotdrink.beverages.com ` and you will see that responder policy has blocked the access to hotdrink beverage microservice application.
 
 

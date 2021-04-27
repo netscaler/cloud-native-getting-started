@@ -38,7 +38,7 @@ Perform the following:
 
 4. Send some traffic to the `colddrink` microservice application.
 
-    curl -s -H "Host: www.colddrink.com" http://<MasterNode IP:<NodePort> | grep colddrink
+    curl -s -H "Host: www.colddrink.com" http://<MasterNode IP:NodePort | grep colddrink
 
     ![colddrink-app](images/colddrink-app.PNG)
 
