@@ -30,7 +30,7 @@ You can create cluster either using Azure portal GUI or Azure CLI. Choose one op
 	You will below home page after successful login.
 	![homepage](images/homepage.png)
 
-2. Create mew Azure resource group
+2. Create new Azure resource group
 
 	Select Resource group from Azure services -> Click on Add and provide Resource group name and region information -> Click on Review + Create -> Click on Create. 
 	![resourcegroup](images/resourcegroup.png)
