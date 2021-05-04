@@ -16,9 +16,16 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 | [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-a-deploy-citrix-adc-vpx-in-azure-cloud) | Deploy Citrix ADC VPX in Azure cloud|
 | [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-b-deploy-azure-k8s-cluster-aks) | Deploy Azure K8s cluster (AKS) |
 | [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-c-load-balance-beverage-microservice-apps-using-vpx) | Load balance beverage microservice apps using VPX|
-| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-d-clean-up) | Clean Up |
+| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-c-load-balance-beverage-microservice-apps-using-vpx) | Configure WAF policies on Citrix ADC VPX for microservice based applications|
+| [Section ED](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-d-clean-up) | Clean Up |
 
 ### Section A (Deploy Citrix ADC VPX in Azure cloud)
+You can either choose to deploy VPX express for basic load balacing POCs or you can deploy Premium/Platinum VPX to validate advance use cases like API Gateway, Multi cluster Ingress  (GSLB).
+
+| [Section 1.a](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-a-deploy-citrix-adc-vpx-in-azure-cloud) | Deploy Citrix ADC VPX Express in Azure cloud|
+| [Section 1.b](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-a-deploy-citrix-adc-vpx-in-azure-cloud ) | Deploy Citrix ADC VPX Premium/Platinum Edition in Azure cloud|
+
+### Section 1.a (Deploy Citrix ADC VPX Express in Azure cloud)
 
 Lets deploy Citrix ADC VPX Express on Azure cloud using ARM template. For more details on supported Azure templates visit [Citrix ADC ARM templates](https://github.com/citrix/citrix-adc-azure-templates) documentation.
 
@@ -56,6 +63,25 @@ Lets deploy Citrix ADC VPX Express on Azure cloud using ARM template. For more d
 **Note** In case you are not able to use CLI for VPX login, ensure that Azure CLI is installed on your local machine. Refer to [Create AKS cluster using Azure CLI](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/marketplace-cpx#section-a-create-k8s-cluster-in-aks) section.
 
 
+### Section 1.b (Deploy Citrix ADC VPX Premium/Platinum Edition in Azure cloud)
+
+1. Select the Citrix ADC VPX Premium edition offering from Azure Marketplace
+
+* Select Citrix ADC VPX from Azure marketplace from [here](https://azuremarketplace.microsoft.com/en-in/marketplace/apps/citrix.netscalervpx-1vm-3nic?tab=Overview).
+* Click on "Get It Now", select "Citrix ADC VPX Subscription License" from software plan and click on "Continue".
+![vpx-azure-sku](images/vpx-azure-sku.PNG)
+* Click on the "Create" to select Citrix ADC VPX licensing SKU
+* Fill in the project details for Citrix ADC as shown in below screenshot. ( Please ensure that you select License Subscription Edition : Platinum)
+![vpx-azure-sku1](images/vpx-azure-sku1.PNG)
+* Click on Next and validate VM configuration, Network and Additional settings. ** Note: ** This is optional information, can be ignored and directly jump to Review + Create section.
+* Once Validation is passed on "Review + Create " page, click on Create to deploy Platinum/Premium VPX on Azure cloud.
+
+2. Login into Citrix ADC VPX
+
+* Goto Resource group created while deploying VPX in previous step and look for Virtual machine.
+![premium-vpx](images/premium-vpx.PNG)
+* Click on Connect to see option for login. I have used SSH option to login into terminal
+![vpx-premium-login](images/vpx-premium-login.PNG)
 
 ### Section B (Deploy Azure K8s cluster (AKS))
 
@@ -78,7 +104,7 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 	otherwise you can have other deployment where Citrix ADC VPX can be deployed in the same resource group of AKS (starting with MC_) where vnet peering is not required.
 	**Note** When you deploy AKS cluster in one resource group then Azure creates another resource group strting with ''MC_'' in which AKS workload is deployed. e.g. "cpx-aks-cluster AKS cluster is created in CN-marketplace-cpx-deployment will create another resource group called MC_CN-marketplace-cpx-deployment_cpx-aks-cluster_southindia where actual k8s deployment takes place".
 
-	* Goto Resource group - MC_CN-marketplace-cpx-deployment_cpx-aks-cluster_southindia -> aks-vnet-25189219 9virtual network) -> Click on Peering from left panel -> Click on Add 
+	* Goto Resource group - MC_CN-marketplace-cpx-deployment_cpx-aks-cluster_southindia -> aks-vnet-25189219 (virtual network) -> Click on Peering from left panel -> Click on Add 
 
 	![vnet-peering-1](images/vnet-peering-1.png)
 
@@ -90,6 +116,7 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 	![vnet-peering-3](images/vnet-peering-3.png)
 
 ### Section C (Load balance beverage microservice apps using VPX)
+
 1. Deploy beverage microservice apps in AKS
 	Lets deploy hotdrink and colddrink beverage microservice based apps to AKS.
 
@@ -159,7 +186,32 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 	Lets access hotdrink beverage microservice app from local machine browser e.g. ``https://hotdrink.beverages.com``
 
 
-### Section D (Clean Up)
+### Section D (Configure WAF policies on Citrix ADC VPX for microservice based applications)
+
+Here we will configure Web Application Firewall policies on VPX for hotdrink beevrage application and colddrink beverage applications using WAF CRD. Know more about WAF CRD from [developer-docs](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/crds/waf/)
+
+**Note:** Ensure you have licensed VPX to configure WAF features. Here we will use VPX Platinum edition deployed in [Section 1.b](link)
+
+1. Deploy WAF CRD
+
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/waf-crd.yaml
+    ```
+
+2. Enable cross-site scripting and SQL injection attacks protection for hotdrink beverage application
+
+    **Note:** In case you have not deployed hotdrink app, follow [Section C]() and continue here. 
+
+    ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-waf-policy.yaml
+    ```
+
+    Now, lets check the VPX and find WAF policy is present on LB vserver corresponds to hotdrink app.
+
+    ![waf-policy.PNG](images/waf-policy.PNG)
+
+
+### Section E (Clean Up)
 ```
 kubectl delete -f vpx-ingress.yaml
 kubectl delete -f vpx-cic.yaml
