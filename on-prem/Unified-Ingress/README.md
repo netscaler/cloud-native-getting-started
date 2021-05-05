@@ -65,6 +65,15 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     ```
     ![colddrink-app](images/colddrink-app.PNG)
 
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+    ```
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-secret.yaml
+    ```
+    Update tls.crt and tls.key values and deploy hotdrink-secret.yaml
+    ```
+    kubectl create -f hotdrink-secret.yaml -n unified-ingress
+    ```
+
 3. Deploy IPAM CRD and IPAM to allocate IP address to access colddrink beverage microservice
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/ipam-crd.yaml
