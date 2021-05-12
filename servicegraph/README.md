@@ -287,7 +287,6 @@ The IP mentioned under `Cluster-IP` is the service IP for the agent and use this
 
   iii. "LS_IP"
 
-**Update**  `server` in `endpoint` under `NS_ANALYTICS_CONFIG` with the Citrix ADM Agent Service IP mentioned in config map `adc-netflix-cpx-cic-configmap` in `citrix-cloud-native.yaml` file .
 
 Update Fingerprint in below environment variable in `citrix-cloud-native.yaml` 
  
