@@ -7,25 +7,23 @@ The aim of this example is to help visualising the request flow between differen
 
    [Prerequisites](#prerequisite)
 
-  A. [Deploy and register Citrix ADM Agent](#deploy-register-citrix-adm-agent)
+  A. [Service Graph Onboarding](#onboarding)
 
-  B. [Add Cluster in Citrix ADM](#register-adm-agent)
+  B. [Create Kubernetes Secret using Citrix ADM credentials ](#create-secret)
 
-  C. [Configuration for service graph in ADM](#config-adm)
+  C. [Deploy Netflix application on Kubernetes Cluster ](#deploy-application)
 
-  D. [Deploy Netflix application on Kubernetes Cluster ](#deploy-application)
+  D. [Citrix Cloud Native Dual Tier Topology ](#deploy-citrix-cloud-native-stack)
 
-  E. [Citrix Cloud Native Dual Tier Topology ](#deploy-citrix-cloud-native-stack)
+  E. [Send Traffic](#send-traffic)
 
-  F. [Send Traffic](#send-traffic)
+  F. [Visualize Servicegraph in Citrix ADM](#servicegraph)
 
-  G. [Visualize Servicegraph in Citrix ADM](#servicegraph)
+  G. [Tracing](#trace)
 
-  H. [Tracing](#trace)
+  H. [Clean Up the deployment](#clean-up)
 
-  I. [Clean Up the deployment](#clean-up)
-
-  J. [Debugging](#debugging)
+  I. [Debugging](#debugging)
 
 ## <a name="prerequisite">Prerequisites</a>
  - Citrix ADM. To start using Citrix ADM, you must first create a Citrix Cloud company account or join an existing one that someone else in your company has created. For detailed processes and instructions on how to proceed, see [Signing Up for Citrix Cloud](https://docs.citrix.com/en-us/citrix-cloud/overview/signing-up-for-citrix-cloud/signing-up-for-citrix-cloud). 
@@ -33,10 +31,10 @@ The aim of this example is to help visualising the request flow between differen
     To manage Citrix ADM with an Express account, follow [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html#install-an-agent-as-a-microservice).
 
  - The [Kubernetes](https://kubernetes.io/) version 1.16 or later.
- - The Citrix ADC VPX with Version 13.0-76.31 or later.
+ - The Citrix ADC VPX with Version 13.0-76.29 or later.
  - The Citrix ADC VPX and the Kubernetes Cluster should be in same network.
 
-## <a name="deploy-register-citrix-adm-agent">A) Deploy and register Citrix ADM Agent</a>
+## <a name="onboarding">A) Service Graph Onboarding</a>
 You can deploy a Citrix ADM agent as a microservice in the Kubernetes cluster to view service graph in Citrix ADM. 
 
 Follow below steps:
@@ -59,21 +57,23 @@ Follow below steps:
 
     ![](images/choose-environment.png)
 
- 6. Choose `As a microservice` and click `Next`
+ 6. Choose `Microservices` and click `Next`
 
-    ![](images/select-agent-type.png)
+    ![](images/application-type.png)
 
- 7. Specify the following parameters:
+ 7.  In the Download Agent Microservice page, specify the following parameters:
 
-    a. **Application ID** : A string id to define the service for the agent in the Kubernetes cluster and distinguish 		this agent from other agents in the same cluster. Use lowercase alphanumeric characters only. Uppercase characters are not supported.
+      a. **Application ID** : A string id to define the service for the agent in the Kubernetes cluster and distinguish 		this agent from other agents in the same cluster. Use lowercase alphanumeric characters only. Uppercase characters are not supported.
 
-	b. **Agent Password** – Specify a password for ADM agent. This passoword will be used on onboarding CPX to ADM service through the agent.
+      b. **Agent Password** – Specify a password for ADM agent. This passoword will be used on onboarding CPX to ADM service through the agent.
 
-	c. **Confirm Password** – Specify the same password for confirmation.
+      c. **Confirm Password** – Specify the same password for confirmation.
+       
+      **Note**:You must not use the default password (nsroot).
 	
-    d. **Submit**
+      d. **Submit**
 
-    **NOTE** You can save Application ID and Agent Password, this will be used while creating secret and updating variables in the YAML file.
+      **NOTE** You can save Application ID and Agent Password, this will be used while creating secret and updating variables in the YAML file. 
 
       ![](images/agent-details.png)
 
@@ -81,27 +81,27 @@ Follow below steps:
 
     ![](images/download-agent-file.png)
 
- 9. Click **Close**.
+ 9. In the Kubernetes main mode, save the downloaded YAML file and run the following command to register the agent:
 
-    On the Kubernetes cluster:
+         kubectl create -f < YAML file >
+   
+      For example, kubectl create -f testing.yaml
+    
+      ![](images/agent-install.png) 
 
-        kubectl create -f <yaml file>
+      The agent is successfully created.
 
-    For example, `kubectl create -f myagent.yaml`
+ 10. Click **Register Agent**.
+   
+   ![](images/download-agent-file.png)
+ 
+    The page loads for a few seconds and displays the registered agent.
 
-    The agent is successfully created.
+ 11. Ensure if the agent is present in the list and click **Next**.
+  
+   ![](images/agent-list.png)
 
-    In Citrix ADM, navigate to Networks > Agents to see the agent status.
-
-    ![](images/agent-status.png)
-
-## <a name="register-adm-agent"> B) Add Cluster in Citrix ADM</a>
-
-To add cluster using Agent, follow the below steps:
-
- 1. Navigate to `Orchestration > Kubernetes > Cluster` in Citrix ADM. The Clusters page is displayed.
- 2. Click `Add`.
- 3. In the Add Cluster page, specify the following parameters:
+ 12. You must register the cluster. Click Add More Clusters and specify the following parameters::
 
       a. **Name** - Specify a name of your choice.
 
@@ -115,82 +115,70 @@ To add cluster using Agent, follow the below steps:
 		
       c. **Authentication Token** - Specify the authentication token. The authentication token is required to validate access for communication between Kubernetes cluster and Citrix ADM.
 
-      To generate an authentication token; 
-      On the Kubernetes master node:
+         To generate an authentication token; 
+         
+         On the Kubernetes master node:
 
-      i. Use the following YAML to create a service account:
+       i. Use the following YAML to create a service account:
 				
-        apiVersion: v1
-        kind: ServiceAccount
-        metadata:
-	        name: citrixadm-sa
+               apiVersion: v1
+               kind: ServiceAccount
+               metadata:
+	               name: citrixadm-sa
 
-      ii. Run `kubectl create -f <yaml file>`. The service account is created.
+       ii. Run `kubectl create -f <yaml file>`. The service account is created.
 
-      iii. Run `kubectl create clusterrolebinding clusterBinding --clusterrole=cluster-admin --serviceaccount=default:citrixadm-sa` to bind the cluster role to service account.
+       iii. Run `kubectl create clusterrolebinding clusterBinding --clusterrole=cluster-admin --serviceaccount=default:citrixadm-sa` to bind the cluster role to service account.
 
-      The service account now has the cluster-wide access. A token is automatically generated while creating the service account.
+            The service account now has the cluster-wide access. A token is automatically generated while creating the service account.
 
-      iv. Run `kubectl describe sa citrixadm-sa` to view the token.
+       iv. Run `kubectl describe sa citrixadm-sa` to view the token.
 
       ![](images/describe-sa.png)
 
-      v. To get the secret string, run `kubectl describe secret <token-name>`.
+       v. To get the secret string, run `kubectl describe secret <token-name>`.
 
       ![](images/describe-token.png)
 
-    d. Select the **agent** from the list.
+      d. Select the **agent** from the list.
     
-    **To get the agent IP**
+      e. Click **Create**.
 
-    Use `Application ID` mentioned in `Step A.7.a` to list the service IP for Citrix Agent.
-  
-        kubectl get svc <application-id> -o wide
-    
-    The IP mentioned under `Cluster-IP` is the service IP for the agent. Alternatively, you can navigate to `Networks > Agents` in Citrix ADM to view the agent IP.
+   ![](images/add-cluster.png)
 
-    e. Click **Create**.
+13. In the Clusters page, the cluster information is displayed. Click **Next**.
 
-     ![](images/addcluster.png)
+   ![](images/cluster-list.png)
+
+14. Configure the CPX and VPX instances, and click **Next**.
+
+   ![](images/vpx-cpx-list.png)
+
+   **NOTE** You can deploy Citrix ADCs in Dual Tier topology as mentioned in [Citrix Cloud Native Dual Tier Topology ](#deploy-citrix-cloud-native-stack)   
+
+15. Click **Next** to auto-license the virtual servers and to enable detailed web and TCP transactions.
+
+   ![](images/auto-license.png)
+
+16. The configurations are complete. Select **Service Graph** and click **Done**.
+
+   ![](images/final-page-onboarding.png)
 
 
-### Create Kubernetes Secret using Citrix ADM credentials
+## <a name="create-secret"> B) Create Kubernetes Secret using Citrix ADM credentials </a>
 
   To auto register Citrix ADC CPX in ADM for obtaining [servicegraph](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html), you will have to create a Kubernetes secret using ADM Agent credentials. Create a Kubernetes secret with password you have provided during `Step A.7.b` using the following command:
 
     kubectl create secret generic admlogin --from-literal=username=nsroot --from-literal=password=<adm-password>
 
-## <a name="config-adm"> C) Configuration for service graph in ADM </a>
 
-After you add Kubernetes cluster in Citrix ADM, you must ensure to auto-select virtual servers for licensing. CPX virtual servers must be licensed to display data in service graph. To auto-select virtual servers:
-
- 1. Navigate to Accounts > Subscriptions in Citrix ADM.
-
- 2. Under Virtual Server License Summary, enable Auto-select Virtual Servers.
-
-    ![](images/auto-license.png)
-
-   After enable the auto-select virtual servers, change the Web Transaction Settings and TCP Transactions Settings to All.
-
-  1. Navigate to `Analytics > Settings`.  
-
-  2. The Settings page is displayed.
-
-  3. Click **Enable Features for Analytics**.
-
-  4. Under **Web Transaction Settings**, select **All**.
- 
-  5. Under **TCP Transactions Settings**, select **All**.
-
-      ![](images/tcp-web-settings.png)
-
-## <a name="deploy-application"> D) Deploy Netflix application on Kubernetes Cluster </a>
+## <a name="deploy-application"> C) Deploy Netflix application on Kubernetes Cluster </a>
 
 Run following to deploy Netflix application on your Kubernetes Cluster
 
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/netflix.yaml
 
-## <a name="deploy-citrix-cloud-native-stack"> E) Citrix Cloud Native Dual Tier Topology </a>
+## <a name="deploy-citrix-cloud-native-stack"> D) Citrix Cloud Native Dual Tier Topology </a>
 
   Let's understand the Netflix application topology having Citrix ADC to deliver best user experience in North-South and East-West Load balancing.
 
@@ -214,7 +202,9 @@ Lets deploy the Netflix application in Service mesh lite deployment where
 
  - Tier 2 ADC - CPX to route East-West traffic from Netflix application.
 
-### Add Tier 1 ADC in Citrix ADM
+## <a name="add-tier1-adc-in-adm"> Add Tier 1 ADC in Citrix ADM </a>
+
+You can skip this step if you have added VPX in Step **A.14**.
 
 Citrix ADC VPX is used to ingress North-South traffic. To add Citrix ADC VPX in ADM follow below steps:
 
@@ -244,15 +234,17 @@ Citrix ADC VPX is used to ingress North-South traffic. To add Citrix ADC VPX in 
 
     h. **SNMP Version:** Select either SNMPv2 or SNMPv3 and do the following:
 
-    i. If you select SNMPv2, specify the **Community name** for authentication.
+      i. If you select SNMPv2, specify the **Community name** for authentication.
 
-    ii. If you select SNMPv3, specify the **Security Name** and **Security Level**. Based on the **security level**, select the **Authentication Type** and **Privacy Type**.
+      ii. If you select SNMPv3, specify the **Security Name** and **Security Level**. Based on the **security level**, select the **Authentication Type** and **Privacy Type**.
 
       ![](images/profile-snmp.png)
 
-#### To configure the Tier 1 ADC VPX using Citrix Ingress Controller (CIC):
+### To configure the Tier 1 ADC VPX using Citrix Ingress Controller (CIC):
 
-The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that Citrix ingress controller (CIC) can configure the Citrix ADC VPX. For instructions to create the system user account on Citrix ADC, see [Create System User Account for CIC in Citrix ADC](#create-system-user-account-for-cic-in-citrix-adc).
+The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that Citrix ingress controller (CIC) can configure the Citrix ADC VPX. 
+
+For instructions to create the system user account on Citrix ADC, see [Create System User Account for CIC in Citrix ADC](#create-system-user-account-for-cic-in-citrix-adc).
 
 Create a Kubernetes secret for the user name and password using the following command:
 
@@ -269,7 +261,14 @@ Update `NS_IP` under the deployment name `adc-netflix-cic`  `citrix-cloud-native
 
 **Note** Citrix ADC VPX and Kubernetes Cluster must be deployed in same network.
 
-### Deploying Tier-2 ADC CPX -
+**Update**  `server` in `endpoint` under `NS_ANALYTICS_CONFIG` with the Citrix ADM Agent POD IP in config map `adc-netflix-cic-configmap` in `citrix-cloud-native.yaml` file .
+
+To get the Citrix ADM Agent Pod IP use below command.
+
+    kubectl get endpoints <Application-id> -o wide
+
+
+## Deploying Tier-2 ADC CPX -
 
 Citrix ADC CPX is used to route North-South traffic from Tier 1 ADC to frontend Netflix microservice application and route East-West traffic from Netflix microservices  
 
@@ -287,24 +286,10 @@ The IP mentioned under `Cluster-IP` is the service IP for the agent and use this
 
   iii. "LS_IP"
 
+**NOTE** Make sure you have created Kubernetes secret as mentioned in [Create Kubernetes Secret using Citrix ADM credentials](#create-secret)
 
-Update Fingerprint in below environment variable in `citrix-cloud-native.yaml` 
- 
-  i. "NS_MGMT_FINGER_PRINT"
 
-#### To get the `Citrix ADM agent Fingerprint`
-
-Navigate to `Networks > Agents` in Citrix ADM. Select the Agent from the list and click the `View Fingerprint`.
-
-   ![](images/fingerprint.png)
-
-**Update**  `server` in `endpoint` under `NS_ANALYTICS_CONFIG` with the Citrix ADM Agent POD IP in config map `adc-netflix-cic-configmap` in `citrix-cloud-native.yaml` file .
-
-To get the Citrix ADM Agent Pod IP use below command.
-
-    kubectl get endpoints <Application-id> -o wide
-
-After updating above environment variables, deploy CIC for Tier-1 VPX and tier-2 CPX using
+After updating all the environment variables, deploy CIC for Tier-1 VPX and tier-2 CPX using
 
     kubectl apply -f citrix-cloud-native.yaml
 
@@ -322,7 +307,7 @@ After updating above environment variables, deploy CIC for Tier-1 VPX and tier-2
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/smlite_services.yaml
 
 
-## <a name="send-traffic"> F) Send Traffic </a>
+## <a name="send-traffic"> E) Send Traffic </a>
   Send traffic using helper script
 
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/traffic.sh
@@ -331,7 +316,7 @@ Provide VIP which was used to expose the Netflix app in `traffic.sh` and start t
 
     nohup sh traffic.sh <VIP> > log &
 
-## <a name="servicegraph"> G) Visualize Service Graph in Citrix ADM</a>
+## <a name="servicegraph"> F) Visualize Service Graph in Citrix ADM</a>
 Before visualizing the Service Graph, you can check if the vservers configured in ADC are properly discovered and licensed. For this check the section [debugging](#debugging)
 
 In ADM navigate  `Application > Service Graph > MicroServices` .
@@ -345,13 +330,13 @@ We can view **transation logs** as well in the servicegraph.
 
   ![](images/transactionlog.png)
 
-## <a name="trace">H) Tracing </a>
+## <a name="trace">G) Tracing </a>
 
 A user can select **See Trace Details** to visualize the entire trace in the form of a chart of all transactions which are part of the trace.
 
   ![](images/tracing.png)
 
-## <a name="clean-up">I) Clean Up the deployment </a>
+## <a name="clean-up">H) Clean Up the deployment </a>
 
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/cpx_ingress.yaml
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/servicegraph/manifest/smlite_services.yaml
@@ -361,7 +346,7 @@ A user can select **See Trace Details** to visualize the entire trace in the for
     kubectl delete secret nslogin
     kubectl delete secret admlogin
 
-## <a name="debugging">J) Debugging </a>
+## <a name="debugging">I) Debugging </a>
 
 Service Graph will not be populated if vserver configuration of Tier 2 ADC are not populated in ADM. Also, the vserver in Tier-1 ADC need to be licensed. Following sections will guide on licensing vserver in Tier-1 Citrix ADC VPX and discovering the vserver configuration on Tier 2 Citrix ADC CPX.
 
