@@ -68,10 +68,7 @@ Know more about supported deployments from [Citrix Cloud native deployments](htt
 
 2.	Deploy Two Citrix ADC CPXs for hotdrink and colddrink beverages microservice apps
 
-    You can directly pass the user name and password as environment variables to the Citrix ingress controller or use K8s secrets (recommended). If you want to use K8s secrets, create a secret for the user name and password using the following command:
-    ```
-    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n tier-2-adc
-    ```
+    
     Lets deploy two CPXs now; one CPX exposed as Ingress service load balancing hotdrink beverage app and another CPX exposed as LoadBalancer service load balancing colddrink beverage app.
 
     **Note:** Please upload your TLS certificate and TLS key into vpx-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
@@ -124,6 +121,12 @@ Know more about supported deployments from [Citrix Cloud native deployments](htt
     ![ipam](images/ipam.PNG)
 
 6.	Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
+
+    Create a secret for the login into Tier 1 ADC, Update username and password for your Tier 1 ADC and execute below command
+
+    ```
+    kubectl create secret generic nsvpxlogin --from-literal=username='userA' --from-literal=password='password' -n tier-2-adc
+    ```
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/ingress-vpx.yaml
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/API-gateway/manifest/cic-vpx.yaml

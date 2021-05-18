@@ -19,7 +19,7 @@ spec:
       serviceAccountName: api-gw
       containers:
         - name: cpx-ingress-hotdrinks
-          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29"
           securityContext: 
              privileged: true
           env:
@@ -28,9 +28,17 @@ spec:
           - name: "KUBERNETES_TASK_ID"
             value: ""
           imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+            - mountPath: /cpx/
+              name: cpx-volume
         # Add cic as a sidecar
         - name: cic
-          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.14.17"
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
           env:
           - name: "EULA"
             value: "yes"
@@ -44,16 +52,6 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: password
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -70,25 +68,11 @@ spec:
             - --default-ssl-certificate
               $(POD_NAMESPACE)/vpx-secret
           imagePullPolicy: Always
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: lb-service-hotdrinks
-  labels:
-    app: lb-service-hotdrinks
-spec:
-  type: ClusterIP
-  ports:
-  - port: 443
-    protocol: TCP
-    name: https
-    targetPort: 443
-  selector:
-    app: cpx-ingress-hotdrinks
-
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -111,7 +95,7 @@ spec:
       serviceAccountName: api-gw
       containers:
         - name: cpx-ingress-colddrinks
-          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29"
           securityContext: 
              privileged: true
           env:
@@ -120,9 +104,17 @@ spec:
           - name: "KUBERNETES_TASK_ID"
             value: ""
           imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+            - mountPath: /cpx/
+              name: cpx-volume
         # Add cic as a sidecar
         - name: cic
-          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.14.17"
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data          
           env:
           - name: "EULA"
             value: "yes"
@@ -136,16 +128,6 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: password
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -160,6 +142,29 @@ spec:
             - --ingress-classes
               colddrink
           imagePullPolicy: Always
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-hotdrinks
+  labels:
+    app: lb-service-hotdrinks
+spec:
+  type: ClusterIP
+  ports:
+  - port: 443
+    protocol: TCP
+    name: https
+    targetPort: 443
+  selector:
+    app: cpx-ingress-hotdrinks
 
 ---
 
