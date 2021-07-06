@@ -47,5 +47,5 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
 
 Looking to get started or take the next step in your app modernization? Our team is now offering free consultations! Send an email to appmodernization@citrix.com to schedule your session, and a specialist will promptly reply with options to connect.
 
-![CN-emailID.png](/VPX/images/CN-emailID.png.png)
+![CN-emailID.png](/VPX/images/CN-emailID.png)
 
