@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: netflix-frontend-service
+  labels:
+    citrix-adc: cpx
 spec:
   ports:
   - name: netflix-frontend-80
@@ -16,6 +18,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: tv-shows-service
+  labels:
+    citrix-adc: cpx
 spec:
   ports:
   - name: tv-shows-80
@@ -30,6 +34,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: movies-service
+  labels:
+    citrix-adc: cpx
 spec:
   ports:
   - name: movies-80
@@ -44,6 +50,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: metadata-store-service
+  labels:
+    citrix-adc: cpx
 spec:
   ports:
   - name: metadata-store-80
@@ -58,6 +66,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: recommendation-engine-service
+  labels:
+    citrix-adc: cpx
 spec:
   ports:
   - name: recommendation-engine-80
@@ -72,6 +82,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: similarity-calculator-service
+  labels:
+    citrix-adc: cpx
 spec:
   ports:
   - name: similarity-calculator-80
@@ -86,6 +98,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mutual-friends-interests-service
+  labels:
+    citrix-adc: cpx
 spec:
   ports:
   - name: mutual-friends-interests-80
@@ -100,6 +114,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: trending-service
+  labels:
+    citrix-adc: cpx
 spec:
   ports:
   - name: trending-80
@@ -114,6 +130,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: telemetry-store-service
+  labels:
+    citrix-adc: cpx
 spec:
   ports:
   - name: telemetry-store-80
