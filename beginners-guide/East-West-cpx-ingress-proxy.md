@@ -6,7 +6,7 @@ This type of deployment is called as a [Service Mesh lite topology](https://deve
 
 **Prerequisite**
 
-Ensure that you have installed and set up a Kubernetes cluster (The following example is tested in on-prem v1.17.0 Kubernetes cluster).
+Ensure that you have installed and set up a Kubernetes cluster (The following example is tested in on-prem Kubernetes cluster v1.22.1).
 
 Perform the following:
 
@@ -91,4 +91,6 @@ Perform the following:
             
             kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/hotdrink-ingress.yaml
 
-For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).
+For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. 
+
+For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).

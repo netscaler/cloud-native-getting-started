@@ -5,7 +5,7 @@ In this example, the Citrix ADC CPX (a containerized form-factor) is used to rou
 
 **Prerequisite**:
 
-  Ensure that you have installed and set up a [Minikube cluster](https://kubernetes.io/docs/tasks/tools/install-minikube/) (This example is tested on Minikube v0.33.1).
+  Ensure that you have installed and set up a [Minikube cluster](https://kubernetes.io/docs/tasks/tools/install-minikube/) (This example is tested on Minikube v1.23 having K8s 1.22.1 deployed).
 
 Perform the following: 
 
@@ -54,4 +54,6 @@ Perform the following:
         kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/guestbook-ingress.yaml
 
 
-For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).
+For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. 
+
+For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).

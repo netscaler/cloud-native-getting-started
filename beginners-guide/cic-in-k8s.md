@@ -7,7 +7,7 @@ CIC can be deployed in two modes,
   2. Independent k8s deployment kind for configuring Tier 1 Ingress proxy (MPX/SDX/BLX/VPX).
 
 ###### Note: This tutorial is for learning different CIC deployment modes and not to be considered as end user example. Real world examples will use either one/both CIC modes with other use cases. 
-**Prerequisite**: Kubernetes cluster (Below example is tested in on-prem v1.17.0 K8s cluster).
+**Prerequisite**: Kubernetes cluster (Below example is tested in on-prem v1.22.1 K8s cluster).
 
 1. Lets deploy CIC as a sidecar with Citrix ADC CPX proxy
 ```
@@ -35,7 +35,7 @@ Change NS_IP environment variable in tier1-cic yaml with Citrix ADC management I
 Now deploy CIC in K8s cluster,
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/tier1-cic.yaml
-kubectl get pods -l app=tier1-cic
+kubectl get pods -l app=cic-k8s-ingress-controller
 ```
 ![tier1-cic](images/tier1-cic.png)
 
@@ -64,4 +64,8 @@ kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-
 
 ```
 
-For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).
+You can learn more about usage of all supported options for Citrix Ingress controller from [Modern App deployment yaml manifest details ](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide/CN stack manifest details.md).
+
+For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. 
+
+For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).

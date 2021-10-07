@@ -1,4 +1,4 @@
-# Deep dive on Kubernetes features with Citrix ADC CPX
+# Deployment options for  Citrix ADC CPX in Kubernetes platform
 
 In this example, the Citrix ADC CPX (a containerized form-factor) is used to route the Ingress traffic to an Apache microservice application.
 
@@ -55,7 +55,7 @@ Kubernetes cluster (These examples are tested on on-prem v1.17.0 Kubernetes clus
     (The number of `CPX-ingress` pods are equal to the number of nodes in the Kubernetes cluster deploying pods)
    ![cpx-per-node](images/cpx-per-node.PNG)
 
-2. Clean Up the installation using the following command.
+3. Clean Up the installation using the following command.
 
         kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cpx-per-node-mode.yaml
 
@@ -86,14 +86,14 @@ This example shows how to deploy Citrix ADC CPX in multiple namespaces.
 
         kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-app.yaml -n team-C
         
-1. Verify the deployment using the following commands>
+4. Verify the deployment using the following commands>
 
 
         kubectl get pods -l app=frontend-colddrinks -n team-A
         kubectl get pods -l app=frontend-colddrinks -n team-B
         kubectl get pods -l app=frontend-colddrinks -n team-C
-`
-1. Deploy Ingress rules that send traffic to http://www.colddrink.com.
+
+5. Deploy Ingress rules that send traffic to http://www.colddrink.com.
 
         kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml -n team-A
 
@@ -103,7 +103,7 @@ This example shows how to deploy Citrix ADC CPX in multiple namespaces.
 
         kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/colddrink-ingress.yaml -n team-C
 
-1. Verify the Ingress using the following commands.
+6. Verify the Ingress using the following commands.
 
         kubectl get ingress -n team-A
         kubectl get svc cpx-service -n team-A
@@ -115,7 +115,7 @@ This example shows how to deploy Citrix ADC CPX in multiple namespaces.
         kubectl get svc cpx-service -n team-C
 
 
-2. Deploy the traffic for each Citrix ADC CPX deployed in different namespaces.
+7. Deploy the traffic for each Citrix ADC CPX deployed in different namespaces.
 
 
         kubectl get pods -l app=cpx-ingress -n team-A
@@ -127,12 +127,12 @@ This example shows how to deploy Citrix ADC CPX in multiple namespaces.
         kubectl get svc -n team-B
         kubectl get svc -n team-C
 
-3. Check for NodePort for all CPXs and create cURL requests accordingly.
+8. Check for NodePort for all CPXs and create cURL requests accordingly.
 
         curl -s -H "Host: www.ingress.com" http://<Master IP:<NodePort>
 
 
-6. Clean Up the installation using the following commands.
+9. Clean Up the installation using the following commands.
 
         kubectl delete namespace team-A team-B team-C
         kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/standalone-cpx-mode.yaml -n team-A
@@ -177,10 +177,16 @@ This example shows how to deploy Citrix ADC CPX in high availability mode.
 
    You can see that a new Citrix ADC CPX pod has come up immediately once a running pod goes down.
 
-1. Clean Up the installation using the following steps. 
+5. Try our Horizontail pod autoscaling for Citrix ADC CPX
+
+Citrix ADC CPX support Horizontal Pod Autoscaling (HPA) to automatically scale the number of pods in your workload based on different metrics like actual resource usage. Try out CPX HPA from [CPX HPA documentation](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/how-to/cpx-hpa/)
+
+6. Clean Up the installation using the following steps. 
 
 
         kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/standalone-cpx-mode.yaml
 
-For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).
+For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. 
+
+For more tutorials, see [beginners-guides](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide).
 
