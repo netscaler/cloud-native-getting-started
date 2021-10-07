@@ -20,7 +20,7 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
   * [Deploy Citrix ADC CPX in Minikube](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/cpx-in-minikube.md)
   * [Deploy Ingress proxy - CPX on NodePort](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/North-South-cpx-ingress-proxy.md)
   * [Deploy Citrix ADC CPX as East-West proxy without sideacar proxy](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/East-West-cpx-ingress-proxy.md)
-  * [Deployment modes for Citrix ADC CPX](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/k8s-features-deepdive-using-cpx.md)
+  * [Deployment modes for Citrix ADC CPX](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/CPX-deployment-modes.md)
   * [Update Citrix Ingress Controller logging using ConfigMap](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/configmap-for-loglevels.md)
 
 * Citrix Cloud Native Advanced Guides
