@@ -1,7 +1,9 @@
 # Deploy a Citrix ADC CPX proxy in docker
 
 Citrix ADC CPX is a container based proxy and can be deployed as a process in docker. 
-* **Note**: This tutorial is for learning Citrix ADC CPX deployment in docker container and not to be considered as end user example. Real world examples will use Citrix ADC CPX in different deployment modes showcased in other beginners guides.
+* **Note**: Citrix encourages you to deploy Citrix ADC CPX on managed Kubernetes platforms for better performance and enterprise support. We no longer support enhancements for CPX support on vanilla Docker.
+
+This tutorial is for learning Citrix ADC CPX deployment in docker container and not to be considered as end user example. Real world examples will use Citrix ADC CPX in different deployment modes showcased in other beginners guides.
 
 **Prerequisite**: Docker engine (Below example is tested in docker engine v18.06).
 
