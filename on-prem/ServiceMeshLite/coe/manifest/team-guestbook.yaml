@@ -197,8 +197,10 @@ metadata:
 spec:
   ingressClassName: guestbook
     backend:
-        serviceName: frontend-pods
-        servicePort: 80
+        service:
+          name: frontend-pods
+          port: 
+            number: 80
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -210,7 +212,9 @@ metadata:
 spec:
   ingressClassName: guestbook
     backend:
-        serviceName: redis-master-pods
-        servicePort: 6379
+        service:
+          name: redis-master-pods
+          port: 
+            number: 6379
 ---
 

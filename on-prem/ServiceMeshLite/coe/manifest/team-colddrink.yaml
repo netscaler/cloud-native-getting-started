@@ -61,5 +61,7 @@ spec:
   tls:
   - secretName: "colddrink-secret"
   backend:
-    serviceName: frontend-colddrinks
-    servicePort: 443
+    service:
+      name: frontend-colddrinks
+      port: 
+        number: 443
