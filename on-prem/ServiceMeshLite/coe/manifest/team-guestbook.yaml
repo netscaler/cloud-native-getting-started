@@ -197,10 +197,10 @@ metadata:
 spec:
   ingressClassName: guestbook
   defaultBackend:
-      service:
-         name: frontend-pods
-        port: 
-          number: 80
+    service:
+      name: frontend-pods
+      port: 
+        number: 80
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
