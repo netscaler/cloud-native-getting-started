@@ -60,7 +60,7 @@ spec:
   ingressClassName: colddrink
   tls:
   - secretName: "colddrink-secret"
-  backend:
+  defaultBackend:
     service:
       name: frontend-colddrinks
       port: 

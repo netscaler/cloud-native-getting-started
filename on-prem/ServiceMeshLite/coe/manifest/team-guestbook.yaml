@@ -196,11 +196,11 @@ metadata:
    ingress.citrix.com/analyticsprofile: '{"webinsight": {"httpurl":"ENABLED", "httpuseragent":"ENABLED", "httphost":"ENABLED", "httpmethod":"ENABLED", "httpcontenttype":"ENABLED"}, "tcpinsight": {"tcpBurstReporting":"ENABLED"}}'
 spec:
   ingressClassName: guestbook
-    backend:
-        service:
-          name: frontend-pods
-          port: 
-            number: 80
+  defaultBackend:
+      service:
+         name: frontend-pods
+        port: 
+          number: 80
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -211,10 +211,10 @@ metadata:
    ingress.citrix.com/insecure-port: "6379"
 spec:
   ingressClassName: guestbook
-    backend:
-        service:
-          name: redis-master-pods
-          port: 
-            number: 6379
+  defaultBackend:
+    service:
+      name: redis-master-pods
+      port: 
+        number: 6379
 ---
 

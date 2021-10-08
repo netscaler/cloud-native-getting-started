@@ -39,7 +39,6 @@ spec:
     targetPort: 443
   selector:
     app: tea-beverage
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -82,7 +81,6 @@ spec:
     targetPort: 443
   selector:
     app: coffee-beverage
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -125,7 +123,6 @@ spec:
     targetPort: 443
   selector:
     app: frontend-hotdrinks
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: IngressClass
@@ -175,9 +172,7 @@ spec:
             name: coffee-beverage
             port: 
               number: 443
-
 ---
-
 kind: Service
 apiVersion: v1
 metadata:
@@ -190,9 +185,7 @@ spec:
     port: 80
   - name: ssl
     port: 443
-
 ---
-
 kind: Service
 apiVersion: v1
 metadata:
@@ -205,4 +198,4 @@ spec:
     port: 80
   - name: ssl
     port: 443
-
+---
