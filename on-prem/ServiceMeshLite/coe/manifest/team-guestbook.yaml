@@ -179,8 +179,14 @@ spec:
         - containerPort: 80
 
 ---
-
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: guestbook
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: guestbook-ingress
@@ -188,24 +194,23 @@ metadata:
    ingress.citrix.com/insecure-service-type: "tcp"
    ingress.citrix.com/insecure-port: "80"
    ingress.citrix.com/analyticsprofile: '{"webinsight": {"httpurl":"ENABLED", "httpuseragent":"ENABLED", "httphost":"ENABLED", "httpmethod":"ENABLED", "httpcontenttype":"ENABLED"}, "tcpinsight": {"tcpBurstReporting":"ENABLED"}}'
-   kubernetes.io/ingress.class: "guestbook"
 spec:
+  ingressClassName: guestbook
     backend:
         serviceName: frontend-pods
         servicePort: 80
-
 ---
-
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: redis-master-ingress
   annotations:
    ingress.citrix.com/insecure-service-type: "tcp"
    ingress.citrix.com/insecure-port: "6379"
-   kubernetes.io/ingress.class: "guestbook"
 spec:
+  ingressClassName: guestbook
     backend:
         serviceName: redis-master-pods
         servicePort: 6379
+---
 

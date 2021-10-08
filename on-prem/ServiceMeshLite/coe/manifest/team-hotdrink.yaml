@@ -127,18 +127,24 @@ spec:
     app: frontend-hotdrinks
 
 ---
-
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: hotdrink
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hotdrinks-ingress
   annotations:
-   kubernetes.io/ingress.class: "hotdrink"
    ingress.citrix.com/secure_backend: '{"coffee-beverage": "True"}'
    ingress.citrix.com/analyticsprofile: '{"webinsight": {"httpurl":"ENABLED", "httpuseragent":"ENABLED", "httphost":"ENABLED", "httpmethod":"ENABLED", "httpcontenttype":"ENABLED"}, "tcpinsight": {"tcpBurstReporting":"ENABLED"}}'
 #   ingress.citrix.com/insecure-termination: "allow"
 #   ingress.citrix.com/lbvserver: '{"frontend-hotdrinks":{"lbmethod":"ROUNDROBIN"},"tea-beverage":{"lbmethod":"LEASTRESPONSETIME"},"coffee-beverage":{"persistencetype":"SOURCEIP"}}'
 spec:
+  ingressClassName: hotdrink
   tls:
   - hosts:
   rules:

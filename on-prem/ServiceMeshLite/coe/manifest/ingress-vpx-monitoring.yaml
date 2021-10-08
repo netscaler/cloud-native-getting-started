@@ -1,13 +1,20 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: citrix
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-vpx-monitoring
   annotations:
-   kubernetes.io/ingress.class: "citrix"
 #   ingress.citrix.com/insecure-termination: "allow"
    ingress.citrix.com/frontend-ip: "10.105.158.195"
    ingress.citrix.com/insecure-port: "8080"
 spec:
+  ingressClassName: citrix
   rules:
   - host:  grafana.beverages.com
     http:

@@ -24,7 +24,7 @@ Citrix Observability Exporter is a container which collects metrics and transact
 1.	Bring your own nodes (BYON)
 
     Kubernetes is an open-source system for automating deployment, scaling, and management of containerised applications. Please install and configure Kubernetes cluster with one master node and at least two worker node deployment.
-    Recommended OS: Ubuntu 16.04 desktop/server OS. 
+    Recommended OS: Ubuntu 18.04 desktop/server OS. 
     Visit: https://kubernetes.io/docs/setup/ for Kubernetes cluster deployment guide.
     Once Kubernetes cluster is up and running, execute the below command on master node to get the node status.
     ``` 
@@ -32,7 +32,7 @@ Citrix Observability Exporter is a container which collects metrics and transact
     ```
     ![nodes](images/nodes.PNG)
  
-    (The following example is validated on open source on-prem Kubernetes cluster version 1.17.0).
+    (The following example is validated on open source on-prem Kubernetes cluster version 1.22.1).
 
 2.	<u>[Optional]</u> Set up a Kubernetes dashboard for deploying containerised applications.
     

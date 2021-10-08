@@ -4,22 +4,21 @@ metadata:
   name: cic-configmap
   namespace: tier-2-adc
 data:
-   LOGLEVEL: 'debug'
    NS_ANALYTICS_CONFIG: |
      distributed_tracing:
        enable: 'true'
        samplingrate: 100
      endpoint:
-       server: '10.105.158.151'
-     timeseries:
-       port: 30071
+       server: 'coe-es.default.svc.cluster.local'
+     timeseries: 
+       port: 5563 
        metrics:
          enable: 'true'
-         mode: 'prometheus'
+         mode: 'prometheus' 
        auditlogs:
-         enable: 'true'
-       events:
-         enable: 'true'
+         enable: 'false'
+       events: 
+         enable: 'false'
      transactions:
        enable: 'true'
-       port: 30026
+       port: 5557 
