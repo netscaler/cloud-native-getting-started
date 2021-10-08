@@ -19,28 +19,40 @@ spec:
   - host:  grafana.beverages.com
     http:
       paths:
-      - path: 
+      - path: /
+        pathType: Prefix
         backend:
-          serviceName: grafana
-          servicePort: 3000
+          service:
+            name: grafana
+            port: 
+              number: 3000
   - host:  prometheus.beverages.com
     http:
       paths:
-      - path: 
+      - path: /
+        pathType: Prefix
         backend:
-          serviceName: prometheus-server
-          servicePort: 9090
+          service:
+            name: prometheus-server
+            port: 
+              number: 9090
   - host:  kibana.beverages.com
     http:
       paths:
-      - path:
+      - path: /
+        pathType: Prefix
         backend:
-          serviceName: kibana
-          servicePort: 5601
+          service:
+            name: kibana
+            port: 
+              number: 5601
   - host:  elasticsearch.beverages.com
     http:
       paths:
-      - path:
+      - path: /
+        pathType: Prefix
         backend:
-          serviceName: elasticsearch
-          servicePort: 9200
+          service:
+            name: elasticsearch
+            port: 
+              number: 9200
