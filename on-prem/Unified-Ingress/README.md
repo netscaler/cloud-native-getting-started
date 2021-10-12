@@ -20,7 +20,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. Please install and configure Kubernetes cluster with one master node and at least two worker node deployment.
     Visit: https://kubernetes.io/docs/setup/ for Kubernetes cluster deployment guide.
 
-    **Prerequisite**: This example is validated on K8s cluster v1.22.1
+    **Prerequisite**: This example is validated on K8s cluster v1.22.2
 
     Once Kubernetes cluster is up and running, execute the below command on master node to get the node status.
     ``` 
@@ -44,8 +44,8 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) | Deploy colddrink beverage microservice application exposed as Load Balancer Type service |
-| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) | Deploy hotdrink beverage microservice application exposed as Ingress Type service |
+| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) | Deploy colddrink beverage microservice application exposed as Load Balancer Type service |
+| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) | Deploy hotdrink beverage microservice application exposed as Ingress Type service |
 | [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-c-deploy-guestbook-microservice-application-exposed-as-nodeport-type-service) | Deploy Guestbook microservice application exposed as NodePort Type service |
 | [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-d-configure-responder-policy-l7-policy-on-vpx-using-rewrite-responder-crds) | Configure Responder policy (L7 policy) on VPX using rewrite-responder CRDs |
 | [Section E](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-e-configure-waf-policies-on-vpx-using-waf-crds) | Configure WAF policies on VPX using WAF CRDs |
@@ -65,7 +65,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     ```
     ![colddrink-app](images/colddrink-app.PNG)
 
-    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides. (Hotdrink secret is common for hotdrink and colddrink app, you can opt to use different secret).
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-secret.yaml
     ```
@@ -119,8 +119,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
 ### Section B (Deploy hotdrink beverage microservice application exposed as Ingress Type service)
 
-    **Prerequisite/ Note:** In case you have directly started from Section B and have not followed the Section A, then you need to deploy Citrix Ingress Controller and RBAC from Section A to make Section B work independently.
-    ``Deploy Step 1 and Step 4 from Section A.``
+**Prerequisite/ Note:** In case you have directly started from Section B and have not followed the Section A, then you need to deploy Citrix Ingress Controller and RBAC from Section A to make Section B work independently.``Deploy Step 1 and Step 4 from Section A.``
 
 1.	Deploy hotdrink beverage microservice application (Ingress type service)
     
