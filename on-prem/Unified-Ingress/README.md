@@ -20,7 +20,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. Please install and configure Kubernetes cluster with one master node and at least two worker node deployment.
     Visit: https://kubernetes.io/docs/setup/ for Kubernetes cluster deployment guide.
 
-    **Prerequisite**: Supported Kubernetes cluster v1.10 and above(Below example is tested in on-prem K8s cluster v1.17.0).
+    **Prerequisite**: This example is validated on K8s cluster v1.22.1
 
     Once Kubernetes cluster is up and running, execute the below command on master node to get the node status.
     ``` 
@@ -76,7 +76,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
 3. Deploy IPAM CRD and IPAM to allocate IP address to access colddrink beverage microservice
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/ipam-crd.yaml
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/config/crds/ipam-crd.yaml
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/ipam.yaml
     ```
     Change the IP range to your free VIP IP range for allocating IP from pool to access colddrink microservice
@@ -99,7 +99,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     
     Add kubernetes secret as VPX login credentials. Change username and password field in below command.
     ```
-    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='paswword' -n unified-ingress
+    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password' -n unified-ingress
     ```
 
     Now, deploy Citrix Ingress Controller!
@@ -118,6 +118,9 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     You can even access colddrink application from local browser using URL - ``http://< External-IP for colddrink app >`` (e.g. http://10.105.158.196)
 
 ### Section B (Deploy hotdrink beverage microservice application exposed as Ingress Type service)
+
+    **Prerequisite/ Note:** In case you have directly started from Section B and have not followed the Section A, then you need to deploy Citrix Ingress Controller and RBAC from Section A to make Section B work independently.
+    ``Deploy Step 1 and Step 4 from Section A.``
 
 1.	Deploy hotdrink beverage microservice application (Ingress type service)
     
@@ -160,6 +163,9 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
 ### Section C (Deploy Guestbook microservice application exposed as NodePort Type service)
 
+    **Note:** In case you have directly started from Section C and have not followed the Section A/B, then you need to deploy Citrix Ingress Controller and RBAC from Section A (Step 1 and Step 4) and Ingress rule from Section B (Step 2) to make Section C work independently.
+
+    
 1.  Deploy the guestbook microservice application (NodePort type service)
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/guestbook.yaml -n unified-ingress
@@ -187,7 +193,7 @@ We will configure Responder policy on VPX for hotdrink beverage application depl
 
 1. Deploy the CRD for Rewrite and Responder policies in default namespace
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/rewrite-responder-crd.yaml
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/config/crds/rewrite-responder-crd.yaml
     ```
 2. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the hotdrink beverage microservice
     ```
@@ -211,7 +217,7 @@ Here we will configure Web Application Firewall policies on VPX for hotdrink bee
 1. Deploy WAF CRD
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/waf-crd.yaml
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/config/crds/waf-crd.yaml
     ```
 
 2. Enable cross-site scripting and SQL injection attacks protection for hotdrink beverage application
@@ -254,8 +260,9 @@ Here we will configure Web Application Firewall policies on VPX for hotdrink bee
     kubectl delete -f tier-1-ingress.yaml -n unified-ingress
     kubectl delete -f tier-1-cic.yaml -n unified-ingress
     kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/guestbook.yaml -n unified-ingress
-    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/rewrite-responder-crd.yaml
-    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/waf-crd.yaml
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/config/crds/rewrite-responder-crd.yaml
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/config/crds/waf-crd.yaml
+    kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/config/crds/ipam-crd.yaml
     kubectl delete namespace unified-ingress
     ```
 

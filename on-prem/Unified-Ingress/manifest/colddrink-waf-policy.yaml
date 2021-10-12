@@ -5,7 +5,9 @@ metadata:
 spec:
     servicenames:
         - frontend-colddrinks
-    application_type: HTML
+    application_type: 
+        - HTML
+# change html error page server details as per your setup
     html_error_object: "http://10.217.14.99/crd/error_page.html"
     target:
         path:

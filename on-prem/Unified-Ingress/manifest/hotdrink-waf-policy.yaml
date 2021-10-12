@@ -5,7 +5,7 @@ metadata:
 spec:
     servicenames:
         - frontend-hotdrinks
-    application_type: HTML
+# change html error page url as per your setup
     html_page_url: "http://10.217.14.99/crd/error_page.html"
     security_checks:
         html:
