@@ -3,6 +3,7 @@ kind: waf
 metadata:
     name: wafurlchecks
 spec:
+#    ingressClassName: vpx // required when you want to create waf policy only for this workload. If you have more than one CIC configuring same ADC then without ingressClass, waf policy will be created for all workloads
     servicenames:
         - frontend-colddrinks
     application_type: 
