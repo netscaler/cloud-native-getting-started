@@ -28,8 +28,6 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     ```
     ![k8s-cluster](images/k8s-cluster.PNG)
 
-    (Screen-shot above has Kubernetes cluster with one master and one worker node).
-
 2.	[Optional] Set up a Kubernetes dashboard for deploying containerized applications
     Please visit https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/ and follow the steps mentioned to bring the Kubernetes dashboard up as shown below.
 
