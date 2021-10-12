@@ -41,6 +41,8 @@ spec:
          # Set log level
          - name: "EULA"
            value: "yes"
+         - name: "NS_APPS_NAME_PREFIX"
+           value: "tier1"
         args:
           - --ingress-classes
             vpx
