@@ -73,11 +73,26 @@ We deployed three CPXs to manage each application workload independently. Also w
 
 2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
-    Lets deploy CPX now,
+    Lets deploy a config-map to provide end point details required for COE.
+    ```
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/cic-configmap.yaml
+    ```
+
+    Update cic-configmap with following details;
+    * Update server end point to your one-of the k8s worker node IP. You can find k8s worker node IP using ``kubectl get nodes -o wide``
+    * In case you are not using pre-defined NodePorts in coe deployment then update time-series, transactional port details to respective nodeport.
+    * cic-configmap is deployed in same namespace where CIC for Tier 1 and CPXs are deployed.
+
+    ```
+    kubectl create -f cic-configmap.yaml -n tier-2-adc
+    ```
+    ![coe-configmap](images/coe-configmap.png)
+
+    Now, Lets deploy CPX,
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/rbac.yaml
+
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/cpx.yaml -n tier-2-adc
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/hotdrink-secret.yaml -n tier-2-adc
     ```
@@ -169,15 +184,7 @@ In this demo, we will deploy COE to visualize time series data in Prometheus and
 Lets begin observability stack deployment using yamls
 
 1. Deploy Citrix Observability Exporter to receive log stream information from Citrix ADCs.
-    Lets create your own K8s secret used for secure traffic
-    **Note:** Please upload your TLS certificate and TLS key into secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
-    ```
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/ingress.crt
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/ingress.key
-    kubectl create secret tls ing --cert=ingress.crt --key=ingress.key -n monitoring
-    ```
-    ![coe-secret](images/coe-secret.png)
 
     Lets deploy COE in K8s exposed as NodePort
     ```
@@ -185,24 +192,11 @@ Lets begin observability stack deployment using yamls
     ```
     ![coe](images/coe.png)
 
-    **Note** COE is exposed on pre-defined NodePort '30026' & '30071' for transactional & time series config respectively, this is optional step. You may go for auto selected NodePort by K8s.
-
+    **Note** In this example COE is exposed on NodePort '30026' & '30071' for transactional & time series config respectively, you might find different NodePort for your COE pod
+    
     ![coe-svc](images/coe-svc.png)
 
-    Lets deploy a config-map to provide end point details.
-    ```
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/coe/manifest/cic-configmap.yaml
-    ```
 
-    Update cic-configmap with following details;
-    * Update server end point to your one-of the k8s worker node IP. You can find k8s worker node IP using ``kubectl get nodes -o wide``
-    * In case you are not using pre-defined NodePorts in coe deployment then update time-series, transactional port details to respective nodeport.
-    * cic-configmap is deployed in same namespace where CIC for Tier 1 and CPXs are deployed.
-
-    ```
-    kubectl create -f cic-configmap.yaml -n tier-2-adc
-    ```
-    ![coe-configmap](images/coe-configmap.png)
 
 2. Deploy Observability/monitoring tools communicating with COE
 

@@ -99,7 +99,7 @@ spec:
       protocol: TCP
       name: lstreamd
     - port: 5563
-      nodePort: 30071
+#      nodePort: 30071
       protocol: TCP
       name: rest
   selector: 
