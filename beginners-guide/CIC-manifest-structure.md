@@ -63,30 +63,48 @@ Let’s understand CIC yaml configuration and its use case;
 *	CIC container images are hosted in quay.io container repository as mentioned in image: "quay.io/citrix/citrix-k8s-ingress-controller:1.17.13"
 *	There are environmental variables (env) defined in CIC definition categorized in two parts – Mandatory arguments and Optional arguments. Let’s discuss all arguments below.
 *	Mandatory arguments:
-``
+```
 	name: "NS_IP" -> Mention Citrix ADC NSIP that will be configured by CIC (Ingress Proxy/Tier 1 ADC).  Use NSIP for standalone ADC, use SNIP for HA pair of ADC and use CLIP for ADC clusters.
-	name: "NS_USER" & name: "NS_PASSWORD" -> Citrix Tier 1 ADC login credentials required by CIC to configure it automatically. You can use K8s secret for ADC credentials.
-	name: "EULA" -> This variable is for the end user license agreement (EULA) which has to be set as YES for the Citrix ingress controller to up and run.
-``
+  
+  name: "NS_USER" & name: "NS_PASSWORD" -> Citrix Tier 1 ADC login credentials required by CIC to configure it automatically. You can use K8s secret for ADC credentials.
+  
+  name: "EULA" -> This variable is for the end user license agreement (EULA) which has to be set as YES for the Citrix ingress controller to up and run.
+```
+
 *	Optional arguments:
-``
+```
 	name: “kubernetes_url” -> Set the K8s API server IP to register for K8s events, default value is K8s internal API server IP.
-	name: "LOGLEVEL” -> Set the CIC log levels from CRITICAL/ERROR/WARNING/INFO/DEBUG. Default loglevel is set to DEBUG
-	name: "NS_PROTOCOL and NS_PORT” -> Set the SSL vs HTTP communication mode for Citrix ADC management login. By default NS_PROTOCOL is HTTP and NS_PORT is 80. Other option is to use HTTPs and port 443.
-	name: "Ingress Class” -> Set the Ingress class in args field where Ingress class will be used when multiple Ingress load balancers are used to load balance different ingress resources. 
-	name: "NS_VIP” -> Set the Content switching vserver IP (Ingress ADC frontend IP on which client traffic will land). This variable is useful in the case where all Ingresses run in the Virtual IP address. This variable takes precedence over the frontend-ip annotation.
-	name: "NS_APPS_NAME_PREFIX” -> Useful when CICs from different K8s clusters configure same Tier 1 ADC, allows you to segregate K8s cluster configuration from each other. Default value is “k8s”
-	name: "NS_MGMT_USER” & name: "NS_MGMT_PASS” -> This is Citrix ADC CPX specific argument required when CPX wants to register with ADM for observability use cases. This environment variable is supported from Citrix ADC CPX 13.0 and later releases
-	name: "NS_MGMT_SERVER” -> Specifies the Citrix ADM server or the agent IP address that manages the Citrix ADC CPX
-	name: "NS_MGMT_FINGER_PRINT” -> Specifies the fingerprint of the Citrix ADM server or the agent IP address that manages Citrix ADC CPX. 
-	name: "NS_HTTP_PORT” -> Specifies the port on which the HTTP service is available in Citrix ADC CPX. It is used by Citrix ADM to trigger NITRO calls to Citrix ADC CPX.
-	name: "NS_HTTPS_PORT” -> Set the port on which HTTPS service is available in Citrix ADC CPX. It is used by Citrix ADM to trigger NITRO calls to Citrix ADC CPX.
-	name: "LOGSTREAM_COLLECTOR_IP” -> Set the Citrix ADM IP address for collecting analytics.
-	name: "NS_CONFIG_DNS_REC” -> Enables the DNS server configuration on Citrix ADC. This variable is configured at the boot time and cannot be changed at runtime. Possible values are true or false. The default value is `false`.
-	name: "NAMESPACE” -> While running a Citrix ingress controller with Role based RBAC, you must provide the namespace which you want to listen or get events. This namespace must be same as the one used for creating the service account.
-	name: "POD_IPS_FOR_SERVICEGROUP_MEMBERS” -> If this variable is set as True, pod IP address and port are added instead of NodeIP and NodePort as service group members for LoadBalancer or NodePort type services.
-	name: "IGNORE_NODE_EXTERNAL_IP” -> When you want to prefer an internal IP address over an external IP address for NodeIP, you can set this variable to True.
-``
+	
+  name: "LOGLEVEL” -> Set the CIC log levels from CRITICAL/ERROR/WARNING/INFO/DEBUG. Default loglevel is set to DEBUG
+	
+  name: "NS_PROTOCOL and NS_PORT” -> Set the SSL vs HTTP communication mode for Citrix ADC management login. By default NS_PROTOCOL is HTTP and NS_PORT is 80. Other option is to use HTTPs and port 443.
+	
+  name: "Ingress Class” -> Set the Ingress class in args field where Ingress class will be used when multiple Ingress load balancers are used to load balance different ingress resources. 
+	
+  name: "NS_VIP” -> Set the Content switching vserver IP (Ingress ADC frontend IP on which client traffic will land). This variable is useful in the case where all Ingresses run in the Virtual IP address. This variable takes precedence over the frontend-ip annotation.
+	
+  name: "NS_APPS_NAME_PREFIX” -> Useful when CICs from different K8s clusters configure same Tier 1 ADC, allows you to segregate K8s cluster configuration from each other. Default value is “k8s”
+	
+  name: "NS_MGMT_USER” & name: "NS_MGMT_PASS” -> This is Citrix ADC CPX specific argument required when CPX wants to register with ADM for observability use cases. This environment variable is supported from Citrix ADC CPX 13.0 and later releases
+	
+  name: "NS_MGMT_SERVER” -> Specifies the Citrix ADM server or the agent IP address that manages the Citrix ADC CPX
+	
+  name: "NS_MGMT_FINGER_PRINT” -> Specifies the fingerprint of the Citrix ADM server or the agent IP address that manages Citrix ADC CPX. 
+	
+  name: "NS_HTTP_PORT” -> Specifies the port on which the HTTP service is available in Citrix ADC CPX. It is used by Citrix ADM to trigger NITRO calls to Citrix ADC CPX.
+	
+  name: "NS_HTTPS_PORT” -> Set the port on which HTTPS service is available in Citrix ADC CPX. It is used by Citrix ADM to trigger NITRO calls to Citrix ADC CPX.
+	
+  name: "LOGSTREAM_COLLECTOR_IP” -> Set the Citrix ADM IP address for collecting analytics.
+	
+  name: "NS_CONFIG_DNS_REC” -> Enables the DNS server configuration on Citrix ADC. This variable is configured at the boot time and cannot be changed at runtime. Possible values are true or false. The default value is `false`.
+	
+  name: "NAMESPACE” -> While running a Citrix ingress controller with Role based RBAC, you must provide the namespace which you want to listen or get events. This namespace must be same as the one used for creating the service account.
+	
+  name: "POD_IPS_FOR_SERVICEGROUP_MEMBERS” -> If this variable is set as True, pod IP address and port are added instead of NodeIP and NodePort as service group members for LoadBalancer or NodePort type services.
+	
+  name: "IGNORE_NODE_EXTERNAL_IP” -> When you want to prefer an internal IP address over an external IP address for NodeIP, you can set this variable to True.
+```
 
  
 ###Ingress YAML template: (Ingress rules defined for Citrix ADC outside K8s cluster)
@@ -138,7 +156,7 @@ Let’s understand Ingress resources and supported configurable parameters.
 *	Server Name Indication (SNI) option allows you to bind multiple certificates to a single virtual server.
 e.g.
 
-``
+```
 tls:
 - hosts: 
    - a.x.y.com
@@ -146,7 +164,7 @@ secretName: a-secret
 - hosts: 
    - b.x.y.com
 secretName: b-secret 
-``
+```
 
 In this case, CIC will configure above 2 certs on same Content switching virtual server with host details.
 
