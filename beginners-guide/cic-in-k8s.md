@@ -64,7 +64,7 @@ kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-
 
 ```
 
-You can learn more about usage of all supported options for Citrix Ingress controller from [Modern App deployment yaml manifest details ](https://github.com/citrix/cloud-native-getting-started/tree/master/beginners-guide/CN stack manifest details.md).
+You can learn more about usage of all supported options for Citrix Ingress controller from [Modern App deployment yaml manifest details](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/CIC-manifest-structure.md).
 
 For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. 
 
