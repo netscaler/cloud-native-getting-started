@@ -180,7 +180,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     <frontend-ip from ingress_vpx.yaml> guestbook.beverages.com
     ```
   
-3.	Lets access hotdrink beverage microservice app from local machine browser
+3.	Lets access guestbook beverage microservice app from local machine browser
     e.g. ``https://guestbook.beverages.com``
 
 
