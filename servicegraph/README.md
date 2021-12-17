@@ -449,7 +449,7 @@ To create the system user account, do the following:
     ```
 
     **Note**: The system user account would have privileges based on the command policy that you define.
-    The command policy mentioned in ***step 3*** is similar to the built-in `sysAdmin` command policy with another permission to upload files.
+    The command policy mentioned in ***step 5*** is similar to the built-in `sysAdmin` command policy with another permission to upload files.
 
     The command policy spec provided above have already escaped special characters for easier copy pasting into the Citrix ADC command line.
 
