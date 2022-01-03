@@ -520,14 +520,14 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
 
     `Helm` package installation required for `ADM K8s installation`
 
-    ```cloudshell
-    cd example-cpx-vpx-for-kubernetes-2-tier-microservices/gcp/citrixadm-config-files/helm/
-    ```
+    We will download HELM package from helm repository https://helm.sh/docs/intro/install/.
 
-    ```cloudshell
-    chmod 700 helm_install.sh
-    ./helm_install.sh
     ```
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    chmod 700 get_helm.sh
+    ./get_helm.sh
+    ```
+    **Note** You can refer to helm.sh official website for downloading helm package if above scipt does not work for you.
 
     ```cloudshell
     kubectl create serviceaccount --namespace kube-system tiller
@@ -542,8 +542,6 @@ Now it's time to push Rewrite and Responder policies in to VPX through the Citri
     ```cloudshell
     helm version
     ```
-
-    ![GCP](./media/gcp-free-tier-image-36.png)
 
 ### Steps for installation of ADM(Application Delivery Management) Microservices
 
