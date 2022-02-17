@@ -42,12 +42,12 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) | Deploy colddrink beverage microservice application exposed as Load Balancer Type service |
-| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) | Deploy hotdrink beverage microservice application exposed as Ingress Type service |
-| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-c-deploy-guestbook-microservice-application-exposed-as-nodeport-type-service) | Deploy Guestbook microservice application exposed as NodePort Type service |
-| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-d-configure-responder-policy-l7-policy-on-vpx-using-rewrite-responder-crds) | Configure Responder policy (L7 policy) on VPX using rewrite-responder CRDs |
-| [Section E](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-e-configure-waf-policies-on-vpx-using-waf-crds) | Configure WAF policies on VPX using WAF CRDs |
-| [Section F](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-f-clean-up-unified-ingress-deployment) | Clean Up |
+| [Section A](#section-a-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) | Deploy colddrink beverage microservice application exposed as Load Balancer Type service |
+| [Section B](#section-b-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) | Deploy hotdrink beverage microservice application exposed as Ingress Type service |
+| [Section C](#section-c-deploy-guestbook-microservice-application-exposed-as-nodeport-type-service) | Deploy Guestbook microservice application exposed as NodePort Type service |
+| [Section D](#section-d-configure-responder-policy-l7-policy-on-vpx-using-rewrite-responder-crds) | Configure Responder policy (L7 policy) on VPX using rewrite-responder CRDs |
+| [Section E](#section-e-configure-waf-policies-on-vpx-using-waf-crds) | Configure WAF policies on VPX using WAF CRDs |
+| [Section F](#section-f-clean-up-unified-ingress-deployment) | Clean Up |
 
 ### Section A (Deploy colddrink beverage microservice application exposed as Load Balancer type service)
 
@@ -186,7 +186,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
 ### Section D (Configure Responder policy (L7 policy) on VPX using rewrite-responder CRDs)
 
-We will configure Responder policy on VPX for hotdrink beverage application deployment. In case you have not deployed hotdrink app, follow [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here.
+We will configure Responder policy on VPX for hotdrink beverage application deployment. In case you have not deployed hotdrink app, follow [Section B](#section-a-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here.
 
 1. Deploy the CRD for Rewrite and Responder policies in default namespace
     ```
@@ -219,7 +219,7 @@ Here we will configure Web Application Firewall policies on VPX for hotdrink bee
 
 2. Enable cross-site scripting and SQL injection attacks protection for hotdrink beverage application
 
-    **Note:** In case you have not deployed hotdrink app, follow [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-b-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here. 
+    **Note:** In case you have not deployed hotdrink app, follow [Section B](#section-b-deploy-hotdrink-beverage-microservice-application-exposed-as-ingress-type-service) and continue here. 
 
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-waf-policy.yaml -n unified-ingress
@@ -233,7 +233,7 @@ Here we will configure Web Application Firewall policies on VPX for hotdrink bee
 
 3. Configure URL filtering rules for colddrink beverage application to prevent repeated attempts to access random URLs on a web site
 
-    **Note:** In case you have not deployed colddrink app, follow [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-a-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) and continue here. 
+    **Note:** In case you have not deployed colddrink app, follow [Section A](#section-a-deploy-colddrink-beverage-microservice-application-exposed-as-load-balancer-type-service) and continue here. 
 
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/colddrink-waf-policy.yaml -n unified-ingress

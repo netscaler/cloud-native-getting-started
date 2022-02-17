@@ -15,33 +15,34 @@
 ## Getting Started
 Here are very cool hands-on guides for you to understand Citrix Cloud Native portfolio
 * Citrix Cloud Native Beginners Guides
-  * [Deploy a Citrix ADC CPX proxy in docker](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/cpx-in-docker.md)
-  * [Citrix Ingress Controller (CIC) deployment modes in K8s cluster](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/cic-in-k8s.md)
-  * [Deploy Citrix ADC CPX in Minikube](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/cpx-in-minikube.md)
-  * [Deploy Ingress proxy - CPX on NodePort](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/North-South-cpx-ingress-proxy.md)
-  * [Deploy Citrix ADC CPX as East-West proxy without sideacar proxy](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/East-West-cpx-ingress-proxy.md)
-  * [Deployment modes for Citrix ADC CPX](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/CPX-deployment-modes.md)
-  * [Update Citrix Ingress Controller logging using ConfigMap](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/configmap-for-loglevels.md)
+  * [Deploy a Citrix ADC CPX proxy in docker](/beginners-guide/cpx-in-docker.md)
+  * [Citrix Ingress Controller (CIC) deployment modes in K8s cluster](/beginners-guide/cic-in-k8s.md)
+  * [Deploy Citrix ADC CPX in Minikube](/beginners-guide/cpx-in-minikube.md)
+  * [Deploy Ingress proxy - CPX on NodePort](/beginners-guide/North-South-cpx-ingress-proxy.md)
+  * [Deploy Citrix ADC CPX as East-West proxy without sideacar proxy](/beginners-guide/East-West-cpx-ingress-proxy.md)
+  * [Deployment modes for Citrix ADC CPX](/beginners-guide/CPX-deployment-modes.md)
+  * [Update Citrix Ingress Controller logging using ConfigMap](/beginners-guide/configmap-for-loglevels.md)
 
 * Citrix Cloud Native Advanced Guides
   * Azure
-    * [Citrix ADC VPX & Ingress Controller as External LoadBalancer/Ingress for Azure Kubernetes Service](/azure/unified-ingress)
-    * [Citrix ADC CPX & Ingress Controller for Azure Kubernetes Service](/azure/marketplace-cpx)
-  * [GCP (Google Cloud Platform)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/gcp)
+    * [Citrix ADC VPX & Ingress Controller as External LoadBalancer/Ingress for Azure Kubernetes Service](/azure/unified-ingress/README.md)
+    * [Citrix ADC CPX & Ingress Controller for Azure Kubernetes Service](/azure/marketplace-cpx/README.md)
+  * GCP (Google Cloud Platform)
+    * [Two-Tier deployment with Citrix ADC VPX, Citrix Ingress Controller, Citrix ADC CPX and Application Delivery Management(ADM) on Google Cloud](/gcp/two-tier-vpc-cpx-adm/README.md)
   * On-Prem (using VMs on Xenserver)
-    * [Unified Ingress topology: Tier 1 ADC - MPX/BLX/VPX to load balance microservice applications (North-South traffic)](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress)
-    * [2-Tier Ingress topology: Tier 1 ADC - MPX/BLX/VPX & Tier 2 ADC - CPX to load balance microservice applications (North-South traffic)](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/2-Tier-deployment)
-    * [Service mesh Lite topology: Tier 1 ADC - MPX/BLX/VPX & Tier 2 ADC - CPX to load balance microservice applications (North-South as well as East-West traffic)](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/edit/master/on-prem)
-    * [Citrix Observability Exporter to troubleshoot microservices using Grafana, Kibana monitoring tools](https://github.com/citrix/cloud-native-getting-started/blob/master/on-prem/ServiceMeshLite/coe/README.md)
-    * [API gateway use cases: Tier 1 ADC - MPX/BLX/VPX or Tier 2 ADC - CPX to provide Rate limit, Basic Auth, Content routing, IP filtering use cases](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/API-gateway)
-    * [Configure WAF policies on Tier 1 ADC VPX in Unified Ingress deployment](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/Unified-Ingress#section-e-configure-waf-policies-on-vpx-using-waf-crds)
+    * [Unified Ingress topology: Tier 1 ADC - MPX/BLX/VPX to load balance microservice applications (North-South traffic)](/on-prem/Unified-Ingress/README.md)
+    * [2-Tier Ingress topology: Tier 1 ADC - MPX/BLX/VPX & Tier 2 ADC - CPX to load balance microservice applications (North-South traffic)](/on-prem/2-Tier-deployment/README.md)
+    * [Service mesh Lite topology: Tier 1 ADC - MPX/BLX/VPX & Tier 2 ADC - CPX to load balance microservice applications (North-South as well as East-West traffic)](/on-prem/README.md)
+    * [Citrix Observability Exporter to troubleshoot microservices using Grafana, Kibana monitoring tools](/on-prem/ServiceMeshLite/coe/README.md)
+    * [API gateway use cases: Tier 1 ADC - MPX/BLX/VPX or Tier 2 ADC - CPX to provide Rate limit, Basic Auth, Content routing, IP filtering use cases](/on-prem/ServiceMeshLite/API-gateway/README.md)
+    * [Configure WAF policies on Tier 1 ADC VPX in Unified Ingress deployment](/on-prem/Unified-Ingress/README.md#section-e-configure-waf-policies-on-vpx-using-waf-crds)
 
   * OpenShift (Red Hat Enterprise Linux VMs on xenserver)
-    * [Service mesh lite using Ingress rules](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift)
-    * [Unified Ingress using OpenShift routes and route sharding](https://github.com/citrix/example-cpx-vpx-for-kubernetes-2-tier-microservices/tree/master/openshift/openshift-routes)
+    * [Service mesh lite using Ingress rules](/openshift/README.md)
+    * [Unified Ingress using OpenShift routes and route sharding](/openshift/openshift-routes/README.md)
 
 * Cloud Native stack for Sock Shop application
-    * [Deploy Socks Shop microservice application using Citrix ADC](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite/sock-shop)
+    * [Deploy Socks Shop microservice application using Citrix ADC](/on-prem/ServiceMeshLite/sock-shop/README.md)
 
 ## Contact Us
 
