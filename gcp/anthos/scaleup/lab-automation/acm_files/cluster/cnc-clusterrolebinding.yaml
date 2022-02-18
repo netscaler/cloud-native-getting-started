@@ -1,0 +1,26 @@
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kube-cnc-router
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kube-cnc-router
+subjects:
+- kind: ServiceAccount
+  name: kube-cnc-router
+  namespace: ctx-ingress
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: citrix-node-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: citrix-node-controller
+subjects:
+- kind: ServiceAccount
+  name: citrix-node-controller
+  namespace: ctx-ingress

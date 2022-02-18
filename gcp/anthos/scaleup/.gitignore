@@ -1,0 +1,8 @@
+lab-automation/adc_configuration
+lab-automation/creds
+**/.terraform*
+lab-automation/rendered_templates
+.terraform
+*.tfstate
+*.tfstate.backup
+**/.terraform.lock.hcl

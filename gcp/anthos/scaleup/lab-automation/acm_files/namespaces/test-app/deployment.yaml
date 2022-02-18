@@ -1,0 +1,22 @@
+#Using a basic apache web server as application for illustration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-deployment
+  labels:
+    app: apache-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: apache-deployment
+  template:
+    metadata:
+      labels:
+        app: apache-deployment
+    spec:
+      containers:
+      - name: frontend
+        image: httpd
+        ports:
+        - containerPort: 80

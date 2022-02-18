@@ -1,0 +1,42 @@
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kube-cnc-router
+rules:
+  - apiGroups: ["*"]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch", "create", "patch", "delete", "update"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch", "create", "patch", "delete", "update"]
+  - apiGroups: ["crd.projectcalico.org"]
+    resources: ["ipamblocks"]
+    verbs: ["get", "list"]
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: citrix-node-controller
+rules:
+  - apiGroups: ["*"]
+    resources: ["configmaps", "pods"]
+    verbs: ["get", "list", "watch", "create", "patch", "delete", "update"]
+  - apiGroups: [""]
+    resources: ["configmaps", "pods"]
+    verbs: ["get", "list", "watch", "create", "patch", "delete", "update"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: ["*"]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: [""]
+    resources: ["serviceaccounts", "clusterroles", "clusterrolebindings", "namespaces"]
+    verbs: ["get", "list", "create", "delete"]
+  - apiGroups: ["*"]
+    resources: ["serviceaccounts", "clusterroles", "clusterrolebindings", "namespaces"]
+    verbs: ["get", "list", "create", "delete"]
+  - apiGroups: ["crd.projectcalico.org"]
+    resources: ["ipamblocks"]
+    verbs: ["get", "list"]
