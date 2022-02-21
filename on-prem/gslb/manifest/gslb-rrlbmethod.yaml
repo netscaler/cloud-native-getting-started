@@ -1,0 +1,21 @@
+ apiVersion: "citrix.com/v1beta1"
+ kind: globaltrafficpolicy
+ metadata:
+   name: gtp1
+   namespace: default
+ spec:
+   serviceType: 'SSL'
+   hosts:
+   - host: 'hotdrink.beverages.com'
+     policy:
+       trafficPolicy: 'LOCAL-FIRST'
+       secLbMethod: 'ROUNDROBIN'
+       targets:
+       - destination: 'app2.default.east.cluster1'
+         weight: 1
+       - destination: 'app2.default.west.cluster2'
+         weight: 1
+       monitor:
+       - monType: tcp
+         uri: ''
+         respCode: 200

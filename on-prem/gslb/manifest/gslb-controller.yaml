@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gslb-k8s-ingress-controller
+  namespace: default
+  labels:
+    app: gslb-k8s-ingress-controller
+spec:
+      serviceAccountName: gslb-k8s-role
+      containers:
+      - name: gslb-k8s-ingress-controller
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.13.15"
+        imagePullPolicy: Always
+        env:
+        # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
+        # Set username for Nitro
+        # Set log level
+        - name: "EULA"
+          value: "yes"
+        - name: "NS_PROTOCOL"
+          value: "HTTPS"
+        - name: "NS_PORT"
+          value: "443"
+        - name: "LOGLEVEL"
+          value: "INFO"
+        - name: "NS_NETPROFILE"
+          value: "netprof"
+        - name: "LOCAL_REGION"
+          value: "east"
+        - name: "LOCAL_CLUSTER"
+          value: "cluster1"
+        - name: "SITENAMES"
+          value: "site1,site2"
+        - name: "site1_ip"
+          value: "x.x.x.x"
+        - name: "site1_region"
+          value: "east"
+        - name: "site1_username"
+          valueFrom:
+            secretKeyRef:
+              name: nsk8svpx
+              key: username
+        - name: "site1_password"
+          valueFrom:
+            secretKeyRef:
+              name: nsk8svpx
+              key: password
+        - name: "site2_ip"
+          value: "x.x.x.x"
+        - name: "site2_region"
+          value: "west"
+        - name: "site2_username"
+          valueFrom:
+            secretKeyRef:
+              name: nsocvpx
+              key: username
+        - name: "site2_password"
+          valueFrom:
+            secretKeyRef:
+              name: nsocvpx
+              key: password
+        args:
+        - --config-interface
+            gslb-endpoints
