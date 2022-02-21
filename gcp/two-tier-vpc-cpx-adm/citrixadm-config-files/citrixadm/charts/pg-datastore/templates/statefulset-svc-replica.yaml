@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: statefulset-replica
+  name: statefulset-replica
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  ports:
+  - port: {{.Values.container.port}}
+    protocol: TCP
+    targetPort: {{.Values.container.port}}
+  selector:
+    name: statefulset-replica
+  sessionAffinity: None
+  type: "{{.Values.serviceType}}"

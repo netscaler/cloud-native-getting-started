@@ -50,9 +50,9 @@ Please select type of deployment (NodePort, Ingress solution or LoadBalancer Typ
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite#section-a-expose-cpx-as-nodeport-type-service) | Expose CPX as NodePort type service |
-| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite#section-b-expose-cpx-as-ingress-type-service) | Expose CPX as Ingress type service |
-| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite#section-c-expose-cpx-as-loadbalancer-type-service) | Expose CPX as LoadBalancer type service |
+| [Section A](#section-a-expose-cpx-as-nodeport-type-service) | Expose CPX as NodePort type service |
+| [Section B](#section-b-expose-cpx-as-ingress-type-service) | Expose CPX as Ingress type service |
+| [Section C](#section-c-expose-cpx-as-loadbalancer-type-service) | Expose CPX as LoadBalancer type service |
 
 
 ## Section A (Expose CPX as NodePort type service)
@@ -381,7 +381,7 @@ We deployed three CPXs to manage each application workload independently. Also w
 
 ## Integrate with Prometheus and Grafana for visualizing CPX time series metrics data
 
-1.	Deploy the CNCF monitoring tools such as Prometheus and Grafana to collect ADC proxies’ stats. Monitoring ingress yaml will push the configuration automatically to Tier 1 ADC.
+1.	Deploy the CNCF monitoring tools such as Prometheus and Grafana to collect ADC proxiesï¿½ stats. Monitoring ingress yaml will push the configuration automatically to Tier 1 ADC.
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/monitoring.yaml
     ```
@@ -428,7 +428,7 @@ We deployed three CPXs to manage each application workload independently. Also w
 
 Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) using the custom resource definition (CRD).
 
-**Note**: Rewrite responder CRD works with Ingress or Nodeport type service. You will find two sections below for configuring rewrite responder policy at Tier 1 and Tier 2 ADC. If you have deployed Section C (Expose CPX as LoadBalancer type service) then refer to [Deploy Rewrite and Responder policies in Tier 2 ADC](https://github.com/citrix/cloud-native-getting-started/tree/master/on-prem/ServiceMeshLite#deploy-rewrite-and-responder-policies-in-tier-2-adc---cpx)
+**Note**: Rewrite responder CRD works with Ingress or Nodeport type service. You will find two sections below for configuring rewrite responder policy at Tier 1 and Tier 2 ADC. If you have deployed Section C (Expose CPX as LoadBalancer type service) then refer to [Deploy Rewrite and Responder policies in Tier 2 ADC](#deploy-rewrite-and-responder-policies-in-tier-2-adc---cpx)
 
 ###### Deploy Rewrite and Responder policies in Tier 1 ADC
 This section is applicable to Section A (Expose CPX as NodePort type service) or Section B (Expose CPX as Ingress type service) deployment only.

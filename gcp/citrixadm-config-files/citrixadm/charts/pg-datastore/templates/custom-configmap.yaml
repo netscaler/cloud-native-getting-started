@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: primary-deployment-pgconf
-  namespace: "{{ .Release.Namespace }}"
-data:
-{{ (.Files.Glob "configs/*").AsConfig | indent 2 }}

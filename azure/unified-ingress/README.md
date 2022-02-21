@@ -13,18 +13,18 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
 | Section | Description |
 | ------- | ----------- |
-| [Section A](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-a-deploy-citrix-adc-vpx-in-azure-cloud) | Deploy Citrix ADC VPX in Azure cloud|
-| [Section B](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-b-deploy-azure-k8s-cluster-aks) | Deploy Azure K8s cluster (AKS) |
-| [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-c-load-balance-beverage-microservice-apps-using-vpx) | Load balance beverage microservice apps using VPX|
-| [Section D](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-d-configure-waf-policies-on-citrix-adc-vpx-for-microservice-based-applications) | Configure WAF policies on Citrix ADC VPX for microservice based applications|
-| [Section E](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-e-clean-up) | Clean Up |
+| [Section A](#section-a-deploy-citrix-adc-vpx-in-azure-cloud) | Deploy Citrix ADC VPX in Azure cloud|
+| [Section B](#section-b-deploy-azure-k8s-cluster-aks) | Deploy Azure K8s cluster (AKS) |
+| [Section C](#section-c-load-balance-beverage-microservice-apps-using-vpx) | Load balance beverage microservice apps using VPX|
+| [Section D](#section-d-configure-waf-policies-on-citrix-adc-vpx-for-microservice-based-applications) | Configure WAF policies on Citrix ADC VPX for microservice based applications|
+| [Section E](#section-e-clean-up) | Clean Up |
 
 ### Section A (Deploy Citrix ADC VPX in Azure cloud)
 You can either choose to deploy VPX express for basic load balacing POCs or you can deploy Premium/Platinum VPX to validate advance use cases like API Gateway, Multi cluster Ingress  (GSLB).
 
-| [Section 1.a](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-1a-deploy-citrix-adc-vpx-express-in-azure-cloud) | Deploy Citrix ADC VPX Express in Azure cloud|
+| [Section 1.a](#section-1a-deploy-citrix-adc-vpx-express-in-azure-cloud) | Deploy Citrix ADC VPX Express in Azure cloud|
 
-| [Section 1.b](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-1b-deploy-citrix-adc-vpx-premiumplatinum-edition-in-azure-cloud) | Deploy Citrix ADC VPX Premium/Platinum Edition in Azure cloud|
+| [Section 1.b](#section-1b-deploy-citrix-adc-vpx-premiumplatinum-edition-in-azure-cloud) | Deploy Citrix ADC VPX Premium/Platinum Edition in Azure cloud|
 
 ### Section 1.a (Deploy Citrix ADC VPX Express in Azure cloud)
 
@@ -197,7 +197,7 @@ In this demo I will use Azure CLI for deploying Azure CNI based AKS cluster.
 
 Here we will configure Web Application Firewall policies on VPX for hotdrink beevrage application and colddrink beverage applications using WAF CRD. Know more about WAF CRD from [developer-docs](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/crds/waf/)
 
-**Note:** Ensure you have licensed VPX to configure WAF features. Here we will use VPX Platinum edition deployed in [Section 1.b](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-1b-deploy-citrix-adc-vpx-premiumplatinum-edition-in-azure-cloud)
+**Note:** Ensure you have licensed VPX to configure WAF features. Here we will use VPX Platinum edition deployed in [Section 1.b](#section-1b-deploy-citrix-adc-vpx-premiumplatinum-edition-in-azure-cloud)
 
 1. Deploy WAF CRD
 
@@ -207,7 +207,7 @@ Here we will configure Web Application Firewall policies on VPX for hotdrink bee
 
 2. Enable cross-site scripting and SQL injection attacks protection for hotdrink beverage application
 
-    **Note:** In case you have not deployed hotdrink app, follow [Section C](https://github.com/citrix/cloud-native-getting-started/tree/master/azure/unified-ingress#section-c-load-balance-beverage-microservice-apps-using-vpx) and continue here. 
+    **Note:** In case you have not deployed hotdrink app, follow [Section C](#section-c-load-balance-beverage-microservice-apps-using-vpx) and continue here. 
 
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/hotdrink-waf-policy.yaml

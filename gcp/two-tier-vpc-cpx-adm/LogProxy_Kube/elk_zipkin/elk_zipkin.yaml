@@ -1,0 +1,119 @@
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  labels:
+      name: elasticsearch
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: elasticsearch
+    spec:
+      containers:
+      - name: elasticsearch
+        image:  docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+        env:
+         - name: "discovery.type"
+           value: "single-node"
+         - name: ES_JAVA_OPTS
+           value: -Xms256m -Xmx512m
+         - name: bootstrap.memory_lock
+           value: "true"
+        ports:
+        - name: es-9200
+          containerPort: 9200
+#        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+spec:
+  type: NodePort
+  ports:
+  - name: es-9200
+    port: 9200
+    nodePort: 31003
+  selector:
+    name: elasticsearch
+ 
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kibana
+  labels:
+      name: kibana
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: kibana
+    spec:
+      containers:
+      - name: kibana
+        image: docker.elastic.co/kibana/kibana:7.1.1
+        env:
+         - name: "ELASTICSEARCH_URL"
+           value: "http://elasticsearch:9200"
+        ports:
+        - name: kibana-5601
+          containerPort: 5601
+#        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+spec:
+  type: NodePort
+  ports:
+  - name: kibana-5601
+    port: 5601
+    nodePort: 31005
+  selector:
+    name: kibana
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: zipkin
+  labels:
+      name: zipkin
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: zipkin
+    spec:
+      containers:
+      - name: zipkin
+        image:  openzipkin/zipkin
+        env:
+         - name: "STORAGE_TYPE"
+           value: "elasticsearch"
+         - name: "ES_HOSTS"
+           value: "http://elasticsearch:9200"
+        ports:
+        - name: zipkin-9411
+          containerPort: 9411
+#        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin
+spec:
+  type: NodePort
+  ports:
+  - name: zipkin-9411
+    port: 9411
+    nodePort: 31002
+  selector:
+    name: zipkin
+---

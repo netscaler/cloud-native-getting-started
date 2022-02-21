@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-vpx
+  annotations:
+   kubernetes.io/ingress.class: "vpx"
+   ingress.citrix.com/insecure-termination: "redirect"
+   ingress.citrix.com/frontend-ip: "172.16.10.20"
+   ingress.citrix.com/secure_backend: '{"lb-service-hotdrinks": "True","lb-service-colddrinks": "True"}'
+spec:
+  tls:
+  - secretName: hotdrink-secret
+  rules:
+  - host:  hotdrink.beverages.com
+    http:
+      paths:
+      - path: 
+        backend:
+          serviceName: lb-service-hotdrinks
+          servicePort: 443
+  - host:  guestbook.beverages.com
+    http:
+      paths:
+      - path: 
+        backend:
+          serviceName: lb-service-guestbook
+          servicePort: 80
+  - host:  colddrink.beverages.com
+    http:
+      paths:
+      - path: 
+        backend:
+          serviceName: lb-service-colddrinks
+          servicePort: 443
+
