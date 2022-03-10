@@ -1,4 +1,4 @@
-## Citrix ADC VPX with Anthos & Config Management - Scaleup Usecase
+## Citrix ADC with Google Anthos: Autoscaling Lab
 This use case focuses on deploying a Tier-1 Citrix ADC (VPX) in front of a Google Anthos GKE cluster within GCP. It leverages Google Anthos Configuration Management for consistent deployment of the Citrix components into the Anthos GKE cluster, and highlights how the Citrix ADC is automatically configured from the GKE cluster to add new Virtual Servers and Service Group Members as an application is deployed and scaled to meet user demand.  
 
 ACM (Anthos Configuration Management) is a GitOps centric tool that synchronizes configuration into a Anthos Kubernetes cluster from a Git repository. This lab automation has been written with [GitHub](https://github.com) as the git repository tool of choice. 
