@@ -1,0 +1,25 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: ingressmustusewaf
+spec:
+  crd:
+    spec:
+      names:
+        kind: IngressMustUseWaf
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package ingressmustusewaf
+        ns := input.review.object.metadata.namespace
+
+
+        violation[{"msg": msg}] { 
+          existing_waf := {e | e := data.inventory.namespace[ns]["citrix.com/v1"]["waf"][_]}
+          count(existing_waf) == 0
+          msg := sprintf("Ingress in namespace %v is missing at least one WAF resource.", [ns])
+        }
+
+        
+
+
