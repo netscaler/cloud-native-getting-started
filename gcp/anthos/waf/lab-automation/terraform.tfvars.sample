@@ -11,6 +11,7 @@ vpx_image_path = "https://storage.googleapis.com/pm-gcp-anthos-public-images/NSV
 vpx_vip_cidr_range = "192.168.40.0/24"
 vpx_new_password = "citrix"
 ingress_controller_image = "quay.io/citrix/citrix-k8s-ingress-controller:1.19.6"
+vpx_license_file = "CNS_V8000_SERVER_PLT_Retail.lic"
 
 # ACM Repository Details
 github_owner    = "konkaltsas"

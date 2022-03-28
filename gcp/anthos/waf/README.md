@@ -1,7 +1,7 @@
 ## WAF Use Case
-This use case focuses on deploying a Tier-1 Citrix ADC (VPX) in front of a Google Anthos GKE cluster within GCP. It leverages Google Anthos Configuration Management for consistent deployment of the Citrix components into the Anthos GKE cluster, and highlights how the Citrix ADC is automatically configured from the GKE cluster to add new Virtual Servers and Service Group Members as an application is deployed and scaled to meet user demand. Additionally, it leverages Google Anthos Policy Controller to ensure that Cirtix WAF configurations exist to protect ingress objects within a cluster. 
+This use case focuses on deploying a Tier-1 Citrix ADC (VPX) in front of a Google Anthos GKE cluster within GCP. It leverages Google Anthos Configuration Management for consistent deployment of the Citrix components into the Anthos GKE cluster. It leverages Google Anthos Policy Controller to ensure that Citrix WAF configurations exist to protect ingress objects within a cluster. 
 
-ACM (Anthos Configuration Management) is a GitOps centric tool that synchronizes configuration into a Anthos Kubernetes cluster from a Git repository.Policy Controller is a component of ACM that can audit or enforce configurations across the cluster. This lab automation has been written with [GitHub](https://github.com) as the git repository tool of choice. 
+ACM (Anthos Configuration Management) is a GitOps centric tool that synchronizes configuration into a Anthos Kubernetes cluster from a Git repository. Policy Controller is a component of ACM that can audit or enforce configurations across the cluster. This lab automation has been written with [GitHub](https://github.com) as the git repository tool of choice. 
 
 **Note** 
 The infrastructure code contained herein is intended to function in a way that suits demonstrations or proof of concepts, but is not hardened or designed for production deployment scenarios. 
@@ -15,7 +15,7 @@ A single Citrix Netscaler VPX instance is deployed with 2 network interfaces:
 - nic0 provides access for management (NSIP), and access to back end servers (SNIP)
 - nic1 provides access for deployed applications (VIPs)
 - each interface is assigned an internal private IP address and an external Public IP address
-- the inststance is deployed as a preemptible node to reduce lab costs
+- the instance is deployed as a preemptible node to reduce lab costs
 - the instance automatically configures the password with Terraform
 - the instance is then automatically configured by the Citrix Ingress Controller and Citrix Node Controller deployed in the GKE cluster 
 
@@ -30,7 +30,7 @@ A single Citrix Netscaler VPX instance is deployed with 2 network interfaces:
 A single GKE cluster is deployed as a zonal cluster: 
 - autoscaling is enabled with a minimum of 1 node and configurable maximum
 - Google Anthos Config Management (ACM) operator is deployed into the GKE cluster and configured to sync the cluster configuration from a GitHub repository
-- Citrix Ingress Controller Citrix Node Controller components are automatically installed via ACM into the `ctx-ingress` namespace
+- Citrix Ingress Controller and Citrix Node Controller components are automatically installed via ACM into the `ctx-ingress` namespace
 - Citrix WAF Custom Resource Definition (CRD) is installed via ACM to enable developers to create WAF configurations
 - worker nodes are deployed as preemptible nodes to reduce lab costs
 - Policy Controller is installed to demonstrate constraints that enforce the presence of a WAF object in a namespace prior to accepting an Ingress resource
@@ -38,12 +38,12 @@ A single GKE cluster is deployed as a zonal cluster:
 **GitHub Repository**  
 A dedicated GitHub repository is created and loaded with a basic cluster configuration: 
 - A basic [hierarchical format](https://cloud.google.com/anthos-config-management/docs/concepts/hierarchical-repo) is used for ease of navigation through namespaces and manifests
-- Citrix Ingress Controller and Citrix Node Controller deployment manifests are built from templates and added to this repository, along with their other required roles/rolebindings/services/etc. 
+- Citrix Ingress Controller and Citrix Node Controller deployment manifests are built from templates and added to this repository, along with their required roles/rolebindings/services/etc. 
 - This repository is created and destroyed by Terraform
 
 **Online Boutique Demo Application**  
-The [online boutique](https://github.com/GoogleCloudPlatform/microservices-demo) demo application provides a microservices based application that can be used to highlight the scaleup application usecase. It has been modified slightly for this environment: 
-- an ingress resource has been added to recieve all traffic through the Citrix VPX (the standard frontend-external LoadBalancer service was removed)
+The [online boutique](https://github.com/GoogleCloudPlatform/microservices-demo) demo application provides a μServices based application for our lab. It has been modified slightly for this environment: 
+- an ingress resource has been added to receive all traffic through the Citrix VPX (the standard frontend-external LoadBalancer service was removed)
 - application components are controlled through Anthos Config Management and the source Git Repo
 
 ## Lab Deployment
@@ -60,7 +60,7 @@ When the environment has been deployed, terraform will output two public IP addr
 - Navigate to **Traffic Management->Load Balancing->Virtual Servers** and explore the dynamically created virtual services that reside in the Google Anthos GKE cluster  
 ![](../scaleup/assets/ns-02.png)  
 
-With the environment fully deployed, navigate to the [Scaleup Application Demo Usage section](lab-automation/README.md) to explore the demo application. 
+With the environment fully deployed, navigate to the [Application Demo Usage section](lab-automation/README.md) to explore the demo application. 
 
 You can also review the Google Anthos components in the Google Cloud Console:  
 - Navigate to the **Anthos** section of the Google Cloud Console to see the newly created cluster  

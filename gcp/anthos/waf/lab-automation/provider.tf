@@ -4,9 +4,16 @@ terraform {
       source  = "integrations/github"
       version = "~> 4.0"
     }
+    google = {
+      source = "hashicorp/google"
+      version = "4.15.0"
+    }
+    google-beta = {
+      source = "hashicorp/google-beta"
+      version = "4.15.0"
+    }
   }
 }
-
 
 # Configure the GitHub Provider
 provider "github" {

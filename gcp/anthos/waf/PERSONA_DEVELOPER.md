@@ -11,7 +11,7 @@ As a developer, I am responsible for deploying applications to a Google Anthos p
 
 Deploying applications into a Citrix Integrated Google Anthos Platform allows me, the developer, to set specific network configurations as simple annotations within my kubernetes manifests. I don't need to learn an additional platform or tool, and this configuration will be applied in accordance with any constraints set out by the platform, network, and security teams. This allows my application to get to market faster with less internal meetings, approvals, or change requests.  
 
-My platform and security teams have required that I protect my application using Citrix WAF capabilities, but as the developer, I am responsible for ensuring that the WAF configuration is appropriate for my application. Luckily Citrix provides a Kubernets Custom Resource that I can use to define the right WAF policy without needing to engage with other teams, and still be compliant with my platform and securty teams requirements. 
+My platform and security teams have requested that I protect my application using Citrix WAF capabilities, but as the developer, I am responsible for ensuring that the WAF configuration is appropriate for my application. Luckily Citrix provides a Kubernetes Custom Resource that I can use to define the right WAF policy without needing to engage with other teams, and still be compliant with my platform and security teams requirements. 
 
 
 ## The How  
@@ -22,7 +22,7 @@ In this demonstration, the kubectl binary and local files are used to deploy the
 
 ---
 
-First I will deploy the online boutique sample application manifests. I will attempt to deploy a sample ingress object, but the Anthos GKE cluster will inform me that I need a WAF resouce created first. I will then deploy the WAF resource, and then the ingress resource. These steps help to outline the control I have over the ingress WAF protection into my application, without the need to engage with the network or security team to make Application Delivery Controller configuration changes. 
+First I will deploy the online boutique sample application manifests. I will attempt to deploy a sample ingress object, but the Anthos GKE cluster will inform me that I need a WAF resource created first. I will then deploy the WAF resource, and then the ingress resource. These steps help to outline the control I have over the ingress WAF protection into my application, without the need to engage with the network or security team to make Application Delivery Controller configuration changes. 
 
 - Deploy the application and a simple ingress object ... first clone the git repository that the automation created, then deploy the application **Note that you will need to replace the <github-org> and <repo> tags according to your deployment of this lab** 
   ```shell
@@ -50,7 +50,7 @@ First I will deploy the online boutique sample application manifests. I will att
   recommendationservice-b75687c5b-z7lk7    1/1     Running   0          55s
   redis-cart-74594bd569-hkk8x              1/1     Running   0          52s
   shippingservice-778554994-fsnsp          1/1     Running   0          53s
-  sh-5.1$ cat online-boutique-ingress.yaml 
+  sh-5.1$ cat ingress.yaml 
   # #Specify the ingress resource
   apiVersion: networking.k8s.io/v1
   kind: Ingress
@@ -72,7 +72,7 @@ First I will deploy the online boutique sample application manifests. I will att
               port: 
                 number: 80
                 
-  sh-5.1$ kubectl apply -f online-boutique-ingress.yaml 
+  sh-5.1$ kubectl apply -f ingress.yaml -n demoapp
   Error from server ([ingressmustusewaf-constraint] Ingress in namespace demoapp is missing at least one WAF resource.): error when creating "online-boutique/online-boutique-ingress.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [ingressmustusewaf-constraint]
   Ingress in namespace demoapp is missing at least one WAF resource.
 
@@ -119,7 +119,7 @@ First I will deploy the online boutique sample application manifests. I will att
   NAME           STATUS    MESSAGE
   wafbasic       Success   CRD Activated
 
-  sh-5.1$ kubectl apply -f online-boutique-ingress.yaml
+  sh-5.1$ kubectl apply -f ingress.yaml -n demoapp
   ingress.networking.k8s.io/online-boutique-ingress created
 
   ```
