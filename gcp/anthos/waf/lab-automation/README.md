@@ -47,7 +47,7 @@ terraform apply
 ![terraform-plan](../assets/3-tf-apply.gif)
 
 **Important**
-Please note that ADC VPX security features require ADC to be licensed. After ADC VPX is in place, please make sure to follow the steps required to apply your license in one of the various ways that are supported. For simplicity, for this demonstration we are [Using a standalone Citrix ADC VPX license](lab-automation/Licensing.md). For production deployment scenarios you are encouraged to apply different licensing schemes.
+Please note that ADC VPX security features require ADC to be licensed. After ADC VPX is in place, please make sure to follow the steps required to apply your license in one of the various ways that are supported. For simplicity, for this demonstration we are [Using a standalone Citrix ADC VPX license](Licensing.md). For production deployment scenarios you are encouraged to apply different licensing schemes.
 - [Licensing overview](https://docs.citrix.com/en-us/citrix-adc/current-release/licensing.html)
 - [Citrix ADC pooled capacity](https://docs.citrix.com/en-us/citrix-application-delivery-management-software/current-release/license-server/adc-pooled-capacity.html)
 

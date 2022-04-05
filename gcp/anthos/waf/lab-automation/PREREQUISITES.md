@@ -10,7 +10,7 @@ This document outlines the setup and prerequisites required to run the lab autom
 ## GCP Project and APIs
 
 The following set of commands will create a new GCP project with the necessary API's enabled and service account credentials required to execute the lab automation. 
-All credeitnals are stored in folder that is local to your machine and is ignored by git. 
+All credentials are stored in folder that is local to your machine and is ignored by git. 
 
 
 ```shell
