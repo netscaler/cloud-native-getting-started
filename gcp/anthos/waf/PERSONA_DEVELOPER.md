@@ -20,6 +20,11 @@ My platform and security teams have requested that I protect my application usin
 **NOTE**
 In this demonstration, the kubectl binary and local files are used to deploy the application. In production scenarios, other deployment methods would likely be in place, such as a GitOps approach as provided from Google Anthos Configuration Management.  
 
+**Important**
+Please note that ADC VPX security features require ADC to be licensed. After ADC VPX is in place, please make sure to follow the steps required to apply your license in one of the various ways that are supported. For simplicity, for this demonstration we are [Using a standalone Citrix ADC VPX license](lab-automation/Licensing.md). For production deployment scenarios you are encouraged to apply different licensing schemes.
+- [Licensing overview](https://docs.citrix.com/en-us/citrix-adc/current-release/licensing.html)
+- [Citrix ADC pooled capacity](https://docs.citrix.com/en-us/citrix-application-delivery-management-software/current-release/license-server/adc-pooled-capacity.html)
+
 ---
 
 First I will deploy the online boutique sample application manifests. I will attempt to deploy a sample ingress object, but the Anthos GKE cluster will inform me that I need a WAF resource created first. I will then deploy the WAF resource, and then the ingress resource. These steps help to outline the control I have over the ingress WAF protection into my application, without the need to engage with the network or security team to make Application Delivery Controller configuration changes. 
@@ -123,9 +128,19 @@ First I will deploy the online boutique sample application manifests. I will att
   ingress.networking.k8s.io/online-boutique-ingress created
 
   ```
-  - The network and security team can view my configuration from the Citrix ADC
-  ![](assets/waf_basic_policy.png)  
-  ![](assets/waf_basic_policy_details.png)
+---
+
+Network and security teams can view my configuration from the Citrix ADC including:
+
+- Citrix WAF Policies 
+  ![](assets/waf_basic_policy.png)
+- Citrix WAF Profiles
+  ![](assets/waf_profiles.png)
+- Citrix WAF Policy Bindings to Virtual Load Balancing Server 
+  ![](assets/waf_basic_policy_binding.png)  
+- Citrix WAF Policy Binding Details
+  ![](assets/waf_basic_policy_binding_details.png)
+
 
 
 To see more configuration options, review the [waf crd examples](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/crds/waf/) documentation. 

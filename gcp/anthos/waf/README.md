@@ -1,10 +1,15 @@
-## WAF Use Case
-This use case focuses on deploying a Tier-1 Citrix ADC (VPX) in front of a Google Anthos GKE cluster within GCP. It leverages Google Anthos Configuration Management for consistent deployment of the Citrix components into the Anthos GKE cluster. It leverages Google Anthos Policy Controller to ensure that Citrix WAF configurations exist to protect ingress objects within a cluster. 
+## Citrix ADC with Google Anthos: WAF with Policy Controller Lab
+This use case focuses on deploying a Tier-1 Citrix ADC (VPX) in front of a Google Anthos GKE cluster within GCP. It leverages Google Anthos Configuration Management for consistent deployment of the Citrix components into the Anthos GKE cluster and it leverages Google Anthos Policy Controller to ensure that Citrix WAF configurations exist to protect ingress objects within a cluster. 
 
 ACM (Anthos Configuration Management) is a GitOps centric tool that synchronizes configuration into a Anthos Kubernetes cluster from a Git repository. Policy Controller is a component of ACM that can audit or enforce configurations across the cluster. This lab automation has been written with [GitHub](https://github.com) as the git repository tool of choice. 
 
 **Note** 
 The infrastructure code contained herein is intended to function in a way that suits demonstrations or proof of concepts, but is not hardened or designed for production deployment scenarios. 
+
+**Important**
+Please note that ADC VPX security features require ADC to be licensed. After ADC VPX is in place, please make sure to follow the steps required to apply your license in one of the various ways that are supported. For simplicity, for this demonstration we are [Using a standalone Citrix ADC VPX license](lab-automation/Licensing.md). For production deployment scenarios you are encouraged to apply different licensing schemes.
+- [Licensing overview](https://docs.citrix.com/en-us/citrix-adc/current-release/licensing.html)
+- [Citrix ADC pooled capacity](https://docs.citrix.com/en-us/citrix-application-delivery-management-software/current-release/license-server/adc-pooled-capacity.html)
 
 ## Architecture
 The following diagram illustrates the infrastructure that is deployed for this use case.  
@@ -52,15 +57,15 @@ Please refer to [lab-automation/README.md](lab-automation/README.md) for deploym
 ## Environment Usage  
 When the environment has been deployed, terraform will output two public IP addresses, one for management and one for data services. Log into the NetScaler VPX Management interface and review the configuration: 
 - Navigate to **System->Network->IPs** to review the IP addresses that have been dynamically configured on the system  
-![](../scaleup/assets/ns-00.png)  
+![](assets/ns-00.png)  
 
 - Navigate to **System->Network->VXLANS** to review the VXLAN IDs that have been dynamically configured on the system - this configuration enables the VPX to tunnel into the cluster and access the POD IP space  
-![](../scaleup/assets/ns-01.png)  
+![](assets/ns-01.png)  
 
-- Navigate to **Traffic Management->Load Balancing->Virtual Servers** and explore the dynamically created virtual services that reside in the Google Anthos GKE cluster  
-![](../scaleup/assets/ns-02.png)  
+With the environment fully deployed, navigate to [What's Next Section](lab-automation/README.md#whats-next) to explore our use case for different personas. During trying these use case:
 
-With the environment fully deployed, navigate to the [Application Demo Usage section](lab-automation/README.md) to explore the demo application. 
+- Visit **Traffic Management->Load Balancing->Virtual Servers** to explore the dynamically created virtual services that reside in the Google Anthos GKE cluster  
+![](assets/ns-02.png)  
 
 You can also review the Google Anthos components in the Google Cloud Console:  
 - Navigate to the **Anthos** section of the Google Cloud Console to see the newly created cluster  
@@ -71,5 +76,3 @@ You can also review the Google Anthos components in the Google Cloud Console:
 
 - Select **Config management** to see more detail about the ACM deployment on the Anthos GKE cluster  
 ![](assets/anthos-02.png)  
-![](assets/anthos-03.png)  
-

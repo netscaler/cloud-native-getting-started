@@ -30,6 +30,7 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
   * GCP (Google Cloud Platform)
     * [Two-Tier deployment with Citrix ADC VPX, Citrix Ingress Controller, Citrix ADC CPX and Application Delivery Management(ADM) on Google Cloud](/gcp/two-tier-vpc-cpx-adm/README.md)
     * [Citrix ADC with Google Anthos: Autoscaling Lab](/gcp/anthos/scaleup/README.md)
+    * [Citrix ADC with Google Anthos: WAF with Policy Controller Lab](/gcp/anthos/waf/README.md)
   * On-Prem (using VMs on Xenserver)
     * [Unified Ingress topology: Tier 1 ADC - MPX/BLX/VPX to load balance microservice applications (North-South traffic)](/on-prem/Unified-Ingress/README.md)
     * [2-Tier Ingress topology: Tier 1 ADC - MPX/BLX/VPX & Tier 2 ADC - CPX to load balance microservice applications (North-South traffic)](/on-prem/2-Tier-deployment/README.md)

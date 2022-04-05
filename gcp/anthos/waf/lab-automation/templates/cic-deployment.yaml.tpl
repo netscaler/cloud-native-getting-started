@@ -32,6 +32,4 @@ spec:
         args:
           - --ingress-classes
             tier-1-vpx
-          - --feature-node-watch
-            true
         imagePullPolicy: Always

@@ -18,14 +18,13 @@ Please review the [PREREQUISITES.md](PREREQUISITES.md) section prior to deployin
 | vpx\_image\_path       | The https url to a publicly available VPX image. You may need to create this in your project if this has not already been done.                      |
 | vpx\_cidr\_range       | A dedicated private IP range for the VPX 2nd nic to connect to which contains the VIPs.                                                              |
 | vpx\_new\_password     | Set a password for the VPX. The GKE cluster will also obtain these values so that it can automatically configure the VPX.                            |
-| vpx\_license\_file     | Set the name of your VPX license file that will be copied to VPX instance. Security features require a VPX license.                            |
 | ACM Repository Details | \-----                                                                                                                                               |
 | github\_owner          | The GitHub Owner name in which to create the repository.                                                                                             |
 | github\_reponame       | The name of the GitHub repository to upload content to and sync the cluster from.                                                                    |
 | github\_email          | The email address of the github account associated with the GITHUB\_TOKEN.                                                                           |
 | gke\_hub\_sa\_name     | The service account name for GKE Connect / GKE Hub connectivity.                                                                                     |
 | Demo App Details       | \-----                                                                                                                                               |
-| demo\_app\_url         | A host name to be used for the demo app. This must either exist in DNS or be configured in your local hosts file for accessing the demo application. For ease of demonstration this value is ignored and app can be accessed directly through {vpx_vip_address}.nip.io. Please change demo_app_url value on github.tf to use this if required. |
+| demo\_app\_url         | A host name to be used for the demo app. This must either exist in DNS or be configured in your local hosts file for accessing the demo application. |
 
 
 
@@ -47,6 +46,10 @@ terraform apply
 
 ![terraform-plan](../assets/3-tf-apply.gif)
 
+**Important**
+Please note that ADC VPX security features require ADC to be licensed. After ADC VPX is in place, please make sure to follow the steps required to apply your license in one of the various ways that are supported. For simplicity, for this demonstration we are [Using a standalone Citrix ADC VPX license](lab-automation/Licensing.md). For production deployment scenarios you are encouraged to apply different licensing schemes.
+- [Licensing overview](https://docs.citrix.com/en-us/citrix-adc/current-release/licensing.html)
+- [Citrix ADC pooled capacity](https://docs.citrix.com/en-us/citrix-application-delivery-management-software/current-release/license-server/adc-pooled-capacity.html)
 
 ### Destroying the environment
 

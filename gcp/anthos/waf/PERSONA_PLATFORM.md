@@ -4,7 +4,7 @@
 
 ![](assets/platform.png)
 
-The diagram above illustrates the environment at a high-level. There is an Anthos GKE cluster managed from Anthos Configuration Management, with an external Citrix VDX to control ingress traffic into the cluster. This Citrix VDX appliance is managed by the network team and adheres to corporate application delivery standards.  
+The diagram above illustrates the environment at a high-level. There is an Anthos GKE cluster managed from Anthos Configuration Management, with an external Citrix VPX to control ingress traffic into the cluster. This Citrix VPX appliance is managed by the network team and adheres to corporate application delivery standards.  
 
 As a platform engineer, I am responsible for building and managing the life cycle of Anthos and ensuring that the platform is available and complies to my corporate standards. I also need to support the Network and Security teams objectives. This means ensuring that the cluster is secure and compliant by enforcing policies that ensure applications are deployed appropriately. 
 
@@ -12,6 +12,11 @@ As a platform engineer, I am responsible for building and managing the life cycl
 Deploying Citrix on Google Anthos Platform allows me, the platform engineer, to get secure and detailed insight into my platform's application network and related performance. It also allows me to enable developers to take control of the deployments to set specific network and security configurations using simple annotations or custom resources kubernetes manifests and namespaces. 
 
 In this example, the cluster leverages Anthos Config Management with Policy Controller installed to **enforce** a simple policy which requires that *at least one WAF object exists* in a namespace *before an Ingress can be created*. This is a simple example that shows how teams can consider how to protect the application before public access is exposed.  
+
+**Important**
+Please note that ADC VPX security features require ADC to be licensed. After ADC VPX is in place, please make sure to follow the steps required to apply your license in one of the various ways that are supported. For simplicity, for this demonstration we are [Using a standalone Citrix ADC VPX license](lab-automation/Licensing.md). For production deployment scenarios you are encouraged to apply different licensing schemes.
+- [Licensing overview](https://docs.citrix.com/en-us/citrix-adc/current-release/licensing.html)
+- [Citrix ADC pooled capacity](https://docs.citrix.com/en-us/citrix-application-delivery-management-software/current-release/license-server/adc-pooled-capacity.html)
 
 ## The How
 
@@ -114,14 +119,27 @@ With the above manifests being synced to the Anthos GKE cluster;
 - Validate that Anthos Configuration Management pods are running
   ```shell
   $ kubectl get pods -n config-management-system
+  NAME                                            READY   STATUS    RESTARTS   AGE
+  config-management-operator-75bcc8dcc9-ltqpm     1/1     Running   6          12h
+  reconciler-manager-6f64d4f564-xgj94             2/2     Running   0          12h
+  root-reconciler-7cffb785fc-dlc7p                4/4     Running   0          12h
+
   $ kubectl get pods -n gatekeeper-system
+  NAME                                            READY   STATUS    RESTARTS   AGE
+  gatekeeper-audit-5d4d474f95-g5zqd               1/1     Running   0          12h
+  gatekeeper-controller-manager-76d777ddb8-zc758  1/1     Running   0          12h
+  
+- Validate that the following CRDs exist
+  ```
   $ kubectl get crd 
   NAME                                                                CREATED AT
   configs.config.gatekeeper.sh                                        2022-02-02T01:31:23Z
   constrainttemplates.templates.gatekeeper.sh                         2022-02-02T01:31:24Z
   ingressmustusewaf.constraints.gatekeeper.sh                         2022-02-02T01:46:49Z
   wafs.citrix.com                                                     2022-02-02T01:46:50Z
-
+  ```
+- Validate that our constraint is in place
+  ```
   $ kubectl get constraints
   NAME                                                                       AGE
   ingressmustusewaf.constraints.gatekeeper.sh/ingressmustusewaf-constraint   29m
