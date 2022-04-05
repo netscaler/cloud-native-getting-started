@@ -64,7 +64,3 @@ variable "ingress_controller_image" {
   default = "quay.io/citrix/citrix-k8s-ingress-controller:1.19.6"
   type = string
 }
-
-variable "vpx_license_file" {
-  type = string
-}
