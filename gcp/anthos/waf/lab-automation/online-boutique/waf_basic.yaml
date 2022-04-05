@@ -1,0 +1,34 @@
+apiVersion: citrix.com/v1
+kind: waf
+metadata:
+    name: wafbasic
+spec:
+    servicenames:
+        - frontend
+    security_checks:
+        common:
+          allow_url: "on"
+          block_url: "on"
+          buffer_overflow: "on"
+          multiple_headers:
+            action: ["block", "log"]
+        html:
+          cross_site_scripting: "on"
+          field_format: "on"
+          sql_injection: "on"
+          fileupload_type: "on"
+        json:
+          dos: "on"
+          sql_injection: "on"
+          cross_site_scripting: "on"
+        xml:
+          dos: "on"
+          wsi: "on"
+          attachment: "on"
+          format: "on"
+    relaxations:
+        common:
+          allow_url:
+            urls:
+                - "^[^?]+[.](html?|shtml|js|gif|jpg|jpeg|png|swf|pif|pdf|css|csv)$"
+                - "^[^?]+[.](cgi|aspx?|jsp|php|pl)([?].*)?$"
