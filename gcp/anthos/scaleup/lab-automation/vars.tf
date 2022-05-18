@@ -17,7 +17,7 @@ variable "zone" {
 
 variable "preemptible" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "node_type" {
