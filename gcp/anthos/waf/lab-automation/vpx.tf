@@ -76,7 +76,7 @@ resource "google_compute_instance_template" "vpx" {
 
   scheduling {
     automatic_restart = false
-    preemptible       = true
+    preemptible       = false
   }
 
   // Create a new boot disk from an image

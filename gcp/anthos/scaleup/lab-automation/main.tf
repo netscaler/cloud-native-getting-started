@@ -79,6 +79,7 @@ resource "google_gke_hub_membership" "ctx_lab" {
 }
 
 resource "google_project_iam_member" "hub_service_agent_hub" {
+  project    = var.project
   role       = "roles/gkehub.serviceAgent"
   member     = "serviceAccount:${google_project_service_identity.sa_gkehub.email}"
 }

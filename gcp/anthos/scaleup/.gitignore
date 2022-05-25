@@ -5,4 +5,9 @@ lab-automation/rendered_templates
 .terraform
 *.tfstate
 *.tfstate.backup
+*.tfstate.bak
 **/.terraform.lock.hcl
+.terraform.lock*
+.terraform.tfstate*
+*.bak
+*.lic

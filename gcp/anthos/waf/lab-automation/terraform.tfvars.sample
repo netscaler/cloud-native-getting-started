@@ -7,7 +7,7 @@ node_type  = "n1-standard-2"
 max_node_count = 3                          #Maximum size of the node pool
 
 # VPX Configuration Details
-vpx_image_path = "https://storage.googleapis.com/pm-gcp-anthos-public-images/NSVPX-GCP-13.1-17.42_nc.tar.gz"
+vpx_image_path = "https://storage.googleapis.com/pm-gcp-anthos-public-images/NSVPX-GCP-13.1-21.50_nc.tar.gz"
 vpx_vip_cidr_range = "192.168.40.0/24"
 vpx_new_password = "citrix"
 ingress_controller_image = "quay.io/citrix/citrix-k8s-ingress-controller:1.19.6"
