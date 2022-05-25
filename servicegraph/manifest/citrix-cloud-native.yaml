@@ -28,6 +28,7 @@ data:
        samplingrate: 100
      endpoint:
        server: 'A.B.C.D'
+       service: 1.1.1.1
      timeseries: 
        port: 5563 
        metrics:
@@ -56,6 +57,7 @@ data:
        samplingrate: 100
      endpoint:
        server: 'A.B.C.D'
+       service: 1.1.1.1
      timeseries: 
        port: 5563 
        metrics:
