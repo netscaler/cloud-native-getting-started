@@ -1,0 +1,22 @@
+apiVersion: citrix.com/v1
+kind: rewritepolicy
+metadata:
+  name: blocklisturls
+spec:
+  responder-policies:
+    - servicenames:
+        - pet-service
+      logpackets:
+        logexpression: "http.req.url"
+        loglevel: INFORMATIONAL
+      responder-policy:
+        respondwith:
+          http-payload-string: '"HTTP/1.1 401 Access denied"'
+        respond-criteria: 'http.req.url.equals_any("blocklistUrls")'
+        comment: 'Blocklist certain Urls'
+
+
+  patset:
+    - name: blocklistUrls
+      values:
+        - '/block'

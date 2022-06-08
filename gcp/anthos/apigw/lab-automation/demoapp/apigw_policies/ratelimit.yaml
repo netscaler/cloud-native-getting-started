@@ -1,0 +1,15 @@
+apiVersion: citrix.com/v1beta1
+kind: ratelimit
+metadata:
+  name: ratelimit
+spec:
+  servicenames: 
+  - pet-service
+  selector_keys:
+   basic:
+    path: 
+    - /ratelimit
+    per_client_ip: true
+  req_threshold: 7
+  timeslice: 79000
+  throttle_action: "RESPOND"
