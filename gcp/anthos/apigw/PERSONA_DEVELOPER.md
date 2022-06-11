@@ -20,7 +20,7 @@ My platform and security teams have requested that I protect my application usin
 
 ---
 **NOTE**
-In this demonstration, the kubectl binary and local files are used to deploy the application. In production scenarios, other deployment methods would likely be in place, such as a GitOps approach as provided from Google Anthos Configuration Management.  
+In this demonstration, the kubectl binary and local files are used to deploy the application and configure all API Gateway policies. In production scenarios, other deployment methods would likely be in place, such as a GitOps approach as provided from Google Anthos Configuration Management. In that case all these configurations would be stored in Git and automatically synced in GKE. 
 
 **Important**
 Please note that ADC VPX security features require ADC to be licensed. After ADC VPX is in place, please make sure to follow the steps required to apply your license in one of the various ways that are supported. For simplicity, for this demonstration we are [Using a standalone Citrix ADC VPX license](lab-automation/Licensing.md). For production deployment scenarios you are encouraged to apply different licensing schemes.
@@ -160,7 +160,7 @@ First I will deploy the echoserver sample application manifests. As a second ste
   ![](assets/1.ADC-LBVServer-k8s-cpx-service.png) 
 - Send a simple request to pet-service.echoserver.com and check the response. If you followed the prerequisites steps, that should be configured either on your hosts file or your DNS and resolve to ADC VIP. We will use curl to send the request and format the response with jq for better clarity:
   ```shell
-  curl pet-service.echoserver.com | jq
+  $ noglob curl -v -X GET pet-service.echoserver.com/pet.aspx?id=12345 | jq
   *   Trying 34.95.21.135:80...
   * Connected to pet-service.echoserver.com (34.95.21.135) port 80 (#0)
   > GET / HTTP/1.1
@@ -257,7 +257,7 @@ First I will deploy the echoserver sample application manifests. As a second ste
   ```
 ## Deploy WAF Policy and block a Malicious Request
 
-- Enable a WAF policy to block SQL Injection attacks on VPX.
+- Enable a WAF policy and see how it blocks an SQL Injection attacks on VPX.
   ```shell
   $ cat apigw_policies/wafbasic.yaml
   apiVersion: citrix.com/v1
@@ -299,7 +299,7 @@ First I will deploy the echoserver sample application manifests. As a second ste
   ```
 - Send first a typical GET request and then a malicious one and see if it gets blocked.
   ```shell
-  $ noglob curl -v pet-service.echoserver.com?id=12358
+  $ noglob curl -v pet-service.echoserver.com/pet.aspx?id=12345
   *   Trying 34.95.21.135:80...
   * Connected to pet-service.echoserver.com (34.95.21.135) port 80 (#0)
   > GET /?id=12358 HTTP/1.1
@@ -339,7 +339,7 @@ First I will deploy the echoserver sample application manifests. As a second ste
       ...
     }
   }
-  $ noglob curl -v pet-service.echoserver.com?id=12358%3B%20DROP%20TABLE%20users (id=12358; DROP TABLE users)
+  $ noglob curl -v pet-service.echoserver.com/pet.aspx?id=12358%3B%20DROP%20TABLE%20users (id=12358; DROP TABLE users)
   *   Trying 34.95.21.135:80...
   * Connected to pet-service.echoserver.com (34.95.21.135) port 80 (#0)
   > GET /?id=12358%3B%20DROP%20TABLE%20users HTTP/1.1
@@ -358,7 +358,7 @@ First I will deploy the echoserver sample application manifests. As a second ste
   ```
 
 ## Enable Rate limiting on ADC CPX API Gateway
-- We will now focus on applying some policies on our namespaced API Gateway. These policies will be applied only for our pet-service. We will first apply a simple rate limiting policy only to the /pet path and test it.
+- We will now focus on applying some policies on our namespaced API Gateway. These policies will be applied only for our pet-service. We will first apply a simple rate limiting policy only to the /ratelimit.aspx path and test it.
 ```shell
   $ cat apigw_policies/ratelimit.yaml
   apiVersion: citrix.com/v1beta1
@@ -371,7 +371,7 @@ First I will deploy the echoserver sample application manifests. As a second ste
     selector_keys:
     basic:
       path:
-      - /ratelimit
+      - /ratelimit.aspx
       per_client_ip: true
     req_threshold: 7
     timeslice: 79000
@@ -380,7 +380,7 @@ First I will deploy the echoserver sample application manifests. As a second ste
   $ kubectl apply -f apigw_policies/ratelimit.yaml -n demoapp
   $ ratelimit.citrix.com/ratelimit created
   ```
-- Send some request to /ratelimit path and check how it blocks the request after the threshold has been reached.
+- Send more than 7 requests to /ratelimit.aspx and check how it blocks the request after the threshold has been reached.
   ```shell
   $ noglob curl -v pet-service.echoserver.com/ratelimit.aspx?id=12345
   *   Trying 34.95.21.135:80...
@@ -397,7 +397,7 @@ First I will deploy the echoserver sample application manifests. As a second ste
   <
   * Closing connection 0
   ```
-- Send a request to /pet path and validate that it's not getting blocked
+- Send a request to /pet.aspx path and validate that it's not getting blocked
   ```shell
   $ noglob curl -v pet-service.echoserver.com/pet.aspx?id=12345
   *   Trying 34.95.21.135:80...
@@ -419,7 +419,7 @@ First I will deploy the echoserver sample application manifests. As a second ste
   * Connection #0 to host pet-service.echoserver.com left intact
   ```
 ## Add X-Forwarded-For header by applying a rewrite policy on ADC CPX API Gateway
-- Apply the policy and then send a request to see the header that has been added
+- Apply the policy and then send a request to see the X-Forwarded-For header added
   ```shell
   $ cat apigw_policies/rewrite-headers.yaml
     apiVersion: citrix.com/v1
@@ -479,10 +479,189 @@ First I will deploy the echoserver sample application manifests. As a second ste
       },
       ...
     ```
-- 
+## Add Authentication and Authorization to our API by applying an Authentication Policy on ADC CPX API Gateway
+
+On this last scenario we will leverage Keycloak as our OpenIDConnect Provider and OAuth 2.0 server. We created a realm: myrealm and a client: myclient. 
+
+For simplicity we will follow the client_credential OAuth 2.0 flow. We have assigned 3 client optional scopes to myclient: resource:view, resource:create and resource:update. As the name indicates, we will use these scopes to allow access to our client to sent GET, POST and PUT requests to the /pet.aspx resource. 
+
+Our API Gateway CPX is responsible to see whether the access Bearer token presented with each request in the Authorization Header contains the required scope to allow access to resource or return an HTTP Error 401 Unauthorized Access. We also configured our policy to skip both authentication an authorization for a specific resource: /pet-unauth.aspx.
+
+- Let's first see and apply our policy.
+```shell
+$ cat apigw_policies/oauth_jwt_auth.yaml
+apiVersion: citrix.com/v1beta1
+kind: authpolicy
+metadata:
+  name: authexample
+spec:
+    servicenames:
+    - pet-service
+
+    authentication_providers:
+      - name: "jwt-auth-provider"
+        oauth:
+          issuer: "http://35.203.18.96:8080/realms/myrealm"
+          jwks_uri: "http://35.203.18.96:8080/realms/myrealm/protocol/openid-connect/certs"
+          claims_to_save : ["scope"]
+
+    authentication_policies:
+        - resource:
+            path:
+              - '/pet.aspx'
+            method: [GET, POST]
+          provider: ["jwt-auth-provider"]
+
+        # skip authentication for this
+        - resource:
+            path:
+              - '/pet-unauth.aspx'
+              - '/ratelimit.aspx'
+            method: [GET]
+          provider: []
+
+    authorization_policies:
+        # skip authorization, no claims required
+        - resource:
+            path:
+              - '/pet-unauth.aspx'
+              - '/ratelimit.aspx'
+            method: [GET]
+            claims: []
+        - resource:
+            path:
+              - '/pet.aspx'
+            method: [GET]
+            claims:
+            - name: "scope"
+              values: ["resource:view"]
+        - resource:
+            path:
+              - '/pet.aspx'
+            method: [POST]
+            claims:
+            - name: "scope"
+              values: ["resource:create"]
+$ kubectl apply -f apigw_policies/oauth_jwt_auth.yaml -n demoapp
+$ authpolicy.citrix.com/authexample created
+```
+- Let's send a request first to the resource that is not protected.
+```shell
+$ noglob curl -v pet-service.echoserver.com/pet-unauth.aspx?id=12345 | jq
+* Connected to pet-service.echoserver.com (34.95.21.135) port 80 (#0)
+> GET /pet-unauth.aspx?id=12345 HTTP/1.1
+> Host: pet-service.echoserver.com
+> User-Agent: curl/7.77.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 2378
+< ETag: W/"94a-55BELHOXAdMKE1XNoGYd7D22708"
+< Date: Sat, 11 Jun 2022 20:56:27 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+<
+{ [2378 bytes data]
+100  2378  100  2378    0     0   5942      0 --:--:-- --:--:-- --:--:--  6113
+* Connection #0 to host pet-service.echoserver.com left intact
+{
+  ...
+$ 
+```
+- Let's now send a GET request to our protected resource /pet.aspx
+```shell
+$ noglob curl -v pet-service.echoserver.com/pet.aspx?id=12345
+* Connected to pet-service.echoserver.com (34.95.21.135) port 80 (#0)
+> GET /pet.aspx?id=12345 HTTP/1.1
+> Host: pet-service.echoserver.com
+> User-Agent: curl/7.77.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 401 Unauthorized
+< WWW-Authenticate: Bearer
+< Content-Length: 13
+< Content-Type: text/html; charset=utf-8
+< Cache-Control: no-cache,no-store,must-revalidate
+< X-Frame-Options: SAMEORIGIN
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1
+< Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self'; img-src 'self' data: http:; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src 'self' vmware-view:; child-src 'self'
+< Pragma: no-cache
+<
+* Connection #0 to host pet-service.echoserver.com left intact
+Unauthorized.
+```
+- As we saw in the last request we get a 401 Unauthorized Error. Let's now request an access token from keycloak using our client credentials and send a request again also passing the access token. Note that we are also specifically asking for a token that will also include the resource:view and resource:update scopes.
+```shell
+$ curl --location --request POST 'http://35.203.18.96:8080/realms/myrealm/protocol/openid-connect/token' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--header 'Authorization: Basic bXljbGllbnQ6bVpZdzljRDVISzltZzhkZWl3c09TVTBxSlhFN28wbXI=' \
+--data-urlencode 'grant_type=client_credentials' \
+--data-urlencode 'scope=resource:view resource:update'
+{"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJQcWNBSE96X184UDFEOTNGV0o0OU4weEZYaDByemdRbWoxSWJVSHg5LUJNIn0.eyJleHAiOjE2NTQ5ODE5NDUsImlhdCI6MTY1NDk4MTY0NSwianRpIjoiYzBjZmJmZjMtNWQ5Zi00ZTUxLTllOTMtYWE1ZjZkMmIwMzZhIiwiaXNzIjoiaHR0cDovLzM1LjIwMy4xOC45Njo4MDgwL3JlYWxtcy9teXJlYWxtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImY0ZmY0NGJhLWU2YmYtNDRjNy04ZWQ4LWI3OTY0NmMzMWUwNSIsInR5cCI6IkJlYXJlciIsImF6cCI6Im15Y2xpZW50IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLW15cmVhbG0iLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibXljbGllbnQiOnsicm9sZXMiOlsidW1hX3Byb3RlY3Rpb24iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicmVzb3VyY2U6dXBkYXRlIHByb2ZpbGUgZW1haWwgcmVzb3VyY2U6dmlldyIsImNsaWVudEhvc3QiOiIxMC4xNjIuMC4zMiIsImNsaWVudElkIjoibXljbGllbnQiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6InNlcnZpY2UtYWNjb3VudC1teWNsaWVudCIsImNsaWVudEFkZHJlc3MiOiIxMC4xNjIuMC4zMiJ9.BWkIUMILd3w9biz-CXF-KW7975RAgwzwpgQoAKptTpd9ak_sV1gXaF1UFp5dV-5eO34es2PDXdQ2ry6d-1eCVri9yBzTFeIDuoAIPbXz0a6N8lMtV5iAELk5_81GEXQ1VklR2D4moLD3GfWQAjruMQBmzNXifbBDjQo5_fgIOLw0fL5CwAeh8fPB39XQR3oZ4SzriE54UaYKbAJBiILpEfajFKSBGPkCY74Nwi0uVcaHbR0HQF0WuruUAdJIQF7hNcopXz8H95K7T-Wss_t5YayTZwXTlbCH3AqP6lq3aUQ2taI6PPkFelusCOyAK5qgmtgaV-tmgFSAiBcL2bF4-A","expires_in":300,"refresh_expires_in":0,"token_type":"Bearer","not-before-policy":0,"scope":"resource:update profile email resource:view"}
+
+
+$ noglob curl -v -X GET pet-service.echoserver.com/pet.aspx?id=12345 -H 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJQcWNBSE96X184UDFEOTNGV0o0OU4weEZYaDByemdRbWoxSWJVSHg5LUJNIn0.eyJleHAiOjE2NTQ5ODE5NDUsImlhdCI6MTY1NDk4MTY0NSwianRpIjoiYzBjZmJmZjMtNWQ5Zi00ZTUxLTllOTMtYWE1ZjZkMmIwMzZhIiwiaXNzIjoiaHR0cDovLzM1LjIwMy4xOC45Njo4MDgwL3JlYWxtcy9teXJlYWxtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImY0ZmY0NGJhLWU2YmYtNDRjNy04ZWQ4LWI3OTY0NmMzMWUwNSIsInR5cCI6IkJlYXJlciIsImF6cCI6Im15Y2xpZW50IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLW15cmVhbG0iLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibXljbGllbnQiOnsicm9sZXMiOlsidW1hX3Byb3RlY3Rpb24iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicmVzb3VyY2U6dXBkYXRlIHByb2ZpbGUgZW1haWwgcmVzb3VyY2U6dmlldyIsImNsaWVudEhvc3QiOiIxMC4xNjIuMC4zMiIsImNsaWVudElkIjoibXljbGllbnQiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6InNlcnZpY2UtYWNjb3VudC1teWNsaWVudCIsImNsaWVudEFkZHJlc3MiOiIxMC4xNjIuMC4zMiJ9.BWkIUMILd3w9biz-CXF-KW7975RAgwzwpgQoAKptTpd9ak_sV1gXaF1UFp5dV-5eO34es2PDXdQ2ry6d-1eCVri9yBzTFeIDuoAIPbXz0a6N8lMtV5iAELk5_81GEXQ1VklR2D4moLD3GfWQAjruMQBmzNXifbBDjQo5_fgIOLw0fL5CwAeh8fPB39XQR3oZ4SzriE54UaYKbAJBiILpEfajFKSBGPkCY74Nwi0uVcaHbR0HQF0WuruUAdJIQF7hNcopXz8H95K7T-Wss_t5YayTZwXTlbCH3AqP6lq3aUQ2taI6PPkFelusCOyAK5qgmtgaV-tmgFSAiBcL2bF4-A'
+
+* Connected to pet-service.echoserver.com (34.95.21.135) port 80 (#0)
+> GET /pet.aspx?id=12345 HTTP/1.1
+> Host: pet-service.echoserver.com
+> User-Agent: curl/7.77.0
+> Accept: */*
+> Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJQcWNBSE96X184UDFEOTNGV0o0OU4weEZYaDByemdRbWoxSWJVSHg5LUJNIn0.eyJleHAiOjE2NTQ5ODE5NDUsImlhdCI6MTY1NDk4MTY0NSwianRpIjoiYzBjZmJmZjMtNWQ5Zi00ZTUxLTllOTMtYWE1ZjZkMmIwMzZhIiwiaXNzIjoiaHR0cDovLzM1LjIwMy4xOC45Njo4MDgwL3JlYWxtcy9teXJlYWxtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImY0ZmY0NGJhLWU2YmYtNDRjNy04ZWQ4LWI3OTY0NmMzMWUwNSIsInR5cCI6IkJlYXJlciIsImF6cCI6Im15Y2xpZW50IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLW15cmVhbG0iLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibXljbGllbnQiOnsicm9sZXMiOlsidW1hX3Byb3RlY3Rpb24iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicmVzb3VyY2U6dXBkYXRlIHByb2ZpbGUgZW1haWwgcmVzb3VyY2U6dmlldyIsImNsaWVudEhvc3QiOiIxMC4xNjIuMC4zMiIsImNsaWVudElkIjoibXljbGllbnQiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6InNlcnZpY2UtYWNjb3VudC1teWNsaWVudCIsImNsaWVudEFkZHJlc3MiOiIxMC4xNjIuMC4zMiJ9.BWkIUMILd3w9biz-CXF-KW7975RAgwzwpgQoAKptTpd9ak_sV1gXaF1UFp5dV-5eO34es2PDXdQ2ry6d-1eCVri9yBzTFeIDuoAIPbXz0a6N8lMtV5iAELk5_81GEXQ1VklR2D4moLD3GfWQAjruMQBmzNXifbBDjQo5_fgIOLw0fL5CwAeh8fPB39XQR3oZ4SzriE54UaYKbAJBiILpEfajFKSBGPkCY74Nwi0uVcaHbR0HQF0WuruUAdJIQF7hNcopXz8H95K7T-Wss_t5YayTZwXTlbCH3AqP6lq3aUQ2taI6PPkFelusCOyAK5qgmtgaV-tmgFSAiBcL2bF4-A
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 2364
+< ETag: W/"93c-QcKxNKKWo+hzUG+fFX+cu4G8mzA"
+< Date: Sat, 11 Jun 2022 21:12:44 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< Set-Cookie: NSC_TMAA=2c24a6c0dc4ead50001867860608278f;HttpOnly;Path=/;
+< Set-Cookie: NSC_TMAP=xyz;Path=/;expires=Wednesday, 09-Nov-1999 23:12:40 GMT;
+< Set-Cookie: NSC_TMAV=xyz;Path=/;expires=Wednesday, 09-Nov-1999 23:12:40 GMT;
+<
+{ [2364 bytes data]
+100  2364  100  2364    0     0   5020      0 --:--:-- --:--:-- --:--:--  5150
+* Connection #0 to host pet-service.echoserver.com left intact
+{
+  ...
+$
+```
+- Let's use again the same token and sent a POST request to the same resource
+```shell
+$ noglob curl -v -X POST pet-service.echoserver.com/pet.aspx?id=12345 -H 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJQcWNBSE96X184UDFEOTNGV0o0OU4weEZYaDByemdRbWoxSWJVSHg5LUJNIn0.eyJleHAiOjE2NTQ5ODE5NDUsImlhdCI6MTY1NDk4MTY0NSwianRpIjoiYzBjZmJmZjMtNWQ5Zi00ZTUxLTllOTMtYWE1ZjZkMmIwMzZhIiwiaXNzIjoiaHR0cDovLzM1LjIwMy4xOC45Njo4MDgwL3JlYWxtcy9teXJlYWxtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImY0ZmY0NGJhLWU2YmYtNDRjNy04ZWQ4LWI3OTY0NmMzMWUwNSIsInR5cCI6IkJlYXJlciIsImF6cCI6Im15Y2xpZW50IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLW15cmVhbG0iLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibXljbGllbnQiOnsicm9sZXMiOlsidW1hX3Byb3RlY3Rpb24iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicmVzb3VyY2U6dXBkYXRlIHByb2ZpbGUgZW1haWwgcmVzb3VyY2U6dmlldyIsImNsaWVudEhvc3QiOiIxMC4xNjIuMC4zMiIsImNsaWVudElkIjoibXljbGllbnQiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6InNlcnZpY2UtYWNjb3VudC1teWNsaWVudCIsImNsaWVudEFkZHJlc3MiOiIxMC4xNjIuMC4zMiJ9.BWkIUMILd3w9biz-CXF-KW7975RAgwzwpgQoAKptTpd9ak_sV1gXaF1UFp5dV-5eO34es2PDXdQ2ry6d-1eCVri9yBzTFeIDuoAIPbXz0a6N8lMtV5iAELk5_81GEXQ1VklR2D4moLD3GfWQAjruMQBmzNXifbBDjQo5_fgIOLw0fL5CwAeh8fPB39XQR3oZ4SzriE54UaYKbAJBiILpEfajFKSBGPkCY74Nwi0uVcaHbR0HQF0WuruUAdJIQF7hNcopXz8H95K7T-Wss_t5YayTZwXTlbCH3AqP6lq3aUQ2taI6PPkFelusCOyAK5qgmtgaV-tmgFSAiBcL2bF4-A'
+
+* Connected to pet-service.echoserver.com (34.95.21.135) port 80 (#0)
+> POST /pet.aspx?id=12345 HTTP/1.1
+> Host: pet-service.echoserver.com
+> User-Agent: curl/7.77.0
+> Accept: */*
+> Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJQcWNBSE96X184UDFEOTNGV0o0OU4weEZYaDByemdRbWoxSWJVSHg5LUJNIn0.eyJleHAiOjE2NTQ5ODE5NDUsImlhdCI6MTY1NDk4MTY0NSwianRpIjoiYzBjZmJmZjMtNWQ5Zi00ZTUxLTllOTMtYWE1ZjZkMmIwMzZhIiwiaXNzIjoiaHR0cDovLzM1LjIwMy4xOC45Njo4MDgwL3JlYWxtcy9teXJlYWxtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImY0ZmY0NGJhLWU2YmYtNDRjNy04ZWQ4LWI3OTY0NmMzMWUwNSIsInR5cCI6IkJlYXJlciIsImF6cCI6Im15Y2xpZW50IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLW15cmVhbG0iLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibXljbGllbnQiOnsicm9sZXMiOlsidW1hX3Byb3RlY3Rpb24iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicmVzb3VyY2U6dXBkYXRlIHByb2ZpbGUgZW1haWwgcmVzb3VyY2U6dmlldyIsImNsaWVudEhvc3QiOiIxMC4xNjIuMC4zMiIsImNsaWVudElkIjoibXljbGllbnQiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6InNlcnZpY2UtYWNjb3VudC1teWNsaWVudCIsImNsaWVudEFkZHJlc3MiOiIxMC4xNjIuMC4zMiJ9.BWkIUMILd3w9biz-CXF-KW7975RAgwzwpgQoAKptTpd9ak_sV1gXaF1UFp5dV-5eO34es2PDXdQ2ry6d-1eCVri9yBzTFeIDuoAIPbXz0a6N8lMtV5iAELk5_81GEXQ1VklR2D4moLD3GfWQAjruMQBmzNXifbBDjQo5_fgIOLw0fL5CwAeh8fPB39XQR3oZ4SzriE54UaYKbAJBiILpEfajFKSBGPkCY74Nwi0uVcaHbR0HQF0WuruUAdJIQF7hNcopXz8H95K7T-Wss_t5YayTZwXTlbCH3AqP6lq3aUQ2taI6PPkFelusCOyAK5qgmtgaV-tmgFSAiBcL2bF4-A
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 403 Access Forbidden
+< Connection: close
+< Content-Length: 29
+< Content-Type: text/html
+< Cache-Control: no-cache,no-store
+< Pragma: no-cache
+< Set-Cookie: NSC_TMAA=727ad324687e1614b366a4e0eccf258f;Path=/;
+< Set-Cookie: NSC_TMAS=a7358754ef136d0b3fc7677e0bea30c8;Secure;Path=/;
+<
+* Closing connection 0
+Error: Not a privileged User.
+```
+
+Notice that now we got a different error 403 Access Forbidden - Not a privileged User. If we check above, we requested for an access token with resource:view and resource:update scopes while POST requires resource:create scope based on our authorization policy. This is where our authorization policy kicked in and denied access.
+
 ---
 
-Network and security teams can view my configuration from the Citrix ADC including:
+## Network and security teams can view my configuration from the Citrix ADC VPX including:
 
 - Citrix WAF Policies 
   ![](assets/waf_basic_policy.png)
@@ -493,9 +672,72 @@ Network and security teams can view my configuration from the Citrix ADC includi
 - Citrix WAF Policy Binding Details
   ![](assets/waf_basic_policy_binding_details.png)
 
+## Also they can access all policies defined on CPX using CLI
+
+```shell
+$ kubectl -it exec cpx-ingress-65fb478bb5-thxth -n demoapp bash
+$ root@cpx-ingress-65fb478bb5-thxth:/# cli_script.sh "sh lb vserver k8s-pet-service_7030_lbv_cfzb2mubztudgxlsbsvhnoqrfl3vccul"
+
+exec: sh lb vserver k8s-pet-service_7030_lbv_cfzb2mubztudgxlsbsvhnoqrfl3vccul
+	k8s-pet-service_7030_lbv_cfzb2mubztudgxlsbsvhnoqrfl3vccul (0.0.0.0:0) - HTTP	Type: ADDRESS
+	State: UP
+	Last state change was at Wed Jun  8 09:36:03 2022
+	Time since last state change: 3 days, 12:44:58.580
+	Effective State: UP  ARP:DISABLED
+	Client Idle Timeout: 180 sec
+	Down state flush: ENABLED
+	Disable Primary Vserver On Down : DISABLED
+	Comment: "rv:571579,ing:cpx-ingress,ingport:80,ns:demoapp,svc:pet-service,svcport:7030"
+	Appflow logging: ENABLED
+	Port Rewrite : DISABLED
+	No. of Bound Services :  1 (Total) 	 1 (Active)
+	Configured Method: LEASTCONNECTION	BackupMethod: ROUNDROBIN
+	Mode: IP
+	Persistence: NONE
+	Vserver IP and Port insertion: OFF
+	401 Based Authentication: ON	Authn Vserver: k8s-pet-service_7030_lbv_cfzb2mubztudgxlsbsvhnoqrfl3vccul_authvsrvr
+	Push: DISABLED	Push VServer:
+	Push Multi Clients: NO
+	Push Label Rule: none
+	L2Conn: OFF
+	Skip Persistency: None
+	Listen Policy: NONE
+	IcmpResponse: PASSIVE
+	RHIstate: PASSIVE
+	New Service Startup Request Rate: 0 PER_SECOND, Increment Interval: 0
+	Mac mode Retain Vlan: DISABLED
+	DBS_LB: DISABLED
+	Process Local: DISABLED
+	Traffic Domain: 0
+	TROFS Persistence honored: ENABLED
+	Retain Connections on Cluster: NO
+Bound Service Groups:
+1)	Group Name: k8s-pet-service_7030_sgp_cfzb2mubztudgxlsbsvhnoqrfl3vccul
+		1) k8s-pet-service_7030_sgp_cfzb2mubztudgxlsbsvhnoqrfl3vccul (10.0.0.14: 80) - HTTP State: UP	Weight: 1
+4)	Authorization Policy Name: k8s_crd_authpolicy_authexample_authzpolicy_1_demoapp	Type: Advanced	Priority: 100001250
+	GotoPriority Expression: END
+
+5)	Authorization Policy Name: k8s_crd_authpolicy_authexample_authzpolicy_2_demoapp	Type: Advanced	Priority: 100001260
+	GotoPriority Expression: END
+
+6)	Authorization Policy Name: k8s_crd_authpolicy_authexample_authzpolicy_3_demoapp	Type: Advanced	Priority: 100001270
+	GotoPriority Expression: END
+
+7)	Rewrite Policy Name: k8s_crd_rewritepolicy_rwpolicy_httpxforwardedforaddition_0_demoapp	Priority: 100300012
+	GotoPriority Expression: END
+	Flowtype: REQUEST
+8)	Rewrite Policy Name: k8s_crd_rewritepolicy_rwpolicy_httpxforwardedforaddition_1_demoapp	Priority: 100300016
+	GotoPriority Expression: END
+	Flowtype: REQUEST
+9)	Responder Policy Name: k8s_crd_ratelimit_demoapp_ratelimit	Priority: 100200030
+	GotoPriority Expression: END
+	Flowtype: REQUEST
+Done
+  ```
 
 
-To see more configuration options, review the [waf crd examples](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/crds/waf/) documentation. 
+
+To see more configuration options, review the Citrix [Auth](https://docs.citrix.com/en-us/citrix-k8s-ingress-controller/crds/auth.html), [Rate limit](https://docs.citrix.com/en-us/citrix-k8s-ingress-controller/crds/rate-limit.html), [Rewrite and Responder](https://docs.citrix.com/en-us/citrix-k8s-ingress-controller/crds/rewrite-responder.html), [WAF](https://docs.citrix.com/en-us/citrix-k8s-ingress-controller/crds/waf.html) and [Bot](https://docs.citrix.com/en-us/citrix-k8s-ingress-controller/crds/bot.html) CRDs documentation. 
 
 
 

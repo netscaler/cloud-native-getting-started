@@ -8,7 +8,7 @@ spec:
   selector_keys:
    basic:
     path: 
-    - /ratelimit
+    - /ratelimit.aspx
     per_client_ip: true
   req_threshold: 7
   timeslice: 79000
