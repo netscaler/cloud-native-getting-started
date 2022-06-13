@@ -1,0 +1,52 @@
+apiVersion: citrix.com/v1beta1
+kind: authpolicy
+metadata:
+  name: authexample
+spec:
+    servicenames:
+    - pet-service
+
+    authentication_providers:
+      - name: "jwt-auth-provider"
+        oauth:
+          issuer: "http://35.203.18.96:8080/realms/myrealm"
+          jwks_uri: "http://35.203.18.96:8080/realms/myrealm/protocol/openid-connect/certs"
+          claims_to_save : ["scope"]
+
+    authentication_policies:
+        - resource:
+            path:
+              - '/pet.aspx'
+            method: [GET, POST]
+          provider: ["jwt-auth-provider"]
+
+        # skip authentication for this
+        - resource:
+            path:
+              - '/pet-unauth.aspx'
+              - '/ratelimit.aspx'
+            method: [GET]
+          provider: []
+
+    authorization_policies:
+        # skip authorization, no claims required
+        - resource:
+            path:
+              - '/pet-unauth.aspx'
+              - '/ratelimit.aspx'
+            method: [GET]
+            claims: []
+        - resource:
+            path:
+              - '/pet.aspx'
+            method: [GET]
+            claims:
+            - name: "scope"
+              values: ["resource:view"]
+        - resource:
+            path:
+              - '/pet.aspx'
+            method: [POST]
+            claims:
+            - name: "scope"
+              values: ["resource:create"]
