@@ -1,4 +1,4 @@
-## Citrix ADC with Google Anthos: API Gateway with ACM Lab
+## Citrix ADC with Google Anthos: Dual-tier API Gateway with ACM Lab
 This use case focuses on deploying a Tier-1 Citrix ADC (VPX) in front of a Google Anthos GKE cluster within GCP. It leverages Google Anthos Configuration Management for consistent deployment of Citrix components into the Anthos GKE cluster. We will deploy a Tier-2 Citrix ADC (CPX) using ACM within a Kubernetes namespace that will act as a Tier-2 ingress for the microservices deployed in that namespace and make use of ACM for consistent Tier-2 API Gateway policy configurations. Additionally, we will deploy Keycloak, one of the most popular opensource Identity and Access Management solutions, in a dedicated Kubernetes namespace and use it as our Identity Provider and Authorization (OAuth 2.0) server. 
 
 VPX will act as a Tier-1 Enterprise API Gateway where WAF policies will be enabled.

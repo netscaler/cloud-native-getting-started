@@ -11,7 +11,7 @@ As a platform engineer, I am responsible for building and managing the life cycl
 ## The Why
 Deploying Citrix on Google Anthos Platform allows me, the platform engineer, to get secure and detailed insight into my platform's application network and related performance. It also allows me to enable developers to take control of the deployments to set specific network and security configurations using simple annotations or custom resources kubernetes manifests and namespaces. 
 
-In this example, the cluster leverages Anthos Config Management with Policy Controller installed to **enforce** a simple policy which requires that *at least one WAF object exists* in a namespace *before an Ingress can be created*. This is a simple example that shows how teams can consider how to protect the application before public access is exposed.  
+In this example, the cluster leverages Anthos Config Management for consistent deployment and configuration of a dual-tier topology for our API Gateway. This is a simple example that shows how teams can consider how to protect their API both in Tier-1 by applying WAF policies but also in namespace level by introducing an ADC CPX to act as an API Gateway for specific set of APIs.  
 
 **Important**
 Please note that ADC VPX security features require ADC to be licensed. After ADC VPX is in place, please make sure to follow the steps required to apply your license in one of the various ways that are supported. For simplicity, for this demonstration we are [Using a standalone Citrix ADC VPX license](lab-automation/Licensing.md). For production deployment scenarios you are encouraged to apply different licensing schemes.
@@ -22,131 +22,62 @@ Please note that ADC VPX security features require ADC to be licensed. After ADC
 
 As a platform engineer, I own the Git repository that maintains the configuration for the Anthos GKE clusters with Google Anthos Configuration Management. As a result of using this solution, I am responsible for ensuring that the necessary Citrix manifests are present in the git repository and are configured in accordance with my Security and Network teams requirements. 
 
-In this demonstration, there are three primary Citrix components that I am responsible for ensuring operate correctly: 
+In this demonstration, there are the following primary Citrix components that I am responsible for ensuring operate correctly: 
 - Citrix Ingress Controller (CIC) which automatically configures Citrix ADC based on the Ingress resource configuration
 - Citrix Node Controller (CNC) which creates network between the Kubernetes cluster and Citrix ADC controller
-- Citrix WAF Custom Resource Definition which allows developers to create WAF configurations 
+- Citrix ADC CPX which acts as the API Gateway for the APIs in a specific namespace (demoapp)
+- Citrix Custom Resource Definitions which allows developers to create WAF and API Gateway configurations
 
-The two components will ensure that my Anthos GKE cluster is integrated with the appropriate upstream Citrix VPX. These components are comprised of a few Kubernetes manifests that must reside in the Git repo in order for Anthos Configuration Management to deploy them.
+The first two components will ensure that my Anthos GKE cluster is integrated with the appropriate upstream Citrix VPX. All components are comprised of a few Kubernetes manifests that must reside in the Git repo in order for Anthos Configuration Management to deploy and apply the appropriate configurations.
 
 In this demonstration environment, a dedicated GitHub repo is created for ACM, and the following content is automatically placed into that repository within an `acm` folder. A dedicated namespace called `ctx-ingress` is created to hold the core Citrix deployments, while other system level manifests are located in the `cluster` directory of the ACM repository. 
 - Deployments
   - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/ctx-ingress/cic-deployment.yaml
   - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/ctx-ingress/cnc-deployment.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/demoapp/cpx-deployment.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/keycloak/keycloak-deployment.yaml
+- Stateful Sets
+  - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/keycloak/postgres-statefulset.yml
 - Config Maps
   - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/ctx-ingress/cnc-configmap.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/keycloak/keycloak-configmap.yaml
 - Service Accounts
   - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/ctx-ingress/cnc-service-account.yaml
-  - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/ctx-ingress/cpx-ingress-serviceaccount.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/ctx-ingress/cic-ingress-serviceaccount.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/demoapp/cpx-service-account.yaml
 - Roles
   - https://github.com/<github_owner>/<github_reponame>/acm/cluster/cnc-clusterrole.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/cic-clusterrole.yaml
   - https://github.com/<github_owner>/<github_reponame>/acm/cluster/cpx-clusterrole.yaml
 - Rolebindings
   - https://github.com/<github_owner>/<github_reponame>/acm/cluster/cnc-clusterrolebinding.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/cic-clusterrolebinding.yaml
   - https://github.com/<github_owner>/<github_reponame>/acm/cluster/cpx-clusterrolebinding.yaml
 - Custom Resource Definitions
-  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/waf-crd.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/crd-auth.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/crd-bot.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/crd-ratelimit.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/crd-rewrite-responder.yaml
+  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/crd-waf.yaml
+- Storage Class
+  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/storageclass.yaml
 
-In addition to the Citrix components above, it is my job to ensure that policies are enforced within the cluster. In this example: 
-- Policy Controller is installed (into gatekeeper-system namespace) with Anthos Config Management by following terraform code block on the google_gke_hub_feature_membership.feature_member resource
-  ```
-      policy_controller {
-      enabled                    = true
-      template_library_installed = true
-      referential_rules_enabled  = true
-    }
-  ```
-- A policy controller **config** resource that allows the constraint template to reference **WAF** objects in the cluster
-  - https://github.com/<github_owner>/<github_reponame>/acm/namespaces/gatekeeper-system/constraint-config.yaml
-  ```
-  apiVersion: config.gatekeeper.sh/v1alpha1
-  kind: Config
-  metadata:
-    name: config
-    namespace: gatekeeper-system
-  spec:
-    sync:
-      syncOnly:
-        - group: "citrix.com"
-          version: "v1"
-          kind: "waf"
-  ```
-
-- A custom **constraint template** that checks whether a WAF object exists in a namespace
-  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/constraint-template-ingress-must-use-waf.yaml 
-  ```
-  apiVersion: templates.gatekeeper.sh/v1beta1
-  kind: ConstraintTemplate
-  metadata:
-    name: ingressmustusewaf
-  spec:
-    crd:
-      spec:
-        names:
-          kind: IngressMustUseWaf
-    targets:
-      - target: admission.k8s.gatekeeper.sh
-        rego: |
-          package ingressmustusewaf
-          ns := input.review.object.metadata.namespace
-
-
-          violation[{"msg": msg}] { 
-            existing_waf := {e | e := data.inventory.namespace[ns]["citrix.com/v1"]["waf"][_]}
-            count(existing_waf) == 0
-            msg := sprintf("Ingress in namespace %v is missing at least one WAF resource.", [ns])
-          }
-  ```
-  
-- A **constraint** that applies the constraint template to **Ingress** objects
-  - https://github.com/<github_owner>/<github_reponame>/acm/cluster/constraint-ingress-must-have-waf.yaml
-  ```
-  apiVersion: constraints.gatekeeper.sh/v1beta1
-  kind: IngressMustUseWaf
-  metadata:
-    name: ingressmustusewaf-constraint
-  spec:
-    match:
-      kinds:
-        - apiGroups: ["extensions", "networking.k8s.io"]
-          kinds: ["Ingress"]
-  ```
+In addition to the Citrix components above, it is my job to ensure that Keycloak will be also installed in the appropriate namespace so that Developers can use it as Identity Provider and Authorization server with the API Gateway. Realm configuration is also saved in the Git such as Clients, Roles, Groups, Authentication and Authorization configuration are stored as code. As such, by using Google ACM Keycloak realm configuration will also be synced automatically in GKE.
 
 
 ### Deployment Validation
 With the above manifests being synced to the Anthos GKE cluster; 
 
-- Validate that Anthos Configuration Management pods are running
+- Google Anthos Config Management Validation
   ```shell
   $ kubectl get pods -n config-management-system
-  NAME                                            READY   STATUS    RESTARTS   AGE
-  config-management-operator-75bcc8dcc9-ltqpm     1/1     Running   6          12h
-  reconciler-manager-6f64d4f564-xgj94             2/2     Running   0          12h
-  root-reconciler-7cffb785fc-dlc7p                4/4     Running   0          12h
+  NAME                                          READY   STATUS    RESTARTS   AGE
+  config-management-operator-75bcc8dcc9-hfmr2   1/1     Running   5          18m
+  reconciler-manager-6f64d4f564-k9v7b           2/2     Running   0          12m
+  root-reconciler-9fb555d8-vx5f2                4/4     Running   0          12m
+  ```
 
-  $ kubectl get pods -n gatekeeper-system
-  NAME                                            READY   STATUS    RESTARTS   AGE
-  gatekeeper-audit-5d4d474f95-g5zqd               1/1     Running   0          12h
-  gatekeeper-controller-manager-76d777ddb8-zc758  1/1     Running   0          12h
-  
-- Validate that the following CRDs exist
-  ```
-  $ kubectl get crd 
-  NAME                                                                CREATED AT
-  configs.config.gatekeeper.sh                                        2022-02-02T01:31:23Z
-  constrainttemplates.templates.gatekeeper.sh                         2022-02-02T01:31:24Z
-  ingressmustusewaf.constraints.gatekeeper.sh                         2022-02-02T01:46:49Z
-  wafs.citrix.com                                                     2022-02-02T01:46:50Z
-  ```
-- Validate that our constraint is in place
-  ```
-  $ kubectl get constraints
-  NAME                                                                       AGE
-  ingressmustusewaf.constraints.gatekeeper.sh/ingressmustusewaf-constraint   29m
-  ```
-  You can also validate the Anthos Configuration Management status from the Google Cloud Console.   
-![](assets/anthos-02.png)
-- Validate that the Citrix Ingress and Node Controller pods are running
+- Citrix Ingress Controller and Node Controller Validation
   ```shell
   $ kubectl get pods -n ctx-ingress
   NAME                                                              READY   STATUS    RESTARTS   AGE
@@ -154,7 +85,37 @@ With the above manifests being synced to the Anthos GKE cluster;
   citrix-node-controller-579dfc466f-g5v27                           1/1     Running   0          37m
   kube-cnc-router-gke-ctx-lab-cluster-ctx-lab-nodes-6f50cacc-8p7n   1/1     Running   0          37m
   ```
-
+- CPX Validation
+  ```shell
+  $ kubectl get pods -n demoapp
+  NAME                           READY   STATUS    RESTARTS   AGE
+  cpx-ingress-65fb478bb5-thxth   2/2     Running   0          110s
+  ```
+- Keycloak Validation
+  ```shell
+  $ kubectl get pods -n keycloak
+  NAME                        READY   STATUS    RESTARTS   AGE
+  keycloak-654745c7dd-w7x9z   1/1     Running   0          5m40s
+  postgres-0                  1/1     Running   0          5m40s
+  ```
+- Keycloak External IP
+  ```shell
+  $ kubectl get svc keycloak -n keycloak
+  NAME       TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)          AGE
+  keycloak   LoadBalancer   10.3.248.62   35.203.18.96   8080:30564/TCP   7m57s
+  ```
+  
+- Validate that the following CRDs exist
+  ```
+  $ kubectl get crds | grep citrix 
+  authpolicies.citrix.com                                             2022-06-07T17:11:35Z
+  bots.citrix.com                                                     2022-06-07T17:11:36Z
+  ratelimits.citrix.com                                               2022-06-07T17:11:36Z
+  rewritepolicies.citrix.com                                          2022-06-07T17:11:36Z
+  wafs.citrix.com                                                     2022-06-07T17:11:34Z
+  ```
+- You can also validate the Anthos Configuration Management status from the Google Cloud Console.   
+![](assets/anthos-02.png)
 
 
 ## Summary
@@ -166,4 +127,4 @@ As a platform engineer my primary purpose is to apply software engineering princ
 * Security teams have insight into all aspects of the platform and specifically network traffic passing in and out of the platform 
 * Clusters enforce policy set out by the Network and Security teams
 
-A key aspect of my job function is to ensure a secure, reliable and scalable network solution that allows other teams to effectively execute their tasks. Using Citrix ADC, Citrix Ingress Controller, and WAF in a Google Anthos platform with Config Management and Policy Controller allows my team to achieve this goal.
+A key aspect of my job function is to ensure a secure, reliable and scalable network solution that allows other teams to effectively execute their tasks. Using Citrix ADCs, Citrix Ingress Controller, and Citrix CRDs in a Google Anthos platform with Config Management allows my team to achieve this goal.

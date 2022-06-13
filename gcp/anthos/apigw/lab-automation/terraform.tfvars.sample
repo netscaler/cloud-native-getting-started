@@ -18,7 +18,7 @@ github_reponame = "ctx-acm-apigateway"
 github_email    = "konkaltsas@icloud.com"
 gke_hub_sa_name = "ctx-lab-hub"
 
-# Demo App Details (Applied only if enabled in github.tf)
+# Demo App Details 
 demo_app_url_1 = "pet-service.echoserver.com"
 demo_app_url_2 = "user-service.echoserver.com"
 demo_app_url_3 = "play-service.echoserver.com"

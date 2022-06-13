@@ -22,6 +22,8 @@ My platform and security teams have requested that I protect my application usin
 **NOTE**
 In this demonstration, the kubectl binary and local files are used to deploy the application and configure all API Gateway policies. In production scenarios, other deployment methods would likely be in place, such as a GitOps approach as provided from Google Anthos Configuration Management. In that case all these configurations would be stored in Git and automatically synced in GKE. 
 
+For the purpose of this demonstration zsh has been used. Please skip commands (noglob, etc.) not relevant to your bash. Also jq has been used for properly format of responses. Please skip also this or install on your system.
+
 **Important**
 Please note that ADC VPX security features require ADC to be licensed. After ADC VPX is in place, please make sure to follow the steps required to apply your license in one of the various ways that are supported. For simplicity, for this demonstration we are [Using a standalone Citrix ADC VPX license](lab-automation/Licensing.md). For production deployment scenarios you are encouraged to apply different licensing schemes.
 - [Licensing overview](https://docs.citrix.com/en-us/citrix-adc/current-release/licensing.html)
@@ -481,11 +483,11 @@ First I will deploy the echoserver sample application manifests. As a second ste
     ```
 ## Add Authentication and Authorization to our API by applying an Authentication Policy on ADC CPX API Gateway
 
-On this last scenario we will leverage Keycloak as our OpenIDConnect Provider and OAuth 2.0 server. We created a realm: myrealm and a client: myclient. 
+On this last scenario we will leverage Keycloak as our OpenIDConnect Provider and OAuth 2.0 server. We created a realm: myrealm and a client: myclient and we have assigned 3 client optional scopes to myclient: resource:view, resource:create and resource:update. After following all the steps described in this lab acm should have deployed keycloak in keycloak namespace. Visit Keycloak admin console and create a new real *myrealm* and import *realm-export-myrealm.json* that can be found under *demoapp/keycloak/realm-export-myrealm.json*. All the authN / authZ presented from now on will be in place for you. 
 
-For simplicity we will follow the client_credential OAuth 2.0 flow. We have assigned 3 client optional scopes to myclient: resource:view, resource:create and resource:update. As the name indicates, we will use these scopes to allow access to our client to sent GET, POST and PUT requests to the /pet.aspx resource. 
+For simplicity we will follow the client_credential OAuth 2.0 flow. As the names of scopes indicate, we will use these scopes to allow access to our client to sent GET, POST and PUT requests to the /pet.aspx resource. 
 
-Our API Gateway CPX is responsible to see whether the access Bearer token presented with each request in the Authorization Header contains the required scope to allow access to resource or return an HTTP Error 401 Unauthorized Access. We also configured our policy to skip both authentication an authorization for a specific resource: /pet-unauth.aspx.
+Our API Gateway CPX is responsible to check whether the Bearer access token presented in the Authorization Header contains the required scope to allow access to resource or return an HTTP Error 401 Unauthorized Access. We also configured our policy to skip both authentication an authorization for a specific resource: /pet-unauth.aspx.
 
 - Let's first see and apply our policy.
 ```shell
@@ -743,9 +745,9 @@ To see more configuration options, review the Citrix [Auth](https://docs.citrix.
 
 ## Summary  
 
-As a developer, my primary concern is to quickly and securely release my cloud-native application with the pace of my development team and without delays from external teams. Using the Citrix Ingress Controller  and WAF CRDs in a Google Anthos platform allows my team to achieve this goal. 
+As a developer, my primary concern is to quickly and securely release my cloud-native application with the pace of my development team and without delays from external teams. Using the Citrix Ingress Controller, WAF CRDs, ADC CPX and API Gateway policies, in a Google Anthos platform allows my team to achieve this goal. 
 - Network, Security, and Platform teams can configure sensible defaults and constraints automatically without needing my involvement
-- Configurable items specific to my application, **including WAF security**, are delegated to my team in a self-service manner
+- Configurable items specific to my application, **including WAF security, Authentication, Authorization, API Hardening, Rate limiting and more**, are delegated to my team in a self-service manner
 - Visibility of my workloads are present in the northbound network infrastructure to provide better monitoring and alerting across teams
 - I can collaborate in network and security troubleshooting with my network engineers with a shared context and understanding of my workloads
 
