@@ -1,28 +1,28 @@
 resource "google_compute_network" "vip_network" {
-  name                    = "broadcom-vip-network"
+  name                    = "bcom-vip-network"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "vip_subnet" {
-  name          = "broadcom-vip-subnetwork"
+  name          = "bcom-vip-subnetwork"
   ip_cidr_range = var.vpx_vip_cidr_range
   region        = var.region
   network       = google_compute_network.vip_network.id
 }
 
 resource "google_compute_address" "vpx_vip_ip" {
-  name = "broadcom-vpx-vip-address"
+  name = "bcom-vpx-vip-address"
   region = var.region
 }
 
 resource "google_compute_address" "vpx_mgmt_ip" {
-  name = "broadcom-vpx-mgmt-address"
+  name = "bcom-vpx-mgmt-address"
   region = var.region
 }
 
 resource "google_compute_firewall" "nsip_firewall" {
 
-  name          = "broadcom-nsip-firewall"
+  name          = "bcom-nsip-firewall"
   network       = "default"
   direction     = "INGRESS"
   source_ranges = ["0.0.0.0/0"]
@@ -38,7 +38,7 @@ resource "google_compute_firewall" "nsip_firewall" {
 
 resource "google_compute_firewall" "ssh_nsip_firewall" {
 
-  name          = "broadcom-nsip-ssh-firewall"
+  name          = "bcom-nsip-ssh-firewall"
   network       = "default"
   direction     = "INGRESS"
   source_ranges = ["2.85.35.190/32"]
@@ -57,7 +57,7 @@ resource "google_compute_firewall" "vip_firewall" {
     google_compute_subnetwork.vip_subnet
   ]
 
-  name          = "broadcom-vip-firewall"
+  name          = "bcom-vip-firewall"
   network       = google_compute_network.vip_network.name
   direction     = "INGRESS"
   source_ranges = ["0.0.0.0/0"]
@@ -80,10 +80,10 @@ resource "google_compute_instance_template" "vpx" {
     google_compute_image.vpx_image
   ]
 
-  name        = "broadcom-vpx"
+  name        = "bcom-vpx"
   description = "Deploy a single instance of Citrix VPX"
 
-  instance_description = "broadcom-vpx"
+  instance_description = "bcom-vpx"
   machine_type         = "e2-medium"
   can_ip_forward       = true
   tags                 = ["http-server", "https-server"]
@@ -122,7 +122,7 @@ resource "google_compute_instance_template" "vpx" {
 }
 
 resource "google_compute_image" "vpx_image" {
-  name   = "broadcom-vpx"
+  name   = "bcom-vpx"
   family = "citrix"
 
   raw_disk {
@@ -135,7 +135,7 @@ resource "google_compute_image" "vpx_image" {
 }
 
 resource "google_compute_instance_from_template" "vpx-01" {
-  name = "broadcom-vpx"
+  name = "bcom-vpx"
   zone = var.zone
 
   source_instance_template = google_compute_instance_template.vpx.id

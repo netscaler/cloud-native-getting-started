@@ -1,6 +1,6 @@
 # GCP Project and GKE Configuration Details
 project    = "pm-gcp-anthos"
-basename   = "ctx-lab-broadcom"
+basename   = "ctx-lab-bcom"
 zone       = "northamerica-northeast1-a" # Specify a specific zone for zonal clusters
 region     = "northamerica-northeast1"
 node_type  = "n1-standard-2"

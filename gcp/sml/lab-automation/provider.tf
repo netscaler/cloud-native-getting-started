@@ -22,13 +22,13 @@ provider "github" {
 
 provider "google" {
   project     = var.project
-  credentials = "creds/ctx-broadcom.json"
+  credentials = "creds/ctx-bcom.json"
   region = var.region
 }
 
 provider "google-beta" {
   project     = var.project
-  credentials = "creds/ctx-broadcom.json"
+  credentials = "creds/ctx-bcom.json"
   region = var.region
 }
 

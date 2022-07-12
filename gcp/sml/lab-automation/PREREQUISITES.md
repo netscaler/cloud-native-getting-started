@@ -43,9 +43,9 @@ gcloud services enable \
 mkdir creds
 
 # Create a service account, download the credential file, and provide OWNER rights to the project
-gcloud iam service-accounts create ctx-broadcom --project $GCP_PROJECT
-gcloud iam service-accounts keys create creds/ctx-broadcom.json --iam-account=ctx-broadcom@$GCP_PROJECT.iam.gserviceaccount.com
-gcloud projects add-iam-policy-binding $GCP_PROJECT --member="serviceAccount:ctx-broadcom@$GCP_PROJECT.iam.gserviceaccount.com" --role='roles/owner'
+gcloud iam service-accounts create ctx-bcom --project $GCP_PROJECT
+gcloud iam service-accounts keys create creds/ctx-bcom.json --iam-account=ctx-bcom@$GCP_PROJECT.iam.gserviceaccount.com
+gcloud projects add-iam-policy-binding $GCP_PROJECT --member="serviceAccount:ctx-bcom@$GCP_PROJECT.iam.gserviceaccount.com" --role='roles/owner'
 
 ```
 
