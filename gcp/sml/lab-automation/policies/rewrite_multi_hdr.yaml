@@ -1,0 +1,55 @@
+apiVersion: citrix.com/v1
+kind: rewritepolicy
+metadata:
+  name: multipolicy
+spec:
+  rewrite-policies:
+    - servicenames:
+        - front-end-headless
+      goto-priority-expression: NEXT
+      rewrite-policy:
+        operation: insert_http_header
+        target: 'Content-Security-Policy'
+        modify-expression: "\"default-src 'self'\""
+        comment: 'insert Content-Security-Policy in header'
+        direction: RESPONSE
+        rewrite-criteria: 'http.req.is_valid'
+    - servicenames:
+        - front-end-headless
+      goto-priority-expression: NEXT
+      rewrite-policy:
+        operation: insert_http_header
+        target: 'Expect-CT'
+        modify-expression: '"max-age=86400, enforce, report-uri=\"https://example.com/report\""'
+        comment: 'insert Expect-CT in header'
+        direction: RESPONSE
+        rewrite-criteria: 'http.req.is_valid'
+    - servicenames:
+        - front-end-headless
+      goto-priority-expression: NEXT
+      rewrite-policy:
+        operation: insert_http_header
+        target: 'Referrer-Policy'
+        modify-expression: '"origin-when-cross-origin"'
+        comment: 'insert Referrer-Policy in header'
+        direction: RESPONSE
+        rewrite-criteria: 'http.req.is_valid'
+    - servicenames:
+        - front-end-headless
+      goto-priority-expression: NEXT
+      rewrite-policy:
+        operation: insert_http_header
+        target: 'Cache-Control'
+        modify-expression: '"no-store"'
+        comment: 'insert Cache-Control in header'
+        direction: RESPONSE
+        rewrite-criteria: 'http.req.is_valid'
+    - servicenames:
+        - front-end-headless
+      rewrite-policy:
+        operation: insert_http_header
+        target: X-Forwarded-For
+        modify-expression: CLIENT.IP.SRC
+        comment: 'HTTP Initial X-Forwarded-For header insertion'
+        direction: RESPONSE
+        rewrite-criteria: 'HTTP.REQ.HEADER("X-Forwarded-For").EXISTS.NOT'
