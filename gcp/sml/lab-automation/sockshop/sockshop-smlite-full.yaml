@@ -1,0 +1,1811 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carts-db
+  labels:
+    name: carts-db
+spec:
+  selector:
+    matchLabels:
+      name: carts-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: carts-db
+    spec:
+      containers:
+      - name: carts-db
+        image: mongo
+        ports:
+        - name: mongo
+          containerPort: 27017
+        securityContext:
+          capabilities:
+            drop:
+            - all
+            add:
+            - CHOWN
+            - SETGID
+            - SETUID
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts-db-headless
+  labels:
+    name: carts-db
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    name: carts-db
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts-db
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    app: sml1-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: carts-db-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "27017"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  defaultBackend:
+    service:
+      name: carts-db-headless
+      port:
+        number: 27017
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carts
+  labels:
+    name: carts
+spec:
+  selector:
+    matchLabels:
+      name: carts
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: carts
+    spec:
+      containers:
+      - name: carts
+        image: weaveworksdemos/carts:0.4.8
+        ports:
+        - containerPort: 80
+        env:
+        - name: ZIPKIN
+          value: zipkin.jaeger.svc.cluster.local
+        - name: JAVA_OPTS
+          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          capabilities:
+            drop:
+            - all
+            add:
+            - NET_BIND_SERVICE
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts-headless
+  labels:
+    name: carts
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    name: carts
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sml1-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: carts-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  rules:
+  - host: carts
+    http:
+      paths:
+      - backend:
+          service:
+            name: carts-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue-db
+  labels:
+    name: catalogue-db
+spec:
+  selector:
+    matchLabels:
+      name: catalogue-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: catalogue-db
+    spec:
+      containers:
+      - name: catalogue-db
+        image: weaveworksdemos/catalogue-db:0.3.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: fake_password
+        - name: MYSQL_DATABASE
+          value: socksdb
+        ports:
+        - name: mysql
+          containerPort: 3306
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogue-db-headless
+  labels:
+    name: catalogue-db
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    name: catalogue-db
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogue-db
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    app: sml1-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: catalogue-db-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "3306"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  defaultBackend:
+    service:
+      name: catalogue-db-headless
+      port:
+        number: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue
+  labels:
+    name: catalogue
+spec:
+  selector:
+    matchLabels:
+      name: catalogue
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: catalogue
+    spec:
+      containers:
+      - name: catalogue
+        image: weaveworksdemos/catalogue:0.3.5
+        ports:
+        - containerPort: 80
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          capabilities:
+            drop:
+            - all
+            add:
+            - NET_BIND_SERVICE
+          readOnlyRootFilesystem: true
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogue-headless
+  labels:
+    name: catalogue
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    name: catalogue
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogue
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sml1-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: catalogue-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  rules:
+  - host: catalogue
+    http:
+      paths:
+      - backend:
+          service:
+            name: catalogue-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-end
+spec:
+  selector:
+    matchLabels:
+      name: front-end
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: front-end
+    spec:
+      containers:
+      - name: front-end
+        image: weaveworksdemos/front-end:0.3.12
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 8079
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          capabilities:
+            drop:
+            - all
+          readOnlyRootFilesystem: true
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-end-headless
+  labels:
+    name: front-end
+spec:
+  ports:
+  - port: 80
+    targetPort: 8079
+  selector:
+    name: front-end
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-end
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sml1-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: front-end-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  rules:
+  - host: front-end
+    http:
+      paths:
+      - backend:
+          service:
+            name: front-end-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: front-end-ns-ingress
+  annotations:
+    ingress.citrix.com/ca-secret: '{"front-end-headless": "sockshop-ca-secret"}'
+    ingress.citrix.com/frontend-sslprofile: '{"clientauth":"enabled"}'
+    ingress.citrix.com/secure-port: "443"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  tls:
+  - secretName: sockshop-secret
+  rules:
+  - host: sockshop.citrix
+    http:
+      paths:
+      - backend:
+          service:
+            name: front-end-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-db
+  labels:
+    name: orders-db
+spec:
+  selector:
+    matchLabels:
+      name: orders-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: orders-db
+    spec:
+      containers:
+      - name: orders-db
+        image: mongo
+        ports:
+        - name: mongo
+          containerPort: 27017
+        securityContext:
+          capabilities:
+            drop:
+            - all
+            add:
+            - CHOWN
+            - SETGID
+            - SETUID
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-db-headless
+  labels:
+    name: orders-db
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    name: orders-db
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-db
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    app: sml2-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orders-db-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "27017"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  defaultBackend:
+    service:
+      name: orders-db-headless
+      port:
+        number: 27017
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders
+  labels:
+    name: orders
+spec:
+  selector:
+    matchLabels:
+      name: orders
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: orders
+    spec:
+      containers:
+      - name: orders
+        image: weaveworksdemos/orders:0.4.7
+        env:
+        - name: ZIPKIN
+          value: zipkin.jaeger.svc.cluster.local
+        - name: JAVA_OPTS
+          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
+        ports:
+        - containerPort: 80
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          capabilities:
+            drop:
+            - all
+            add:
+            - NET_BIND_SERVICE
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-headless
+  labels:
+    name: orders
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    name: orders
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sml2-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orders-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  rules:
+  - host: orders
+    http:
+      paths:
+      - backend:
+          service:
+            name: orders-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    name: payment
+spec:
+  selector:
+    matchLabels:
+      name: payment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: payment
+    spec:
+      containers:
+      - name: payment
+        image: weaveworksdemos/payment:0.4.3
+        ports:
+        - containerPort: 80
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          capabilities:
+            drop:
+            - all
+            add:
+            - NET_BIND_SERVICE
+          readOnlyRootFilesystem: true
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-headless
+  labels:
+    name: payment
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    name: payment
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sml2-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: payment-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  rules:
+  - host: payment
+    http:
+      paths:
+      - backend:
+          service:
+            name: payment-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue-master
+  labels:
+    name: queue-master
+spec:
+  selector:
+    matchLabels:
+      name: queue-master
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: queue-master
+    spec:
+      containers:
+      - name: queue-master
+        image: weaveworksdemos/queue-master:0.3.1
+        ports:
+        - containerPort: 80
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: queue-master-headless
+  labels:
+    name: queue-master
+  annotations:
+    prometheus.io/path: /prometheus
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    name: queue-master
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: queue-master
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sml2-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: queue-master-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  rules:
+  - host: queue-master
+    http:
+      paths:
+      - backend:
+          service:
+            name: queue-master-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  labels:
+    name: rabbitmq
+spec:
+  selector:
+    matchLabels:
+      name: rabbitmq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: rabbitmq
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3.6.8
+        ports:
+        - containerPort: 5672
+        securityContext:
+          capabilities:
+            drop:
+            - all
+            add:
+            - CHOWN
+            - SETGID
+            - SETUID
+            - DAC_OVERRIDE
+          readOnlyRootFilesystem: true
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-headless
+  labels:
+    name: rabbitmq
+spec:
+  ports:
+  - port: 5672
+    targetPort: 5672
+  selector:
+    name: rabbitmq
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+spec:
+  ports:
+  - port: 5672
+    targetPort: 5672
+  selector:
+    app: sml2-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rabbitmq-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "5672"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  defaultBackend:
+    service:
+      name: rabbitmq-headless
+      port:
+        number: 5672
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+  labels:
+    name: shipping
+spec:
+  selector:
+    matchLabels:
+      name: shipping
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: shipping
+    spec:
+      containers:
+      - name: shipping
+        image: weaveworksdemos/shipping:0.4.8
+        env:
+        - name: ZIPKIN
+          value: zipkin.jaeger.svc.cluster.local
+        - name: JAVA_OPTS
+          value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC
+            -Djava.security.egd=file:/dev/urandom
+        ports:
+        - containerPort: 80
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          capabilities:
+            drop:
+            - all
+            add:
+            - NET_BIND_SERVICE
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping-headless
+  labels:
+    name: shipping
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    name: shipping
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sml2-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shipping-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  rules:
+  - host: shipping
+    http:
+      paths:
+      - backend:
+          service:
+            name: shipping-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-db
+  labels:
+    name: user-db
+spec:
+  selector:
+    matchLabels:
+      name: user-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: user-db
+    spec:
+      containers:
+      - name: user-db
+        image: weaveworksdemos/user-db:0.4.0
+        ports:
+        - name: mongo
+          containerPort: 27017
+        securityContext:
+          capabilities:
+            drop:
+            - all
+            add:
+            - CHOWN
+            - SETGID
+            - SETUID
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          medium: Memory
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-db-headless
+  labels:
+    name: user-db
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    name: user-db
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-db
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    app: sml3-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: user-db-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "27017"
+    kubernetes.io/ingress.class: "tier-2-cpx3"
+spec:
+  defaultBackend:
+    service:
+      name: user-db-headless
+      port:
+        number: 27017
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  labels:
+    name: user
+spec:
+  selector:
+    matchLabels:
+      name: user
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: user
+    spec:
+      containers:
+      - name: user
+        image: weaveworksdemos/user:0.4.7
+        ports:
+        - containerPort: 80
+        env:
+        - name: MONGO_HOST
+          value: user-db:27017
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          capabilities:
+            drop:
+            - all
+            add:
+            - NET_BIND_SERVICE
+          readOnlyRootFilesystem: true
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-headless
+  labels:
+    name: user
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    name: user
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: sml3-cpx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: user-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx3"
+spec:
+  rules:
+  - host: user
+    http:
+      paths:
+      - backend:
+          service:
+            name: user-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sml1-cpx
+  namespace: default
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sml1-cpx-cic-configmap
+  namespace: default
+data:
+  LOGLEVEL: info
+  JSONLOG: 'false'
+  NS_PROTOCOL: http
+  NS_PORT: '80'
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sml1-cpx
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - endpoints
+  - pods
+  - secrets
+  - routes
+  - nodes
+  - namespaces
+  - configmaps
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - services/status
+  verbs:
+  - patch
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses/status
+  verbs:
+  - patch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingressclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - citrix.com
+  resources:
+  - rewritepolicies
+  - continuousdeployments
+  - authpolicies
+  - ratelimits
+  - listeners
+  - httproutes
+  - wafs
+  - apigatewaypolicies
+  - bots
+  - corspolicies
+  - appqoepolicies
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - patch
+- apiGroups:
+  - citrix.com
+  resources:
+  - rewritepolicies/status
+  - continuousdeployments/status
+  - authpolicies/status
+  - ratelimits/status
+  - listeners/status
+  - httproutes/status
+  - wafs/status
+  - apigatewaypolicies/status
+  - bots/status
+  - corspolicies/status
+  - appqoepolicies/status
+  verbs:
+  - patch
+- apiGroups:
+  - citrix.com
+  resources:
+  - vips
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - ipamblocks
+  verbs:
+  - get
+  - list
+  - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sml1-cpx
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: sml1-cpx
+subjects:
+- kind: ServiceAccount
+  name: sml1-cpx
+  namespace: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sml1-cpx-service
+  labels:
+    app: cpx-service
+    service-type: sml1-citrix-adc-cpx-svcmon
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: sml1-cpx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sml1-cpx
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sml1-cpx
+  replicas: 1
+  template:
+    metadata:
+      name: sml1-cpx
+      labels:
+        app: sml1-cpx
+        adc: citrix
+    spec:
+      serviceAccountName: sml1-cpx
+      containers:
+      - name: cpx-ingress
+        image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+        imagePullPolicy: IfNotPresent
+        tty: true
+        securityContext:
+          privileged: true
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: KUBERNETES_TASK_ID
+          value: ''
+        - name: LS_PORT
+          value: '27000'
+        - name: MGMT_HTTP_PORT
+          value: '9080'
+        - name: MGMT_HTTPS_PORT
+          value: '9443'
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        - mountPath: /cpx/
+          name: cpx-volume
+      - name: cic
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: NS_IP
+          value: 127.0.0.1
+        - name: NS_APPS_NAME_PREFIX
+          value: k8s
+        - name: NS_DEPLOYMENT_MODE
+          value: SIDECAR
+        - name: NS_ENABLE_MONITORING
+          value: 'YES'
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        args:
+        - --configmap default/sml1-cpx-cic-configmap
+        - --ingress-classes tier-2-cpx1
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        resources: {}
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: tier-2-cpx1
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sml2-cpx-cic-configmap
+  namespace: default
+data:
+  LOGLEVEL: info
+  JSONLOG: 'false'
+  NS_PROTOCOL: http
+  NS_PORT: '80'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sml2-cpx-service
+  labels:
+    app: cpx-service
+    service-type: sml2-citrix-adc-cpx-svcmon
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: sml2-cpx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sml2-cpx
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sml2-cpx
+  replicas: 1
+  template:
+    metadata:
+      name: sml2-cpx
+      labels:
+        app: sml2-cpx
+        adc: citrix
+    spec:
+      serviceAccountName: sml1-cpx
+      containers:
+      - name: cpx-ingress
+        image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+        imagePullPolicy: IfNotPresent
+        tty: true
+        securityContext:
+          privileged: true
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: KUBERNETES_TASK_ID
+          value: ''
+        - name: LS_PORT
+          value: '27000'
+        - name: MGMT_HTTP_PORT
+          value: '9080'
+        - name: MGMT_HTTPS_PORT
+          value: '9443'
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        - mountPath: /cpx/
+          name: cpx-volume
+      - name: cic
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: NS_IP
+          value: 127.0.0.1
+        - name: NS_APPS_NAME_PREFIX
+          value: k8s
+        - name: NS_DEPLOYMENT_MODE
+          value: SIDECAR
+        - name: NS_ENABLE_MONITORING
+          value: 'YES'
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        args:
+        - --configmap default/sml2-cpx-cic-configmap
+        - --ingress-classes tier-2-cpx2
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        resources: {}
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: tier-2-cpx2
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sml3-cpx-cic-configmap
+  namespace: default
+data:
+  LOGLEVEL: info
+  JSONLOG: 'false'
+  NS_PROTOCOL: http
+  NS_PORT: '80'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sml3-cpx-service
+  labels:
+    app: cpx-service
+    service-type: sml3-citrix-adc-cpx-svcmon
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: sml3-cpx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sml3-cpx
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sml3-cpx
+  replicas: 1
+  template:
+    metadata:
+      name: sml3-cpx
+      labels:
+        app: sml3-cpx
+        adc: citrix
+    spec:
+      serviceAccountName: sml1-cpx
+      containers:
+      - name: cpx-ingress
+        image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+        imagePullPolicy: IfNotPresent
+        tty: true
+        securityContext:
+          privileged: true
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: KUBERNETES_TASK_ID
+          value: ''
+        - name: LS_PORT
+          value: '27000'
+        - name: MGMT_HTTP_PORT
+          value: '9080'
+        - name: MGMT_HTTPS_PORT
+          value: '9443'
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        - mountPath: /cpx/
+          name: cpx-volume
+      - name: cic
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: NS_IP
+          value: 127.0.0.1
+        - name: NS_APPS_NAME_PREFIX
+          value: k8s
+        - name: NS_DEPLOYMENT_MODE
+          value: SIDECAR
+        - name: NS_ENABLE_MONITORING
+          value: 'YES'
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        args:
+        - --configmap default/sml3-cpx-cic-configmap
+        - --ingress-classes tier-2-cpx3
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        resources: {}
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: tier-2-cpx3
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sml-cic
+  namespace: default
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sml-cic-configmap
+  namespace: default
+data:
+  LOGLEVEL: info
+  JSONLOG: 'false'
+  NS_PROTOCOL: https
+  NS_PORT: '443'
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sml-cic
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - endpoints
+  - pods
+  - secrets
+  - routes
+  - nodes
+  - namespaces
+  - configmaps
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - services/status
+  verbs:
+  - patch
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses/status
+  verbs:
+  - patch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingressclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - citrix.com
+  resources:
+  - rewritepolicies
+  - continuousdeployments
+  - authpolicies
+  - ratelimits
+  - listeners
+  - httproutes
+  - wafs
+  - apigatewaypolicies
+  - bots
+  - corspolicies
+  - appqoepolicies
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - patch
+- apiGroups:
+  - citrix.com
+  resources:
+  - rewritepolicies/status
+  - continuousdeployments/status
+  - authpolicies/status
+  - ratelimits/status
+  - listeners/status
+  - httproutes/status
+  - wafs/status
+  - apigatewaypolicies/status
+  - bots/status
+  - corspolicies/status
+  - appqoepolicies/status
+  verbs:
+  - patch
+- apiGroups:
+  - citrix.com
+  resources:
+  - vips
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - ipamblocks
+  verbs:
+  - get
+  - list
+  - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sml-cic
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: sml-cic
+subjects:
+- kind: ServiceAccount
+  name: sml-cic
+  namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sml-cic
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sml-cic
+  replicas: 1
+  template:
+    metadata:
+      name: cic
+      labels:
+        app: sml-cic
+    spec:
+      serviceAccountName: sml-cic
+      containers:
+      - name: cic
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+        imagePullPolicy: IfNotPresent
+        args:
+        - --configmap default/sml-cic-configmap
+        - --ingress-classes tier-1-vpx
+        - --feature-node-watch true
+        - --update-ingress-status yes
+        env:
+        - name: NS_IP
+          value: 10.162.15.237
+        - name: NS_VIP
+          value: 192.168.40.2
+        - name: NS_USER
+          valueFrom:
+            secretKeyRef:
+              name: nscred
+              key: username
+        - name: NS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nscred
+              key: password
+        - name: EULA
+          value: 'yes'
+        - name: NS_APPS_NAME_PREFIX
+          value: k8s
+        resources: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: tier-1-vpx
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tier1-vpx-ingress
+  annotations:
+    ingress.citrix.com/insecure-port: "443"
+    ingress.citrix.com/insecure-service-type: tcp
+    kubernetes.io/ingress.class: "tier-1-vpx"
+spec:
+  defaultBackend:
+    service:
+      name: sml1-cpx-service
+      port:
+        number: 443

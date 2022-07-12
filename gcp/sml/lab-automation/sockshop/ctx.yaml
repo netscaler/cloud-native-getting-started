@@ -1,0 +1,718 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sml1-cpx
+  namespace: default
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sml1-cpx-cic-configmap
+  namespace: default
+data:
+  LOGLEVEL: info
+  JSONLOG: 'false'
+  NS_PROTOCOL: http
+  NS_PORT: '80'
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sml1-cpx
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - endpoints
+  - pods
+  - secrets
+  - routes
+  - nodes
+  - namespaces
+  - configmaps
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - services/status
+  verbs:
+  - patch
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses/status
+  verbs:
+  - patch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingressclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - citrix.com
+  resources:
+  - rewritepolicies
+  - continuousdeployments
+  - authpolicies
+  - ratelimits
+  - listeners
+  - httproutes
+  - wafs
+  - apigatewaypolicies
+  - bots
+  - corspolicies
+  - appqoepolicies
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - patch
+- apiGroups:
+  - citrix.com
+  resources:
+  - rewritepolicies/status
+  - continuousdeployments/status
+  - authpolicies/status
+  - ratelimits/status
+  - listeners/status
+  - httproutes/status
+  - wafs/status
+  - apigatewaypolicies/status
+  - bots/status
+  - corspolicies/status
+  - appqoepolicies/status
+  verbs:
+  - patch
+- apiGroups:
+  - citrix.com
+  resources:
+  - vips
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - ipamblocks
+  verbs:
+  - get
+  - list
+  - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sml1-cpx
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: sml1-cpx
+subjects:
+- kind: ServiceAccount
+  name: sml1-cpx
+  namespace: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sml1-cpx-service
+  labels:
+    app: cpx-service
+    service-type: sml1-citrix-adc-cpx-svcmon
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: sml1-cpx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sml1-cpx
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sml1-cpx
+  replicas: 1
+  template:
+    metadata:
+      name: sml1-cpx
+      labels:
+        app: sml1-cpx
+        adc: citrix
+    spec:
+      serviceAccountName: sml1-cpx
+      containers:
+      - name: cpx-ingress
+        image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+        imagePullPolicy: IfNotPresent
+        tty: true
+        securityContext:
+          privileged: true
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: KUBERNETES_TASK_ID
+          value: ''
+        - name: LS_PORT
+          value: '27000'
+        - name: MGMT_HTTP_PORT
+          value: '9080'
+        - name: MGMT_HTTPS_PORT
+          value: '9443'
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        - mountPath: /cpx/
+          name: cpx-volume
+      - name: cic
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: NS_IP
+          value: 127.0.0.1
+        - name: NS_APPS_NAME_PREFIX
+          value: k8s
+        - name: NS_DEPLOYMENT_MODE
+          value: SIDECAR
+        - name: NS_ENABLE_MONITORING
+          value: 'YES'
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        args:
+        - --configmap default/sml1-cpx-cic-configmap
+        - --ingress-classes tier-2-cpx1
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        resources: {}
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: tier-2-cpx1
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sml2-cpx-cic-configmap
+  namespace: default
+data:
+  LOGLEVEL: info
+  JSONLOG: 'false'
+  NS_PROTOCOL: http
+  NS_PORT: '80'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sml2-cpx-service
+  labels:
+    app: cpx-service
+    service-type: sml2-citrix-adc-cpx-svcmon
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: sml2-cpx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sml2-cpx
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sml2-cpx
+  replicas: 1
+  template:
+    metadata:
+      name: sml2-cpx
+      labels:
+        app: sml2-cpx
+        adc: citrix
+    spec:
+      serviceAccountName: sml1-cpx
+      containers:
+      - name: cpx-ingress
+        image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+        imagePullPolicy: IfNotPresent
+        tty: true
+        securityContext:
+          privileged: true
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: KUBERNETES_TASK_ID
+          value: ''
+        - name: LS_PORT
+          value: '27000'
+        - name: MGMT_HTTP_PORT
+          value: '9080'
+        - name: MGMT_HTTPS_PORT
+          value: '9443'
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        - mountPath: /cpx/
+          name: cpx-volume
+      - name: cic
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: NS_IP
+          value: 127.0.0.1
+        - name: NS_APPS_NAME_PREFIX
+          value: k8s
+        - name: NS_DEPLOYMENT_MODE
+          value: SIDECAR
+        - name: NS_ENABLE_MONITORING
+          value: 'YES'
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        args:
+        - --configmap default/sml2-cpx-cic-configmap
+        - --ingress-classes tier-2-cpx2
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        resources: {}
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: tier-2-cpx2
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sml3-cpx-cic-configmap
+  namespace: default
+data:
+  LOGLEVEL: info
+  JSONLOG: 'false'
+  NS_PROTOCOL: http
+  NS_PORT: '80'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sml3-cpx-service
+  labels:
+    app: cpx-service
+    service-type: sml3-citrix-adc-cpx-svcmon
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: sml3-cpx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sml3-cpx
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sml3-cpx
+  replicas: 1
+  template:
+    metadata:
+      name: sml3-cpx
+      labels:
+        app: sml3-cpx
+        adc: citrix
+    spec:
+      serviceAccountName: sml1-cpx
+      containers:
+      - name: cpx-ingress
+        image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+        imagePullPolicy: IfNotPresent
+        tty: true
+        securityContext:
+          privileged: true
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: KUBERNETES_TASK_ID
+          value: ''
+        - name: LS_PORT
+          value: '27000'
+        - name: MGMT_HTTP_PORT
+          value: '9080'
+        - name: MGMT_HTTPS_PORT
+          value: '9443'
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        - mountPath: /cpx/
+          name: cpx-volume
+      - name: cic
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: EULA
+          value: 'yes'
+        - name: NS_IP
+          value: 127.0.0.1
+        - name: NS_APPS_NAME_PREFIX
+          value: k8s
+        - name: NS_DEPLOYMENT_MODE
+          value: SIDECAR
+        - name: NS_ENABLE_MONITORING
+          value: 'YES'
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        args:
+        - --configmap default/sml3-cpx-cic-configmap
+        - --ingress-classes tier-2-cpx3
+        volumeMounts:
+        - mountPath: /var/deviceinfo
+          name: shared-data
+        resources: {}
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: tier-2-cpx3
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sml-cic
+  namespace: default
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sml-cic-configmap
+  namespace: default
+data:
+  LOGLEVEL: info
+  JSONLOG: 'false'
+  NS_PROTOCOL: https
+  NS_PORT: '443'
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sml-cic
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - endpoints
+  - pods
+  - secrets
+  - routes
+  - nodes
+  - namespaces
+  - configmaps
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - services/status
+  verbs:
+  - patch
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses/status
+  verbs:
+  - patch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingressclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - citrix.com
+  resources:
+  - rewritepolicies
+  - continuousdeployments
+  - authpolicies
+  - ratelimits
+  - listeners
+  - httproutes
+  - wafs
+  - apigatewaypolicies
+  - bots
+  - corspolicies
+  - appqoepolicies
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - patch
+- apiGroups:
+  - citrix.com
+  resources:
+  - rewritepolicies/status
+  - continuousdeployments/status
+  - authpolicies/status
+  - ratelimits/status
+  - listeners/status
+  - httproutes/status
+  - wafs/status
+  - apigatewaypolicies/status
+  - bots/status
+  - corspolicies/status
+  - appqoepolicies/status
+  verbs:
+  - patch
+- apiGroups:
+  - citrix.com
+  resources:
+  - vips
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+- apiGroups:
+  - crd.projectcalico.org
+  resources:
+  - ipamblocks
+  verbs:
+  - get
+  - list
+  - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sml-cic
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: sml-cic
+subjects:
+- kind: ServiceAccount
+  name: sml-cic
+  namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sml-cic
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sml-cic
+  replicas: 1
+  template:
+    metadata:
+      name: cic
+      labels:
+        app: sml-cic
+    spec:
+      serviceAccountName: sml-cic
+      containers:
+      - name: cic
+        image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+        imagePullPolicy: IfNotPresent
+        args:
+        - --configmap default/sml-cic-configmap
+        - --ingress-classes tier-1-vpx
+        - --feature-node-watch true
+        - --update-ingress-status yes
+        env:
+        - name: NS_IP
+          value: 10.162.15.237
+        - name: NS_VIP
+          value: 192.168.40.2
+        - name: NS_USER
+          valueFrom:
+            secretKeyRef:
+              name: nscred
+              key: username
+        - name: NS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nscred
+              key: password
+        - name: EULA
+          value: 'yes'
+        - name: NS_APPS_NAME_PREFIX
+          value: k8s
+        resources: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: tier-1-vpx
+spec:
+  controller: citrix.com/ingress-controller

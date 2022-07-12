@@ -1,0 +1,310 @@
+### Carts-db Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: carts-db-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "27017"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  defaultBackend:
+    service:
+      name: carts-db-headless
+      port:
+        number: 27017
+### Carts-db End
+---
+### Carts Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: carts-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  rules:
+  - host: carts
+    http:
+      paths:
+      - backend:
+          service:
+            name: carts-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+### Carts End
+---
+### Catalogue-db Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: catalogue-db-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "3306"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  defaultBackend:
+    service:
+      name: catalogue-db-headless
+      port:
+        number: 3306
+### Catalogue-db End
+---
+### Catalogue Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: catalogue-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  rules:
+  - host: catalogue
+    http:
+      paths:
+      - backend:
+          service:
+            name: catalogue-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+### Catalogue End
+---
+### Front-End HTTP Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: front-end-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  rules:
+  - host: front-end
+    http:
+      paths:
+      - backend:
+          service:
+            name: front-end-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+### Front-End HTTP End
+---
+### Front-End HTTPS Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: front-end-ns-ingress
+  annotations:
+    ingress.citrix.com/ca-secret: '{"front-end-headless": "sockshop-ca-secret"}'
+    ingress.citrix.com/frontend-sslprofile: '{"clientauth":"enabled"}'
+    ingress.citrix.com/secure-port: "443"
+    kubernetes.io/ingress.class: "tier-2-cpx1"
+spec:
+  tls:
+  - secretName: sockshop-secret
+  rules:
+  - host: sockshop.citrix
+    http:
+      paths:
+      - backend:
+          service:
+            name: front-end-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+### Front-End HTTPS End
+---
+### orders-db Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orders-db-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "27017"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  defaultBackend:
+    service:
+      name: orders-db-headless
+      port:
+        number: 27017
+### orders-db End
+---
+### orders Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orders-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  rules:
+  - host: orders
+    http:
+      paths:
+      - backend:
+          service:
+            name: orders-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+### orders End
+---
+### payment Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: payment-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  rules:
+  - host: payment
+    http:
+      paths:
+      - backend:
+          service:
+            name: payment-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+### payment End
+---
+### queue-master Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: queue-master-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  rules:
+  - host: queue-master
+    http:
+      paths:
+      - backend:
+          service:
+            name: queue-master-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+### queue-master End
+---
+### rabbitmq Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rabbitmq-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "5672"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  defaultBackend:
+    service:
+      name: rabbitmq-headless
+      port:
+        number: 5672
+### rabbitmq End
+---
+### shipping Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shipping-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx2"
+spec:
+  rules:
+  - host: shipping
+    http:
+      paths:
+      - backend:
+          service:
+            name: shipping-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+### shipping End
+---
+### user-db Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: user-db-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    ingress.citrix.com/insecure-port: "27017"
+    kubernetes.io/ingress.class: "tier-2-cpx3"
+spec:
+  defaultBackend:
+    service:
+      name: user-db-headless
+      port:
+        number: 27017
+---
+### user Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: user-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    ingress.citrix.com/insecure-port: "80"
+    kubernetes.io/ingress.class: "tier-2-cpx3"
+spec:
+  rules:
+  - host: user
+    http:
+      paths:
+      - backend:
+          service:
+            name: user-headless
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+### user End
+---
+### VPX Start
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tier1-vpx-ingress
+  annotations:
+    ingress.citrix.com/insecure-port: "443"
+    ingress.citrix.com/insecure-service-type: tcp
+    kubernetes.io/ingress.class: "tier-1-vpx"
+spec:
+  defaultBackend:
+    service:
+      name: sml1-cpx-service
+      port:
+        number: 443
+### VPX End

@@ -1,0 +1,93 @@
+## Prerequisites 
+Please review the [PREREQUISITES.md](PREREQUISITES.md) section prior to deploying the environment. It will assist in the creation of a dedicated GCP project to support this Terraform plan.  
+
+## Environment Deployment and Destruction
+
+### Updating Variables
+**Copy** [terraform.tfvars.sample](terraform.tfvars.sample) to `terraform.tfvars` and customize to suit your environment. 
+
+| Variable               | Description                                                                                                                                          |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GCP Variables          | \-----                                                                                                                                               |
+| project                | The Google Project ID to deploy into.                                                                                                                |
+| basename               | The base cluster name as a prefix to the GKE cluster creation.                                                                                       |
+| zone                   | Specify a specific zone to deploy into to keep costs low. Specifying a region instead will create a regional cluster.                                |
+| node\_type             | The node type for each GKE worker node                                                                                                               |
+| max\_node\_count       | The maximum number of nodes to autoscale the GKE cluster to. The pool size has a default minimum of 1 node to keep costs low.                        |
+| VPX Configuration      | \-----                                                                                                                                               |
+| vpx\_image\_path       | The https url to a publicly available VPX image. You may need to create this in your project if this has not already been done.                      |
+| vpx\_cidr\_range       | A dedicated private IP range for the VPX 2nd nic to connect to which contains the VIPs.                                                              |
+| vpx\_new\_password     | Set a password for the VPX. The GKE cluster will also obtain these values so that it can automatically configure the VPX.                            |
+| ACM Repository Details | \-----                                                                                                                                               |
+| github\_owner          | The GitHub Owner name in which to create the repository.                                                                                             |
+| github\_reponame       | The name of the GitHub repository to upload content to and sync the cluster from.                                                                    |
+| github\_email          | The email address of the github account associated with the GITHUB\_TOKEN.                                                                           |
+| gke\_hub\_sa\_name     | The service account name for GKE Connect / GKE Hub connectivity.                                                                                     |
+| Demo App Details       | \-----                                                                                                                                               |
+| demo\_app\_url         | A host name to be used for the demo app. This must either exist in DNS or be configured in your local hosts file for accessing the demo application. |
+
+
+
+### Deployment Timing
+While timing varies on a number of factors, with the [PREREQUISITES.md](PREREQUISITES.md) already completed, the following approximate timing applies: 
+- Infrastructure Creation - 10-15 minutes
+- Infrastructure Destruction - 10-15 minutes
+
+### Deployment Steps
+
+```shell
+terraform init
+terraform plan 
+terraform apply
+```
+![terraform-init](../assets/1-tf-init.gif)
+
+![terraform-plan](../assets/2-tf-plan.gif)
+
+![terraform-plan](../assets/3-tf-apply.gif)
+
+
+### Destroying the environment
+
+```shell
+terraform destroy
+```
+
+## Environment Validation
+Verify the cluster configuration and VPX configuration once the environment has been deployed. 
+- Cluster Login
+  ```shell
+  $ gcloud container clusters get-credentials ctx-lab-cluster --zone northamerica-northeast1-a --project $GCP_PROJECT
+  Fetching cluster endpoint and auth data.
+  kubeconfig entry generated for ctx-lab-cluster.
+  ```
+
+- Google Anthos Config Management Validation
+  ```shell
+  $ kubectl get pods -n config-management-system
+  NAME                                          READY   STATUS    RESTARTS   AGE
+  config-management-operator-75bcc8dcc9-hfmr2   1/1     Running   5          18m
+  reconciler-manager-6f64d4f564-k9v7b           2/2     Running   0          12m
+  root-reconciler-9fb555d8-vx5f2                4/4     Running   0          12m
+  ```
+
+- Citrix Ingress Controller and Node Controller Validation
+  ```shell
+  $ kubectl get pods -n ctx-ingress
+  NAME                                                              READY   STATUS    RESTARTS   AGE
+  cic-k8s-ingress-controller-9f7559c7d-l7tt8                        1/1     Running   0          37m
+  citrix-node-controller-579dfc466f-g5v27                           1/1     Running   0          37m
+  kube-cnc-router-gke-ctx-lab-cluster-ctx-lab-nodes-6f50cacc-8p7n   1/1     Running   0          37m
+  ```
+- Gatekeeper Validation
+  ```shell
+  $ kubectl get pods -n gatekeeper-system
+  NAME                                             READY   STATUS    RESTARTS   AGE
+  gatekeeper-audit-5d4d474f95-f6dz6                1/1     Running   0          15m
+  gatekeeper-controller-manager-76d777ddb8-2sb9r   1/1     Running   0          15m
+  ```
+
+## What's Next
+See one of the following two personas for details on the WAF use case: 
+- [Developer Persona](../PERSONA_DEVELOPER.md)
+- [Platform Persona](../PERSONA_PLATFORM.md)
