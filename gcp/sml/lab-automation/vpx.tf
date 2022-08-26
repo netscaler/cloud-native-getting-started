@@ -96,7 +96,7 @@ resource "google_compute_instance_template" "vpx" {
 
   // Create a new boot disk from an image
   disk {
-    source_image = "${var.project}/vpx"
+    source_image = "bcom-vpx"
     auto_delete  = true
     boot         = true
   }
