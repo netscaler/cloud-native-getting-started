@@ -11,7 +11,7 @@ metadata:
   name: ingress-vpx
   annotations:
    ingress.citrix.com/insecure-termination: "redirect"
-   ingress.citrix.com/frontend-ip: "172.11.0.5"
+   ingress.citrix.com/frontend-ip: "x.x.x.x"
    ingress.citrix.com/secure_backend: '{"frontend-hotdrinks": "True"}'
 spec:
   ingressClassName: vpx
