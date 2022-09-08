@@ -1,4 +1,11 @@
 apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: vpx
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-vpx
