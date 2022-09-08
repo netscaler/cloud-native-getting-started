@@ -202,7 +202,7 @@ Here we will configure Web Application Firewall policies on VPX for hotdrink bee
 1. Deploy WAF CRD
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/Unified-Ingress/manifest/waf-crd.yaml
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/config/crds/waf-crd.yaml
     ```
 
 2. Enable cross-site scripting and SQL injection attacks protection for hotdrink beverage application
