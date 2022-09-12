@@ -106,3 +106,32 @@ spec:
     app: frontend-hotdrinks
 
 ---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: coffee
+spec:
+  ports:
+  - name: http
+    port: 80
+  - name: ssl
+    port: 443
+  selector:
+    app: cpx-ingress-hotdrinks
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: tea
+spec:
+  ports:
+  - name: http
+    port: 80
+  - name: ssl
+    port: 443
+  selector:
+    app: cpx-ingress-hotdrinks
+---

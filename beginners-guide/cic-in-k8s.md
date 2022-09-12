@@ -34,7 +34,7 @@ Change NS_IP environment variable in tier1-cic yaml with Citrix ADC management I
 
 Now deploy CIC in K8s cluster,
 ```
-kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/tier1-cic.yaml
+kubectl create -f tier1-cic.yaml
 kubectl get pods -l app=cic-k8s-ingress-controller
 ```
 ![tier1-cic](images/tier1-cic.png)

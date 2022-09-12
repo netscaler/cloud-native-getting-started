@@ -1,4 +1,4 @@
-# Load balance outside Kubernetes traffic using Citrix ADC CPX proxy exposed on NodePort
+# Expose Citrix ADC CPX proxy on NodePort
 
 In this example, the Citrix ADC CPX (a containerized form-factor) exposed as NodePort service is used to route the Ingress traffic to a `beverage` microservice application.
 A NodePort service is the most primitive way to get external traffic directly to your service. NodePort, as the name implies, opens a specific port on all the Nodes (the VMs), and any traffic that is sent to this port is forwarded to the service.

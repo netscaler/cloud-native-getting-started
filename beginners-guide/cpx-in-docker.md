@@ -10,7 +10,7 @@ This tutorial is for learning Citrix ADC CPX deployment in docker container and 
 1. Install a Citrix ADC CPX on the docker container
 
 ```
-docker run -dt --name cpxproxy --privileged=true -e EULA=yes quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103
+docker run -dt --name cpxproxy --privileged=true -e EULA=yes quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
 ```
 Note: CPX container image is pulled from quay container repository and deployed in docker engine. In end user deployment CPX will need Citrix Ingress Controller as a sidecar to configure CPX. However this guide is limited to show only CPX container overview.
 

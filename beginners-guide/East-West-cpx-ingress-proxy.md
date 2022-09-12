@@ -1,4 +1,4 @@
-# Load balance East-West microservice traffic using Citrix ADC CPX
+# Load balance microservice to microservice (East-West) traffic using Citrix ADC CPX
 
 In this example, Citrix ADC CPX (a containerized form-factor) is used to route the East-West traffic between microservices (`tea-bevarage` and `coffee-bevarage`) of a sample application (`hotdrink-app`). An Ingress rule is deployed to send requests for the microservice to a `frontend-hotdrink` microservice.
 
@@ -20,6 +20,7 @@ Perform the following:
 
 2. Deploy the `hotdrink` application (front-end hotdrink, tea, and coffee microservices) in the Kubernetes cluster and verify the installation.
 
+  Deploy Hotdrink beverage microservices application in team-hotdrink namespace Hotdrink beverage application has tea and coffee microserives having E-W communication enabled. Tea and Coffee beverage apps uses Citrix ADC CPX for E-W communication in ServiceMesh lite deployment. We create two service kinds for each tea and coffee services. One service will point to CPX where the FQDN of the microservice (for example, coffee) should point to the Citrix ADC CPX IP address instead of the Cluster IP of the target microservice (coffee). And another service as headless service to represent tea or coffee service. Detailed Service Mesh lite deployment using headless service is explained [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/deploy/service-mesh-lite.md)
 
         kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/hotdrink-app.yaml
 

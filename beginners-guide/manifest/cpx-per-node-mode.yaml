@@ -76,6 +76,12 @@ rules:
   - apiGroups: ["route.openshift.io"]
     resources: ["routes"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: ["config.openshift.io"]
+    resources: ["networks"]
+    verbs: ["get", "list"]
+  - apiGroups: ["network.openshift.io"]
+    resources: ["hostsubnets"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: ["crd.projectcalico.org"]
     resources: ["ipamblocks"]
     verbs: ["get", "list", "watch"]
@@ -117,6 +123,7 @@ spec:
   selector:
     matchLabels:
       app: cpx-ingress
+  replicas: 1
   template:
     metadata:
       name: cpx-ingress
@@ -127,7 +134,7 @@ spec:
       serviceAccountName: cpx
       containers:
         - name: cpx-ingress
-          image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
+          image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
           tty: true
           securityContext:
              privileged: true
@@ -144,7 +151,7 @@ spec:
               name: cpx-volume
         # Add cic as a sidecar
         - name: cic
-          image: quay.io/citrix/citrix-k8s-ingress-controller:1.18.5
+          image: quay.io/citrix/citrix-k8s-ingress-controller:1.26.7
           volumeMounts:
           - mountPath: /var/deviceinfo
             name: shared-data
@@ -181,8 +188,7 @@ spec:
       - name: shared-data
         emptyDir: {}
       - name: cpx-volume
-        emptyDir: {}
-        
+        emptyDir: {}  
 ---
 #Expose the CPX as a NodePort service
 apiVersion: v1
