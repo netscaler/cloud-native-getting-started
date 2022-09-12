@@ -129,41 +129,56 @@ spec:
     app: frontend-hotdrinks
 
 ---
-
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: hotdrink
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hotdrinks-ingress
   annotations:
-   kubernetes.io/ingress.class: "hotdrink"
    ingress.citrix.com/secure_backend: '{"coffee-beverage": "True"}'
 #   ingress.citrix.com/insecure-termination: "allow"
 #   ingress.citrix.com/lbvserver: '{"frontend-hotdrinks":{"lbmethod":"ROUNDROBIN"},"tea-beverage":{"lbmethod":"LEASTRESPONSETIME"},"coffee-beverage":{"persistencetype":"SOURCEIP"}}'
 spec:
+  ingressClassName: hotdrink
   tls:
   - hosts:
   rules:
   - host:  hotdrink.beverages.com
     http:
       paths:
-      - path: 
+      - path: /
+        pathType: Prefix 
         backend:
-          serviceName: frontend-hotdrinks
-          servicePort: 80
+          service: 
+            name: frontend-hotdrinks
+            port: 
+              number: 80
   - host:  tea
     http:
       paths:
-      - path: 
+      - path: /
+        pathType: Prefix 
         backend:
-          serviceName: tea-beverage # headless tea service
-          servicePort: 80
+          service: 
+            name: tea-beverage # headless tea service
+            port: 
+              number: 80
   - host:  coffee
     http:
       paths:
-      - path: 
+      - path: /
+        pathType: Prefix 
         backend:
-          serviceName: coffee-beverage # headless coffee service
-          servicePort: 443
+          service: 
+            name: coffee-beverage # headless coffee service
+            port: 
+              number: 443
 
 ---
 

@@ -178,11 +178,6 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
 
 2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
-    You can directly pass the user name and password as environment variables to the Citrix ingress controller or use K8s secrets (recommended). If you want to use K8s secrets, create a secret for the user name and password using the following command:
-    ```
-    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n tier-2-adc
-    ```
-    Lets deploy CPX now,
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
     ```

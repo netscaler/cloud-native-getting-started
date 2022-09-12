@@ -41,18 +41,28 @@ spec:
     app: frontend-colddrinks
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: colddrink
+spec:
+  controller: citrix.com/ingress-controller
+---
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: colddrinks-ingress
   annotations:
-   kubernetes.io/ingress.class: "colddrink"
    ingress.citrix.com/secure-service-type: "ssl_tcp"
    ingress.citrix.com/secure_backend: '{"frontend-colddrinks": "True"}'
 spec:
+  ingressClassName: colddrink
   tls:
   - secretName: "colddrink-secret"
-  backend:
-    serviceName: frontend-colddrinks
-    servicePort: 443
+  defaultBackend:
+    service: 
+      name: frontend-colddrinks
+      port: 
+        number: 443
+---
 
