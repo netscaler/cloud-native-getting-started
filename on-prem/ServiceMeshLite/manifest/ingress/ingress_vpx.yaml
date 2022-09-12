@@ -14,6 +14,7 @@ metadata:
    ingress.citrix.com/frontend-ip: "x.x.x.x"
    ingress.citrix.com/secure_backend: '{"lb-service-hotdrinks": "True","lb-service-colddrinks": "True"}'
 spec:
+  ingressClassName: vpx
   tls:
   - secretName: hotdrink-secret
   rules:
