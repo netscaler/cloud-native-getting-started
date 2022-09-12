@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cpx-ingress-hotdrinks
+  labels:
+    name: cpx-ingress-hotdrinks
+    app: cpx-ingress-hotdrinks
 spec:
   selector:
     matchLabels:
@@ -12,14 +15,13 @@ spec:
       name: cpx-ingress-hotdrinks
       labels:
         app: cpx-ingress-hotdrinks
-        app1: exporter
-      annotations:
-        NETSCALER_AS_APP: "True"
+      annotations: null
     spec:
       serviceAccountName: cpx
       containers:
         - name: cpx-ingress-hotdrinks
-          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27"
+          tty: true
           securityContext: 
              privileged: true
           env:
@@ -28,9 +30,14 @@ spec:
           - name: "KUBERNETES_TASK_ID"
             value: ""
           imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+            - mountPath: /cpx/
+              name: cpx-volume
         # Add cic as a sidecar
         - name: cic
-          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.26.7"
           env:
           - name: "EULA"
             value: "yes"
@@ -44,16 +51,6 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: password
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -69,7 +66,15 @@ spec:
               hotdrink
             - --default-ssl-certificate
               $(POD_NAMESPACE)/hotdrink-secret
+          volumeMounts:
+          - mountPath: /var/deviceinfo
+            name: shared-data
           imagePullPolicy: Always
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
 
 ---
 
@@ -94,6 +99,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cpx-ingress-colddrinks
+  labels:
+    name: cpx-ingress-colddrinks
+    app: cpx-ingress-colddrinks
 spec:
   selector:
     matchLabels:
@@ -104,14 +112,13 @@ spec:
       name: cpx-ingress-colddrinks
       labels:
         app: cpx-ingress-colddrinks
-        app1: exporter
-      annotations:
-        NETSCALER_AS_APP: "True"
+      annotations: null
     spec:
       serviceAccountName: cpx
       containers:
         - name: cpx-ingress-colddrinks
-          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27"
+          tty: true
           securityContext: 
              privileged: true
           env:
@@ -120,9 +127,14 @@ spec:
           - name: "KUBERNETES_TASK_ID"
             value: ""
           imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+            - mountPath: /cpx/
+              name: cpx-volume
         # Add cic as a sidecar
         - name: cic
-          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.26.7"
           env:
           - name: "EULA"
             value: "yes"
@@ -136,16 +148,6 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: password
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -159,8 +161,15 @@ spec:
           args:
             - --ingress-classes
               colddrink
+          volumeMounts:
+          - mountPath: /var/deviceinfo
+            name: shared-data
           imagePullPolicy: Always
-
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
 ---
 
 apiVersion: v1
@@ -189,6 +198,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cpx-ingress-guestbook
+  labels:
+    name: cpx-ingress-guestbook
+    app: cpx-ingress-guestbook
 spec:
   selector:
     matchLabels:
@@ -199,14 +211,13 @@ spec:
       name: cpx-ingress-guestbook
       labels:
         app: cpx-ingress-guestbook
-        app1: exporter
-      annotations:
-        NETSCALER_AS_APP: "True"
+      annotations: null
     spec:
       serviceAccountName: cpx
       containers:
         - name: cpx-ingress-guestbook
-          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27"
+          tty: true
           securityContext: 
              privileged: true
           env:
@@ -215,9 +226,14 @@ spec:
           - name: "KUBERNETES_TASK_ID"
             value: ""
           imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
+            - mountPath: /cpx/
+              name: cpx-volume
         # Add cic as a sidecar
         - name: cic
-          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.26.7"
           env:
           - name: "EULA"
             value: "yes"
@@ -231,16 +247,6 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: nslogin
-              key: password
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -254,8 +260,15 @@ spec:
           args:
             - --ingress-classes
               guestbook
+          volumeMounts:
+          - mountPath: /var/deviceinfo
+            name: shared-data
           imagePullPolicy: Always
-
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: cpx-volume
+        emptyDir: {}
 ---
 
 apiVersion: v1

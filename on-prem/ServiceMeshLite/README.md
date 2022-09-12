@@ -71,10 +71,6 @@ We deployed three CPXs to manage each application workload independently. Also w
 
 2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
-    You can directly pass the user name and password as environment variables to the Citrix ingress controller or use K8s secrets (recommended). If you want to use K8s secrets, create a secret for the user name and password using the following command:
-    ```
-    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n tier-2-adc
-    ```
     Lets deploy CPX now,
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
@@ -111,12 +107,18 @@ We deployed three CPXs to manage each application workload independently. Also w
     ```
     ![nodeport-guestbook](images/nodeport-guestbook.PNG)
 
-6.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC
+6.	(Optional) Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration present for K8s related workloads before automating the Tier 1 ADC configuration through Citrix Ingress Controller
     
     Note: If you do not have Tier 1 ADC already present in your setup then you can refer to [Citrix ADC VPX installation on XenCenter](https://github.com/citrix/cloud-native-getting-started/tree/master/VPX) for deploying Citrix ADC VPX as Tier 1 ADC.
     
 
 7.	Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
+    
+    Create K8s secret for VPX login credentials used in CIC yaml file.
+    ```
+    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password'
+    ```
+    Download ingress_vpx and cic_vpx yaml files to update Tier 1 ADC configurations
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/ingress_vpx.yaml
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/nodeport/cic_vpx.yaml
@@ -341,12 +343,18 @@ We deployed three CPXs to manage each application workload independently. Also w
     ```
     ![lb-guestbook](images/lb-guestbook.PNG)
 
-7.	Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration is pushed from Citrix Ingress Controller before automating the Tier 1 ADC
+7.	(Optional) Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration present for K8s related workloads before automating the Tier 1 ADC configuration through Citrix Ingress Controller
 
     Note: If you do not have Tier 1 ADC already present in your setup then you can refer to [Citrix ADC VPX installation on XenCenter](https://github.com/citrix/cloud-native-getting-started/tree/master/VPX) for deploying Citrix ADC VPX as Tier 1 ADC.
 
 
 8.	Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
+    
+    Create K8s secret for VPX login credentials used in CIC yaml file.
+    ```
+    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password'
+    ```
+    Download cic_vpx yaml files to update Tier 1 ADC configurations
     ```
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/LB/cic_vpx.yaml
     ```
