@@ -1,28 +1,28 @@
 resource "google_compute_network" "vip_network" {
-  name                    = "vip-network"
+  name                    = "apigw-vip-network"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "vip_subnet" {
-  name          = "vip-subnetwork"
+  name          = "apigw-vip-subnetwork"
   ip_cidr_range = var.vpx_vip_cidr_range
   region        = var.region
   network       = google_compute_network.vip_network.id
 }
 
 resource "google_compute_address" "vpx_vip_ip" {
-  name = "vpx-vip-address"
+  name = "apigw-vpx-vip-address"
   region = var.region
 }
 
 resource "google_compute_address" "vpx_mgmt_ip" {
-  name = "vpx-mgmt-address"
+  name = "apigw-vpx-mgmt-address"
   region = var.region
 }
 
 resource "google_compute_firewall" "nsip_firewall" {
 
-  name          = "nsip-firewall"
+  name          = "apigw-nsip-firewall"
   network       = "default"
   direction     = "INGRESS"
   source_ranges = ["0.0.0.0/0"]
@@ -41,7 +41,7 @@ resource "google_compute_firewall" "vip_firewall" {
     google_compute_subnetwork.vip_subnet
   ]
 
-  name          = "vip-firewall"
+  name          = "apigw-vip-firewall"
   network       = google_compute_network.vip_network.name
   direction     = "INGRESS"
   source_ranges = ["0.0.0.0/0"]
@@ -64,10 +64,10 @@ resource "google_compute_instance_template" "vpx" {
     google_compute_image.vpx_image
   ]
 
-  name        = "vpx"
+  name        = "apigw-vpx"
   description = "Deploy a single instance of Citrix VPX"
 
-  instance_description = "vpx"
+  instance_description = "apigw-vpx"
   machine_type         = "e2-medium"
   can_ip_forward       = true
   tags                 = ["http-server", "https-server"]
@@ -80,7 +80,7 @@ resource "google_compute_instance_template" "vpx" {
 
   // Create a new boot disk from an image
   disk {
-    source_image = "${var.project}/vpx"
+    source_image = "apigw-vpx"
     auto_delete  = true
     boot         = true
   }
@@ -106,7 +106,7 @@ resource "google_compute_instance_template" "vpx" {
 }
 
 resource "google_compute_image" "vpx_image" {
-  name   = "vpx"
+  name   = "apigw-vpx"
   family = "citrix"
 
   raw_disk {
@@ -119,7 +119,7 @@ resource "google_compute_image" "vpx_image" {
 }
 
 resource "google_compute_instance_from_template" "vpx-01" {
-  name = "vpx"
+  name = "apigw-vpx"
   zone = var.zone
 
   source_instance_template = google_compute_instance_template.vpx.id
@@ -136,8 +136,8 @@ resource "google_compute_instance_from_template" "vpx-01" {
   }
 
   network_interface {
-    network    = "vip-network"
-    subnetwork = "vip-subnetwork"
+    network    = "apigw-vip-network"
+    subnetwork = "apigw-vip-subnetwork"
     access_config {
       nat_ip = google_compute_address.vpx_vip_ip.address
     }

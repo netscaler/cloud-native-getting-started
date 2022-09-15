@@ -43,9 +43,9 @@ gcloud services enable \
 mkdir creds
 
 # Create a service account, download the credential file, and provide OWNER rights to the project
-gcloud iam service-accounts create ctx-anthos --project $GCP_PROJECT
-gcloud iam service-accounts keys create creds/ctx-anthos.json --iam-account=ctx-anthos@$GCP_PROJECT.iam.gserviceaccount.com
-gcloud projects add-iam-policy-binding $GCP_PROJECT --member="serviceAccount:ctx-anthos@$GCP_PROJECT.iam.gserviceaccount.com" --role='roles/owner'
+gcloud iam service-accounts create ctx-anthos-apigw --project $GCP_PROJECT
+gcloud iam service-accounts keys create creds/ctx-anthos-apigw.json --iam-account=ctx-anthos-apigw@$GCP_PROJECT.iam.gserviceaccount.com
+gcloud projects add-iam-policy-binding $GCP_PROJECT --member="serviceAccount:ctx-anthos-apigw@$GCP_PROJECT.iam.gserviceaccount.com" --role='roles/owner'
 
 ```
 
