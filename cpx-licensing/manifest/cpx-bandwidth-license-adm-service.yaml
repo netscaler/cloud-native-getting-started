@@ -106,7 +106,7 @@ spec:
           - name: "KUBERNETES_TASK_ID"
             value: ""
 #CPX licensing information section
-          - name: "LS_IP" # IP address of ADM on prem
+          - name: "LS_IP" # ADM Container agent service IP address
             value: "10.105.158.144"
           - name: "LS_PORT" # ADM port on which licensing works
             value: "27000"

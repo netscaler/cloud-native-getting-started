@@ -26,7 +26,7 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
 1. Setting up Citrix Application Delivery Management (Citrix ADM) for the first time
 
     Please make sure that ADM service setup is ready with ADM agent configuration. We need ADM service account and ADM agent both to CPX licensing to be functional.
-    If you are first time user of ADM service, please refer  [ADM service documnetation](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html) guide for setting up ADM service and ADM agent in your lab.
+    If you are first time user of ADM service, please refer  [ADM service documentation](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html) guide for setting up ADM service and ADM agent in your lab.
 
     **Note**: For this demo, I have used microservice based ADM agent. Please refer [ADM agent documentation](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started/install-agent-as-microservice.html) to deploy ADM agent in kubernetes cluster.
 
@@ -56,7 +56,7 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
     Variables used in CPX manifest file to license it
     ```
           - name: "LS_IP"
-            value: "10.105.158.166" //ADM container agent IP as mentioned in step 1
+            value: "10.105.158.166" //ADM container agent service IP as mentioned in step 1
           - name: "LS_PORT"
             value: "27000"          // port on which ADM license server listen
           - name: "BANDWIDTH"
@@ -70,6 +70,8 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
     ```
     kubectl create -f cpx-bandwidth-license-adm-service.yaml -n bandwidth
     ```
+    ![cpx-bandwidth-instance-admsvc](images/cpx-bandwidth-instance-admsvc.png)
+
     **Note:** In this example, CPX will check out Premium edition bandwidth pool, hence EDITION environment variable is not present in given CPX manifest file because its default value.
 
     Login to CPX for checking instancing information.
@@ -81,48 +83,62 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
     sh licenseserver
     sh capacity
     ```
+    ![cpx-bandwidth-instance-licensed-admsvc](images/cpx-bandwidth-instance-licensed-admsvc.png)
 
-    You can also track the allocated bandwidth capacity from ADM service portal.
+    You can also track the allocated bandwidth capacity from ADM service portal under *Infrastructure -> License Settings -> Bandwidth Licenses -> Pooled Capacity*
 
 ##### Section B: Provision vCPU based licensing to Citrix ADC CPX from ADM service
 1. Setting up Citrix Application Delivery Management (Citrix ADM) for the first time
 
     Please make sure that ADM service setup is ready with ADM agent configuration. We need ADM service account and ADM agent both to CPX licensing to be functional.
-    If you are first time user of ADM service, please visit - https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html guide for setting up ADM service and ADM agent in your lab.
+    If you are first time user of ADM service, please refer  [ADM service documentation](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html) guide for setting up ADM service and ADM agent in your lab.
 
-    **Note**: For this demo, I have used Hypervisor based ADM agent setup. From below screenshot you can see that "10.105.158.166" is my on-prem agent used for licensing CPX.
+   **Note**: For this demo, I have used microservice based ADM agent. Please refer [ADM agent documentation](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started/install-agent-as-microservice.html) to deploy ADM agent in kubernetes cluster.
 
-    ![agent](images/ADM-agent.PNG)
+    Goto *Infrastructure -> Instances Dashboard ->Agents* and click on *Set Up Agent* and follow the steps to deploy ADM container agent. Once container agent yaml/HELM manifest file is ready, download it and deploy it in K8s cluster
+
+    ![adm-container-agent-pod](images/adm-container-agent-pod.png)
+
+    After successful deployment of ADM container agent, ADM service portal will start showing container agent details.
+
+    ![adm-container-agent-portal](images/adm-container-agent-portal.png)
 
 2. Add Citrix ADC instance license pool to ADM service
     
-    I assume that you have vCPU pool license available in you ADM service. If you want to know how to upload licensing file to ADM, refer to https://docs.citrix.com/en-us/citrix-application-delivery-management-service/manage-licenses/pooled-licenses/configuring-pooled-capacity.html
+    I assume that you have vCPU pool license available in you ADM service. If you want to know how to upload licensing file to ADM, refer to [ADM service pool licensing](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/manage-licenses/pooled-capacity.html)
 
 
 3. Deploy CPX in Kubernetes cluster
 
-    Make sure that below environment variables are added to CPX yaml file to license CPX instance.
-    
-    ```
-          - name: "LS_IP"
-            value: "10.102.216.173" //ADM agent IP as mentioned in step 1
-          - name: "LS_PORT"
-            value: "27000"          // port on which ADM license server listen
-          - name: "PLATFORM"
-            value: "CORES"         // used for specifying type of pool licensing
-          - name: "CPX_CORES"
-            value: "4"              // number of core you want to allocate
-    ```
+    We will deploy CPX in ``core`` namespace however CPX licensing works in any namespace.
 
-    Edit CPX yaml file and update above EVN variable
+    Download CPX yaml file to update CPX licensing variables
     ```
     kubectl create namespace core
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/cpx-licensing/manifest/cpx-core-license-adm-service.yaml
     ```
+
+    Variables used in CPX manifest file to license it
+    ```
+          - name: "LS_IP"
+            value: "10.102.216.173" //ADM container agent service IP as mentioned in step 1
+          - name: "LS_PORT"
+            value: "27000"          // port on which ADM license server listen
+          - name: "CPX_CORES"
+            value: "2"              // number of core you want to allocate
+    ```
+
     Make the changes to ``cpx-core-license-adm-service.yaml`` file and deploy in K8s cluster
     ```
     kubectl create -f cpx-core-license-adm-service.yaml -n core
     ```
+    ![cpx-core-instance-admsvc](images/cpx-core-instance-admsvc.png)
+
+    **Note 1:** In this example, CPX will check out Premium edition vCPU pool, hence EDITION environment variable is not present in given CPX manifest file because its default value.
+
+    **Note 2:** If you want to check out 1 vCPU for CPX then either you specify CPX_CORES value to ``1`` or skip the CPX_CORES variable, it will default consider one core.
+
+
     Login to CPX for checking instancing information.
     ```
     kubectl exec -it <cpx-pod-ip-name> bash -n core
@@ -238,7 +254,7 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
     ```
     ![cpx-core-instance](images/cpx-core-instance.png)
 
-    **Note 1:** In this example, CPX will check out Premium edition bandwidth pool, hence EDITION environment variable is not present in given CPX manifest file because its default value.
+    **Note 1:** In this example, CPX will check out Premium edition vCPU pool, hence EDITION environment variable is not present in given CPX manifest file because its default value.
 
     **Note 2:** If you want to check out 1 vCPU for CPX then either you specify CPX_CORES value to ``1`` or skip the CPX_CORES variable, it will default consider one core.
 
