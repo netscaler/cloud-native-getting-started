@@ -125,18 +125,26 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
 1. Setting up Citrix Application Delivery Management (Citrix ADM) for the first time
 
     Please make sure that ADM onprem setup is ready. We can have ADM onprem with and without ADM agent deployment for CPX licensing to be functional.
-    If you are first time user of ADM onprem, please visit - https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/get-started.html guide for setting up ADM onprem and ADM agent (optional) in your lab.
+    If you are first time user of ADM onprem, please refer [ADM documentation](https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/get-started.html) guide for setting up ADM onprem and ADM agent (optional) in your lab.
 
     **Note**: For this demo, I have used inbuilt ADM agent with ADM onprem.
 
 2. Add Citrix ADC instance license pool to ADM onprem
     
-    I assume that you have pool of bandwidth license available in you ADM onprem. If you want to know how to upload licensing file to ADM, refer to https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/license-server/licenses-in-adm-license-server-in-high-availability.html
+    I assume that you have pool of bandwidth license available in you ADM onprem. If you want to know how to upload licensing file to ADM, refer to [ADC pool licensing](https://docs.citrix.com/en-us/citrix-application-delivery-management-software/current-release/license-server/adc-pooled-capacity.html)
 
 
 3. Deploy CPX in Kubernetes cluster
 
-    Make sure that below environment variables are added to CPX yaml file to license CPX instance.
+    We will deploy CPX in ``bandwidth`` namespace however CPX licensing works in any namespace.
+
+    Download CPX yaml file to update CPX licensing variables
+    ```
+    kubectl create namespace bandwidth
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/cpx-licensing/manifest/cpx-bandwidth-license-adm-onprem.yaml
+    ```    
+
+    Variables used in CPX manifest file to license it
     
     ```
           - name: "LS_IP"
@@ -145,17 +153,20 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
             value: "27000"          // port on which ADM license server listen
           - name: "BANDWIDTH"
             value: "3000"           //capacity in Mbps wants to allocate to CPX
+          - name: "EDITION"
+            value: "STANDARD"       //CPX started supporting STD, ADV license editions, default value is PLATINUM
     ```
+    
+    Make the above changes to ``cpx-bandwidth-license-adm-onprem.yaml`` file and deploy in K8s cluster
 
-    Edit CPX yaml file and update above EVN variable
-    ```
-    kubectl create namespace bandwidth
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/cpx-licensing/manifest/cpx-bandwidth-license-adm-onprem.yaml
-    ```
-    Make the changes to ``cpx-bandwidth-license-adm-onprem.yaml`` file and deploy in K8s cluster
+    ![cpx-bandwidth-instance](images/cpx-bandwidth-instance.png)
+
     ```
     kubectl create -f cpx-bandwidth-license-adm-onprem.yaml -n bandwidth
     ```
+
+    **Note:** In this example, CPX will check out Premium edition bandwidth pool, hence EDITION environment variable is not present in given CPX manifest file because its default value.
+
     Login to CPX for checking instancing information.
     ```
     kubectl exec -it <cpx-pod-ip-name> bash -n bandwidth
@@ -165,45 +176,57 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
     sh licenseserver
     sh capacity
     ```
-    You can also track the allocated bandwidth capacity from ADM onprem portal.
+    ![cpx-bandwidth-instance-licensed](images/cpx-bandwidth-instance-licensed.png)
+
+    You can also track the allocated bandwidth capacity from ADM onprem portal under *Infrastructure -> License Settings -> Bandwidth Licenses -> Pooled Capacity*
+
+    ![cpx-bandwidth-licensed-adm](images/cpx-bandwidth-licensed-adm.png)
 
 ##### Section D: Provision vCPU based licensing to Citrix ADC CPX from ADM on-premise
 1. Setting up Citrix Application Delivery Management (Citrix ADM) for the first time
 
     Please make sure that ADM onprem setup is ready. We can have ADM onprem with and without ADM agent deployment for CPX licensing to be functional.
-    If you are first time user of ADM onprem, please visit - https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/get-started.html guide for setting up ADM onprem and ADM agent (optional) in your lab.
+    If you are first time user of ADM onprem, please refer [ADM documentation](https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/get-started.html) guide for setting up ADM onprem and ADM agent (optional) in your lab.
 
     **Note**: For this demo, I have used inbuilt ADM agent with ADM onprem.
 
 2. Add Citrix ADC instance license pool to ADM onprem
     
-    I assume that you have pool of bandwidth license available in you ADM onprem. If you want to know how to upload licensing file to ADM, refer to https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/license-server/licenses-in-adm-license-server-in-high-availability.html
+    I assume that you have pool of bandwidth license available in you ADM onprem. If you want to know how to upload licensing file to ADM, refer to [ADC pool licensing](https://docs.citrix.com/en-us/citrix-application-delivery-management-software/current-release/license-server/adc-pooled-capacity.html)
 
 
 3. Deploy CPX in Kubernetes cluster
 
-    Make sure that below environment variables are added to CPX yaml file to license CPX instance.
-    
+    We will deploy CPX in ``core`` namespace however CPX licensing works in any namespace.
+
+    Download CPX yaml file to update CPX licensing variables
+    ```
+    kubectl create namespace core
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/cpx-licensing/manifest/cpx-core-license-adm-onprem.yaml
+    ```
+
+    Variables used in CPX manifest file to license it
     ```
           - name: "LS_IP"
             value: "10.105.158.144" // ADM onprem instance IP, If you have ADM agent deployment then this will be your agent IP as described in step 1
           - name: "LS_PORT"
             value: "27000"          // port on which ADM license server listen
-          - name: "PLATFORM"
-            value: "CORES"         // used for specifying type of pool licensing
           - name: "CPX_CORES"
-            value: "4"              // number of core you want to allocate
+            value: "2"              // number of core you want to allocate
+          - name: "EDITION"
+            value: "STANDARD"       //CPX started supporting STD, ADV license editions, default value is PLATINUM            
     ```
 
-    Edit CPX yaml file and update above EVN variable
-    ```
-    kubectl create namespace core
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/cpx-licensing/manifest/cpx-core-license-adm-onprem.yaml
-    ```
     Make the changes to ``cpx-core-license-adm-onprem.yaml`` file and deploy in K8s cluster
     ```
     kubectl create -f cpx-core-license-adm-onprem.yaml -n core
     ```
+    ![cpx-core-instance](images/cpx-core-instance.png)
+
+    **Note 1:** In this example, CPX will check out Premium edition bandwidth pool, hence EDITION environment variable is not present in given CPX manifest file because its default value.
+
+    **Note 2:** If you want to check out 1 vCPU for CPX then either you specify CPX_CORES value to ``1`` or skip the CPX_CORES variable, it will default consider one core.
+
     Login to CPX for checking instancing information.
     ```
     kubectl exec -it <cpx-pod-ip-name> bash -n core
@@ -213,7 +236,11 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
     sh licenseserver
     sh capacity
     ```
-    You can also track the allocated vCPU capacity from ADM onprem portal.
+    ![cpx-core-instance-licensed](images/cpx-core-instance-licensed.png)
+
+    You can also track the allocated vCPU capacity from ADM onprem portal under *Infrastructure ->License Settings -> Pooled VCPU*
+
+    ![cpx-core-licensed-adm](images/cpx-core-licensed-adm.png)
 
 ## Clean up the deployment
 
