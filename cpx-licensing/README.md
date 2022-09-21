@@ -148,6 +148,8 @@ Know more about Citrix ADC pooled licensing - [licensing docs](https://docs.citr
     sh licenseserver
     sh capacity
     ```
+    ![cpx-licensed-cores](images/cpx-licensed-cores.png)
+    
     You can also track the allocated vCPU capacity from ADM service portal.
 
 
