@@ -35,7 +35,7 @@ Once OpenShift cluster is up and running, execute the below command on master no
 ``` 
 oc get nodes
 ```
-![oc-nodes](https://user-images.githubusercontent.com/48945413/59844387-61f02f00-9378-11e9-836b-1a8f59e4f3b2.PNG)
+![oc-nodes](images/get-nodes.PNG)
  
 (Screenshot above has OpenShift cluster with one master and two worker node).
 
@@ -126,10 +126,42 @@ Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for Open
     ```
     ![hotbeverage_webpage](https://user-images.githubusercontent.com/42699135/50677394-987efb00-101f-11e9-87d1-6523b7fbe95a.png)
 
+    You can access the application from command line using CURL
+    ```
+    curl https://<frontend-ip>  -H "Host: hotdrink.beverages.com" -ik
+    curl https://<frontend-ip>/coffee  -H "Host: hotdrink.beverages.com" -ik
+    curl https://<frontend-ip>/tea  -H "Host: hotdrink.beverages.com" -ik
+    ```
+    ![curl-hotdrink-tea](images/curl-hotdrink-tea.PNG)
+    ![curl-hotdrink-coffee](images/curl-hotdrink-coffee.PNG)
+
+## Configure Rewrite and Responder policies in Citrix ADC using Kubernetes CRD deployment
+
+Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) using the custom resource definition (CRD).
+
+###### Deploy Rewrite and Responder policies in Tier 1 ADC
+
+1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
+
+   ```
+   oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/crd_rewrite_responder.yaml
+   ```
+
+2. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
+
+   ```
+   oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/responderpolicy_hotdrink.yaml -n tier-2-adc
+   ```
+
+   After you deploy the Responder policy, access the coffee page on `https://hotdrink.beverages.com/coffee.php`. Then you receive the following message.
+   
+   ![ingress-rewrite-responder-policy](images/ingress-rewrite-responder-policy.png)
+
 
 ## Clean up the deployment
 ```
 oc delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/namespace.yaml
+oc delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/crd_rewrite_responder.yaml
 ```
 
 
