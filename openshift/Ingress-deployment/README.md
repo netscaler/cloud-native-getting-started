@@ -59,6 +59,12 @@ You need Citrix Node Controller configuration only when K8s cluster and Tier 1 A
 
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
+    
+    ``
+    oc adm policy add-scc-to-group anyuid system:authenticated
+    oc adm policy add-scc-to-user privileged system:serviceaccount:tier-2-adc:cpx
+    ``
+
     ```
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/rbac.yaml
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/cpx.yaml -n tier-2-adc
