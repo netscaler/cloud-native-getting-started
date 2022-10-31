@@ -1,16 +1,17 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-hotdrinks
-  labels:
-      name: frontend-hotdrinks
 spec:
+  selector:
+    matchLabels:
+      app: frontend-hotdrinks
   replicas: 2 
   template:
     metadata:
       labels:
-        name: frontend-hotdrinks
+        app: frontend-hotdrinks
     spec:
       containers:
       - name: frontend-hotdrinks
@@ -36,6 +37,7 @@ spec:
     port: 443
     targetPort: 443
   selector:
-    name: frontend-hotdrinks
+    app: frontend-hotdrinks
 
 ---
+

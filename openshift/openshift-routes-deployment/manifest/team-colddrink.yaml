@@ -1,15 +1,16 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-colddrinks
-  labels:
-      name: frontend-colddrinks
 spec:
+  selector:
+    matchLabels:
+      app: frontend-colddrinks
   replicas: 2
   template:
     metadata:
       labels:
-        name: frontend-colddrinks
+        app: frontend-colddrinks
     spec:
       containers:
       - name: frontend-colddrinks
