@@ -40,21 +40,22 @@ oc get nodes
 (Screenshot above has OpenShift cluster with one master and two worker node).
 
 
-**Pre-Requisites:**
+2. Add OpenShift hostsubnets in Tier 1 ADC to reach OpenShift pod network from NetScaler
 
-Make sure that route configuration  is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes  pod network for seamless connectivity. 
-Please refer to Section `Configure static routes on Citrix ADC VPX or MPX to reach the pods inside the OpenShift cluster` from https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/deployment/openshift#deploy-the-citrix-ingress-controller-as-a-pod-in-an-openshift-cluster  for Network configuration.
+Make sure that route configuration is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
 
-Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for OpenShift cluster.
+If you have K8s cluster and Tier 1 Citrix ADC in same subnet then you do not have to do anything, below example will take care of route info using ``feature-node-watch`` argument variable used in Citrix Ingress Controller manifest.
+
+You need Citrix Node Controller configuration only when K8s cluster and Tier 1 ADC are in different subnet. Please refer to https://github.com/citrix/citrix-k8s-node-controller for Network configuration.
 
 
-1. Create K8s namespaces to manage team beverages workload independently
+3. Create K8s namespaces to manage team beverages workload independently
     ```
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/namespace.yaml
     ```
     ![namespace](images/namespace.PNG)
 
-2. Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
+4. Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
 
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
@@ -65,7 +66,7 @@ Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for Open
     ```
     ![ingress-cpx](images/ingress-cpx.PNG)
 
-3. Deploy Hotdrink beverage microservices application in team-hotdrink namespace
+5. Deploy Hotdrink beverage microservices application in team-hotdrink namespace
     Hotdrink beverage application has tea and coffee microserives having E-W communication enabled. Tea and Coffee beverage apps uses Citrix ADC CPX for E-W communication in ServiceMesh lite deployment. We create two service kinds for each tea and coffee services. One service will point to CPX where the FQDN of the microservice (for example, coffee) should point to the Citrix ADC CPX IP address instead of the Cluster IP of the target microservice (coffee). And another service as ``headless service`` to represent tea or coffee service. Detailed Service Mesh lite deployment using headless service is explained [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/deploy/service-mesh-lite.md)
 
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
@@ -77,11 +78,11 @@ Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for Open
     ![ingress-hotdrink](images/ingress-hotdrink.PNG)
 
 
-4. (Optional) Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration present for K8s related workloads before automating the Tier 1 ADC configuration through Citrix Ingress Controller
+6. (Optional) Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration present for K8s related workloads before automating the Tier 1 ADC configuration through Citrix Ingress Controller
     
     Note: If you do not have Tier 1 ADC already present in your setup then you can refer to [Citrix ADC VPX installation on XenCenter](https://github.com/citrix/cloud-native-getting-started/tree/master/VPX) for deploying Citrix ADC VPX as Tier 1 ADC.
 
-5. Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
+7. Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
     
     Create K8s secret for VPX login credentials used in CIC yaml file.
     ```
