@@ -98,15 +98,21 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/cic-vpx.yaml
     ```
 
-    ii. Update CIC with below parameters
+    ii. Update CIC with below parameters and create K8s secret for Tier 1 NetScaler
 
     Change NS_IP to Tier 1 ADC Management IP/NSIP
 
     Change NS_VIP to one free IP which will be an ingress frontend IP in Tier 1 ADC to ingress client traffic.
 
-    iii. Deploy CIC in OpenShift cluster
+    Create K8s secret for VPX login credentials used in CIC yaml file.
     ```
-    oc create -f cic_vpx.yaml -n beverages
+    oc create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password' -n beverages
+    ```
+
+    iii. Deploy CIC in OpenShift cluster
+
+    ```
+    oc create -f cic-vpx.yaml -n beverages
     ```
     ![cic](images/cic.PNG)
 
