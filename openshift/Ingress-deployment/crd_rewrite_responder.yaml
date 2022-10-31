@@ -445,3 +445,4 @@ spec:
                       - properties:
                         required: [body_expr]
             anyOf: [required: [rewrite-policies], required: [responder-policies]]
+            
