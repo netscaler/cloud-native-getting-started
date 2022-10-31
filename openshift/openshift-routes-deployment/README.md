@@ -81,17 +81,12 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
     ii. Deploy hotdrink beverage microservice application
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/team_hotdrink.yaml -n beverages
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/team-hotdrink.yaml -n beverages
     ```
     
     iii. Deploy colddrink beverage microservice application
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/team_colddrink.yaml -n beverages
-    ```
-    
-    iv. Deploy guestbook microservice application
-    ```    
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/team_guestbook.yaml -n beverages
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/team-colddrink.yaml -n beverages
     ```
 
     ![beverage-apps](images/beverage-apps.PNG)
@@ -100,7 +95,7 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
     i. Download the CIC yaml file
     ```     
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/cic_vpx.yaml
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/cic-vpx.yaml
     ```
 
     ii. Update CIC with below parameters
@@ -131,17 +126,19 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
     i. Deploy re-encryption termination route for hotdrink beverage application
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/route-reencrypt-hoddrink.yaml -n beverages
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/route-reencrypt-hoddrink.yaml -n beverages
     ```
 
-    ii. Deploy edge termination route for guestbook application
+    ii. Deploy passthrough termination route for colddrink beverage application
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/edge_route_guestbook.yaml -n beverages
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/route-passthrough-colddrink.yaml -n beverages
     ```
-    iii. Deploy passthrough termination route for colddrink beverage application
+
+    iii. Deploy Edge termination route for colddrink application
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes/manifest/route_passthrough_colddrink.yaml -n beverages
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/edge-route-colddrink.yaml -n beverages
     ```
+
     ![routes](images/routes.PNG)
 
     ![pod-status](images/pod-status.PNG)
