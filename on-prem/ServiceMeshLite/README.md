@@ -116,7 +116,7 @@ We deployed three CPXs to manage each application workload independently. Also w
     
     Create K8s secret for VPX login credentials used in CIC yaml file.
     ```
-    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password'
+    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password' -n tier-2-adc
     ```
     Download ingress_vpx and cic_vpx yaml files to update Tier 1 ADC configurations
     ```
@@ -223,7 +223,7 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     
     Create K8s secret for VPX login credentials used in CIC yaml file.
     ```
-    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password'
+    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password' -n tier-2-adc
     ```
     Download ingress_vpx and cic_vpx yaml files to update Tier 1 ADC configurations
     ```
@@ -352,7 +352,7 @@ We deployed three CPXs to manage each application workload independently. Also w
     
     Create K8s secret for VPX login credentials used in CIC yaml file.
     ```
-    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password'
+    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password' -n tier-2-adc
     ```
     Download cic_vpx yaml files to update Tier 1 ADC configurations
     ```
