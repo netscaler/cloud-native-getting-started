@@ -50,7 +50,7 @@ Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for Open
 
 1. Create K8s namespaces to manage team beverages workload independently
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/namespace.yaml
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/namespace.yaml
     ```
     ![namespace](images/namespace.PNG)
 
@@ -59,9 +59,9 @@ Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for Open
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/rbac.yaml
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cpx.yaml -n tier-2-adc
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n tier-2-adc
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/rbac.yaml
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/cpx.yaml -n tier-2-adc
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/hotdrink-secret.yaml -n tier-2-adc
     ```
     ![ingress-cpx](images/ingress-cpx.PNG)
 
@@ -71,31 +71,17 @@ Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for Open
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_hotdrink.yaml -n team-hotdrink
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n team-hotdrink
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/team_hotdrink.yaml -n team-hotdrink
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/hotdrink-secret.yaml -n team-hotdrink
     ```
     ![ingress-hotdrink](images/ingress-hotdrink.PNG)
 
-4. Deploy the colddrink beverage microservice application in team-colddrink namespace
 
-    **Note:** Please upload your TLS certificate and TLS key into colddrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
-    ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_colddrink.yaml -n team-colddrink
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/colddrink-secret.yaml -n team-colddrink
-    ```
-    ![ingress-colddrink](images/ingress-colddrink.PNG)
-
-5. Deploy the guestbook no SQL type microservice application in team-guestbook namespace
-    ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_guestbook.yaml -n team-guestbook
-    ```
-    ![ingress-guestbook](images/ingress-guestbook.PNG)
-
-6. (Optional) Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration present for K8s related workloads before automating the Tier 1 ADC configuration through Citrix Ingress Controller
+4. (Optional) Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration present for K8s related workloads before automating the Tier 1 ADC configuration through Citrix Ingress Controller
     
     Note: If you do not have Tier 1 ADC already present in your setup then you can refer to [Citrix ADC VPX installation on XenCenter](https://github.com/citrix/cloud-native-getting-started/tree/master/VPX) for deploying Citrix ADC VPX as Tier 1 ADC.
 
-7. Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
+5. Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
     
     Create K8s secret for VPX login credentials used in CIC yaml file.
     ```
@@ -103,8 +89,8 @@ Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for Open
     ```
     Download ingress_vpx and cic_vpx yaml files to update Tier 1 ADC configurations
     ```
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/ingress_vpx.yaml
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cic_vpx.yaml
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/ingress_vpx.yaml
+    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/cic_vpx.yaml
     ```
     ![ingress-cic](images/ingress-cic.PNG)
 
@@ -119,8 +105,8 @@ Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for Open
     2.  Update VPX crednetails in cic_vpx.yaml file 
     Now execute the following commands after the above change.
     ```
-    kubectl create -f ingress_vpx.yaml -n tier-2-adc
-    kubectl create -f cic_vpx.yaml -n tier-2-adc
+    oc create -f ingress_vpx.yaml -n tier-2-adc
+    oc create -f cic_vpx.yaml -n tier-2-adc
     ```
     ![ingress-cic-config](images/ingress-cic-config.PNG)
 
@@ -132,22 +118,18 @@ Note: Route configuration on the Citrix ADC (Tier 1) instance is manual for Open
 
     ```
     <frontend-ip from ingress_vpx.yaml> hotdrink.beverages.com
-    <frontend-ip from ingress_vpx.yaml> colddrink.beverages.com
-    <frontend-ip from ingress_vpx.yaml> guestbook.beverages.com
     ```
 
     Lets access microservice app from local machine browser
     ```
     https://hotdrink.beverages.com
-    https://colddrink.beverages.com
-    https://guestbook.beverages.com
     ```
     ![hotbeverage_webpage](https://user-images.githubusercontent.com/42699135/50677394-987efb00-101f-11e9-87d1-6523b7fbe95a.png)
 
 
 ## Clean up the deployment
 ```
-
+oc delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/namespace.yaml
 ```
 
 
