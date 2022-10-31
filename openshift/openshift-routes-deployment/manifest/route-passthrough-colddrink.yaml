@@ -3,7 +3,7 @@ kind: Route
 metadata:
   name: route-passthrough-colddrink
   labels:
-    name: guestbook
+    name: colddrink
   annotations:
    kubernetes.io/ingress.class: "vpx"
 spec:
