@@ -152,10 +152,11 @@ Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) usin
    ```
    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/responderpolicy_hotdrink.yaml -n tier-2-adc
    ```
+   ![ingress-rewrite-responder-policy](images/ingress-rewrite-responder-policy.PNG)
 
    After you deploy the Responder policy, access the coffee page on `https://hotdrink.beverages.com/coffee.php`. Then you receive the following message.
    
-   ![ingress-rewrite-responder-policy](images/ingress-rewrite-responder-policy.png)
+   ![ingress-rewrite-responder-policy-output](images/ingress-rewrite-responder-policy-output.PNG)
 
 
 ## Clean up the deployment
