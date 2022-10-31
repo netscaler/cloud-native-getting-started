@@ -39,38 +39,17 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     oc delete -f default-router-backup.yaml
     ```
 
-3. Configure static routes on Citrix ADC VPX or MPX to reach the pods inside the OpenShift cluster
+3. Add OpenShift hostsubnets in Tier 1 ADC to reach OpenShift pod network from NetScaler
 
-    i. Use the following command to get the information about host names, host IP addresses, and subnets for static route configuration.
-    ```
-    oc get hostsubnet
-    ```
+Make sure that route configuration is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
 
-    ii. Log on to the Citrix ADC instance and Add the route on the Citrix ADC instance using the following command
-    ```
-    add route <pod_network> <netmask> <gateway>
-    ```
+If you have K8s cluster and Tier 1 Citrix ADC in same subnet then you do not have to do anything, below example will take care of route info using ``feature-node-watch`` argument variable used in Citrix Ingress Controller manifest.
 
-    **Example:**
-    ```
-    oc get hostsubnet
-    NAME            HOST           HOST IP        SUBNET
-    os.example.com  os.example.com 192.168.122.46 10.1.1.0/24
-    ```
-        
-    From the output of the ``oc get hostsubnet`` command:
-    ```
-    <pod_network> = 10.1.1.0
-    Value for subnet = 10.1.1.0/x where x = 24 that means <netmask>= 255.255.255.0
-    <gateway> = 192.168.122.46
-    ```
 
-    iii. The required static route to add on Citrix ADC is as follows
-    ```
-    add route 10.1.1.0 255.255.255.0 192.168.122.46
-    ```
+You need Citrix Node Controller configuration only when K8s cluster and Tier 1 ADC are in different subnet. Please refer to https://github.com/citrix/citrix-k8s-node-controller for Network configuration.
 
-###### Lets deploy Citrix Ingress Controller in OpenShift cluster
+
+###### Lets deploy beverages application in OpenShift platform and expose it using OpenShift routes through Citrix Ingress Controller
 
 1. Lets deploy microservice applications in OpenShift cluster
 
@@ -109,9 +88,10 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
     oc create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password' -n beverages
     ```
 
-    iii. Deploy CIC in OpenShift cluster
+    iii. Deploy CIC in OpenShift cluster with RBAC
 
     ```
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/rbac.yaml
     oc create -f cic-vpx.yaml -n beverages
     ```
     ![cic](images/cic.PNG)
@@ -130,17 +110,22 @@ Citrix ADC supports Unified Ingress architecture to load balance an enterprise g
 
     **Note:** Please upload your TLS certificate and TLS key into routes.yamls. We have updated our security policies and removed SSL certificate from guides.
 
-    i. Deploy re-encryption termination route for hotdrink beverage application
+    i. Deploy unsecured route for Hotdrink beverage application
+    ```
+    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/unsecured-route-hoddrink.yaml -n beverages
+    ```
+
+    ii. Deploy re-encryption termination route for hotdrink beverage application
     ```
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/route-reencrypt-hoddrink.yaml -n beverages
     ```
 
-    ii. Deploy passthrough termination route for colddrink beverage application
+    iii. Deploy passthrough termination route for colddrink beverage application
     ```
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/route-passthrough-colddrink.yaml -n beverages
     ```
 
-    iii. Deploy Edge termination route for colddrink application
+    iv. Deploy Edge termination route for colddrink application
     ```
     oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/openshift-routes-deployment/manifest/edge-route-colddrink.yaml -n beverages
     ```

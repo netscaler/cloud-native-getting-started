@@ -21,11 +21,13 @@ spec:
         env:
          # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
          - name: "NS_IP"
-           value: "10.105.158.148"
+           value: "x.x.x.x"
          - name: "NS_PROTOCOL"
            value: "HTTPS"
          - name: "NS_PORT"
            value: "443" 
+         - name: "NS_VIP"
+           value: "x.x.x.x"
          # Set username for Nitro
          - name: "NS_USER"
            valueFrom:

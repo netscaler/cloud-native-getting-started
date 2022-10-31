@@ -1,17 +1,15 @@
-apiVersion: v1
+apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: route-passthrough-hotdrink
+  name: unsecured-route
   labels:
     name: hotdrink
+  namespace: beverages
   annotations:
    kubernetes.io/ingress.class: "vpx"
 spec:
   host: hotdrink.beverages.com
+  path: "/"
   to:
     kind: Service
     name: frontend-hotdrinks
-  tls:
-    termination: passthrough
-
-
