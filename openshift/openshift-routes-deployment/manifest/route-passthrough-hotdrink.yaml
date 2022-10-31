@@ -1,17 +1,16 @@
 apiVersion: v1
 kind: Route
 metadata:
-  name: route-passthrough-colddrink
+  name: route-passthrough-hotdrink
   labels:
-    name: guestbook
+    name: hotdrink
   annotations:
    kubernetes.io/ingress.class: "vpx"
 spec:
-  host: colddrink.beverages.com
-#  path: "/" 
+  host: hotdrink.beverages.com
   to:
     kind: Service
-    name: frontend-colddrinks
+    name: frontend-hotdrinks
   tls:
     termination: passthrough
 

@@ -6,7 +6,7 @@ metadata:
     name: hotdrink
   namespace: beverages
   annotations:
-   kubernetes.io/ingress.class: "Citrix"
+   kubernetes.io/ingress.class: "vpx"
 spec:
   host: hotdrink.beverages.com
   to:
