@@ -1,4 +1,4 @@
-
+  
 # Citrix Cloud Native Networking (CNN) hands-on guides
 **Citrix cloud-native solutions** leverage the advanced traffic management, observability, and comprehensive security features of Citrix ADCs to ensure enterprise grade reliability and security. Lets get started with CNN GitHub!
 
@@ -22,6 +22,7 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
   * [Deploy Citrix ADC CPX as East-West proxy without sideacar proxy](/beginners-guide/East-West-cpx-ingress-proxy.md)
   * [Deployment modes for Citrix ADC CPX](/beginners-guide/CPX-deployment-modes.md)
   * [Update Citrix Ingress Controller logging using ConfigMap](/beginners-guide/configmap-for-loglevels.md)
+  * [Deploy Citrix Observability exporter in K8s for sending metrics to Prometheus](/beginners-guide/tier1-prometheus-coe.md)
 
 * Citrix Cloud Native Advanced Guides
   * Azure

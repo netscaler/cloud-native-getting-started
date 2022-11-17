@@ -8,3 +8,4 @@ You can start with below tutorials to get yourself comfortable with Citrix ADC C
 * [Deploy Citrix ADC CPX as East-West proxy without sideacar proxy](East-West-cpx-ingress-proxy.md)
 * [Deployment modes for Citrix ADC CPX](CPX-deployment-modes.md)
 * [Update Citrix Ingress Controller logging using ConfigMap](configmap-for-loglevels.md)
+* [Deploy Citrix Observability exporter in K8s for sending metrics to Prometheus](tier1-prometheus-coe.md)

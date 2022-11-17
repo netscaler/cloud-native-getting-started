@@ -17,7 +17,7 @@ COE is exposed as NodePort service where Tier 1 NetScaler seating outside kubern
 
 Note: COE will be exposed on defined NodePort 32514, in case you want to change the nodeport value please update coe-prometheus.yaml file.
 ```
-kubectl create -f 
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/coe-prometheus.yaml
 ```
 
 Verify the status of COE service
@@ -32,7 +32,7 @@ There is choice of deploying Prometheus either in K8s cluster or somewhere else,
 We will deploy Prometheus in monitoring namespace.
 Note: Prometheus will be exposed on defined NodePort 30000, in case you want to change the nodeport value please update prometheus.yaml file.
 ```
-kubectl create -f 
+kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/prometheus.yaml
 ```
 
 Verify the status of Prometheus service
@@ -61,4 +61,22 @@ Go to Status tab -> Targets, you will see that COE endpoint is UP which will sen
 Go to Homepage and Click on bubble symbol next to execute button to show list of counteres exported from NetScaler.
 Search for your intested counter to plot the graph. E.g. seach ``cpu_use`` and click execute. You can either see Table or Graph view to troubleshoot NetScaler.
 
+![promethues-graph](images/promethues-graph.png)
 
+
+5. Clean UP
+
+Remove below command from VPX
+```
+rm service coe_metric_collector_svc_192.168.1.102 COE_instance
+```
+
+Remove below config from Kubernetes
+```
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/coe-prometheus.yaml
+kubectl delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/prometheus.yaml
+```
+
+You can learn more about usage of all supported options for Citrix Ingress controller from [Modern App deployment yaml manifest details](https://github.com/citrix/cloud-native-getting-started/blob/master/beginners-guide/CIC-manifest-structure.md).
+
+For more information on the Citrix ingress controller, see the [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) documentation. 
