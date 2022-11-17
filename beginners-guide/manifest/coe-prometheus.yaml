@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coe-config-prometheus
+data:
+  lstreamd_default.conf: |
+    {
+      "Endpoints": {
+         "ZIPKIN": {
+           "ServerUrl": "http://0.0.0.0:0",
+           "RecordType": {
+           },
+           "PrometheusMode": "yes"
+         }
+       }
+    }
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coe-prometheus
+  labels: 
+    app: coe-prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coe-prometheus
+  template:
+    metadata:
+      name: coe-prometheus
+      labels:
+        app: coe-prometheus
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5563"
+    spec:
+      containers:
+        - name: coe-prometheus
+          image: "quay.io/citrix/citrix-observability-exporter:1.4.001"
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: 5563
+              name: rest
+          volumeMounts:
+            - name: lstreamd-config-prometheus
+              mountPath: /var/logproxy/lstreamd/conf/lstreamd_default.conf
+              subPath: lstreamd_default.conf
+            - name: core-data
+              mountPath: /cores/
+      volumes:
+        - name: lstreamd-config-prometheus
+          configMap:
+            name: coe-config-prometheus
+        - name: core-data
+          emptyDir: {}
+---
+# Citrix-observability-exporter headless service  
+apiVersion: v1
+kind: Service
+metadata:
+  name: coe-prometheus
+  labels:
+    app: coe-prometheus
+spec:
+  clusterIP: None
+  ports:
+    - port: 5563
+      protocol: TCP
+      name: rest
+  selector:
+      app: coe-prometheus
+---
+# Citrix-observability-exporter NodePort service
+apiVersion: v1
+kind: Service
+metadata:
+  name: coe-prometheus-nodeport
+  labels:
+    app: coe-prometheus
+spec:
+  type: NodePort
+  ports:
+    - port: 5563
+      nodePort: 32514
+      protocol: TCP
+      name: rest
+  selector:
+    app: coe-prometheus
