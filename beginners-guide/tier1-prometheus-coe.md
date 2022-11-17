@@ -61,7 +61,7 @@ Go to Status tab -> Targets, you will see that COE endpoint is UP which will sen
 Go to Homepage and Click on bubble symbol next to execute button to show list of counteres exported from NetScaler.
 Search for your intested counter to plot the graph. E.g. seach ``cpu_use`` and click execute. You can either see Table or Graph view to troubleshoot NetScaler.
 
-![promethues-graph](images/promethues-graph.png)
+![prometheus-graph](images/prometheus-graph.png)
 
 
 5. Clean UP
