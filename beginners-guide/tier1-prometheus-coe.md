@@ -48,7 +48,7 @@ Create service in NetScaler to create communication with COE from NetScaler. Exe
 
 ```
 add service coe_metric_collector_svc_192.168.1.102 COE_instance HTTP 5563
-set analytics profile ns_analytics_time_series_profile -collector coe_metric_collector_svc_192.168.1.102 -Metrics ENABLED -OutputMode Prometheus
+set analytics profile ns_analytics_time_series_profile -collector coe_metric_collector_svc_192.168.1.102 -Metrics ENABLED -OutputMode Prometheus -serveMode push
 ```
 
 4. Monitor applications and NetScaker health on Prometheus

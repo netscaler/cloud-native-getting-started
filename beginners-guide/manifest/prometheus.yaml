@@ -1,3 +1,4 @@
+#referred to https://medium.com/@gurpreets0610/deploy-prometheus-grafana-on-kubernetes-cluster-e8395cc16f91 
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -30,11 +31,11 @@ data:
     # Here it's Prometheus itself.
     scrape_configs:
       # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-      - job_name: 'prometheus'
+      - job_name: 'vpx-coe'
         # metrics_path defaults to '/metrics'
         # scheme defaults to 'http'.
         static_configs:
-        - targets: ['10.105.158.152:32514']
+        - targets: ['coe-prometheus:5563']
 ---
 
 apiVersion: apps/v1
