@@ -43,7 +43,7 @@ kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-
 
 Verify the status of Prometheus service
 ```
-kubectl get svc -n monitoring
+kubectl get svc
 ```
 
 3. Configure NetScaler to send metrics from ADC to Prometheus through COE

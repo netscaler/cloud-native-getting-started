@@ -1,104 +1,130 @@
-#referred to https://medium.com/@gurpreets0610/deploy-prometheus-grafana-on-kubernetes-cluster-e8395cc16f91 
-apiVersion: v1
-kind: Namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
-    name: monitoring
+  name: prometheus
+rules:
+- apiGroups: [""]
+  resources:
+  - configmaps
+  - nodes
+  - nodes/proxy
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
 ---
-
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prometheus-config
-  namespace: monitoring
+  name: prometheus-server-conf
+  labels:
+    name: prometheus-server-conf
 data:
-  prometheus.yml: |
-    # my global config
+  prometheus.cfg: |-
     global:
-      scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-      evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
-      # scrape_timeout is set to the global default (10s).
-    # Alertmanager configuration
-    alerting:
-      alertmanagers:
-      - static_configs:
-        - targets:
-          # - alertmanager:9093
-    # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
-    rule_files:
-      # - "first_rules.yml"
-      # - "second_rules.yml"
-    # A scrape configuration containing exactly one endpoint to scrape:
-    # Here it's Prometheus itself.
+      scrape_interval: 30s
+      scrape_timeout:  29s
+
+      external_labels:
+        monitor: 'prometheus-monitor'
+
     scrape_configs:
-      # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-      - job_name: 'vpx-coe'
-        # metrics_path defaults to '/metrics'
-        # scheme defaults to 'http'.
+      - job_name: 'coe-vpx'
         static_configs:
-        - targets: ['coe-prometheus:5563']
+         - targets: ['coe-prometheus:5563']
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus
-  namespace: monitoring
-  labels:
-    app: prometheus
+  name: prometheus-deployment
 spec:
-  replicas: 1
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
-    type: RollingUpdate
   selector:
     matchLabels:
-      app: prometheus
+      app: prometheus-server
+  replicas: 1
   template:
     metadata:
       labels:
-        app: prometheus
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9090"
+        app: prometheus-server
     spec:
       containers:
-      - name: prometheus
-        image: prom/prometheus
-        args:
-          - '--storage.tsdb.retention=6h'
-          - '--storage.tsdb.path=/prometheus'
-          - '--config.file=/etc/prometheus/prometheus.yml'
-        ports:
-        - name: web
-          containerPort: 9090
-        volumeMounts:
-        - name: prometheus-config-volume
-          mountPath: /etc/prometheus
-      restartPolicy: Always
-
+        - name: prometheus
+          image: prom/prometheus:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--config.file=/etc/prometheus/prometheus.cfg"
+            - "--storage.tsdb.path=/prometheus/"
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/prometheus/
+            - name: prometheus-storage-volume
+              mountPath: /prometheus/
+          imagePullPolicy: Always
       volumes:
-      - name: prometheus-config-volume
-        configMap:
+        - name: prometheus-config-volume
+          configMap:
             defaultMode: 420
-            name: prometheus-config
+            name: prometheus-server-conf
+        - name: prometheus-storage-volume
+          emptyDir: {}
 ---
 
-apiVersion: v1
 kind: Service
+apiVersion: v1
 metadata:
-    name: prometheus-service
-    namespace: monitoring
-    annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port:   '9090'
-
+  name: prometheus-server
+  labels:
+    name: prometheus-server
+  annotations:
+      prometheus.io/scrape: 'true'
+      prometheus.io/port:   '9090'
 spec:
-    selector:
-        app: prometheus
-    type: NodePort
-    ports:
-    - port: 8080
-      targetPort: 9090 
+  type: ClusterIP
+  selector:
+    app: prometheus-server
+  ports:
+    - name: http
+      port: 9090
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus-server-nodeport
+  labels:
+    name: prometheus-server
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '9090'
+spec:
+  type: NodePort
+  selector:
+    app: prometheus-server
+  ports:
+    - name: http
+      port: 9090
+      targetPort: 9090
       nodePort: 30000
