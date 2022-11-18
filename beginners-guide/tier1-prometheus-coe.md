@@ -7,15 +7,21 @@ In this deployment you will learn,
 * How to deploy Prometheus in Kubernetes cluster
 * How to Configure TIer 1 NetScaler (VPX/MPX/SDX) to send metrics to Prometheus through COE.
 
+## Deployment topology
+
+![coe-vpx-topology](images/coe-vpx-topology.png)
+
+
+
 ## Deployment steps:
 
-**Prerequisite**: Ensure that you have installed and set up a Kubernetes cluster (The following example is tested in on-prem Kubernetes cluster version 1.24.2).
+**Prerequisite:** Ensure that you have installed and set up a Kubernetes cluster (The following example is tested in on-prem Kubernetes cluster version 1.24.2).
 
 1. Deploy COE in Kubernetes cluster
 
 COE is exposed as NodePort service so that Tier 1 NetScaler in front of kubernetes cluster is able to send metrics to COE.
 
-Note: COE will be exposed on defined NodePort 32514, in case you want to change the nodeport value please update coe-prometheus.yaml file.
+**Note:** COE will be exposed on defined NodePort 32514, in case you want to change the nodeport value please update coe-prometheus.yaml file.
 ```
 kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/coe-prometheus.yaml
 ```
@@ -42,7 +48,7 @@ kubectl get svc -n monitoring
 
 3. Configure NetScaler to send metrics from ADC to Prometheus through COE
 
-Note: We assume that you have tier 1 NetScaler VPX/SDX/MPX already in place with proper configuration. In this demo we will use VPX as Tier 1 ADC. COE related configuration are being done manually for simplicity sake. Another option is to use Citrix Ingress Controller to automate this configuration. 
+**Note:** We assume that you have tier 1 NetScaler VPX/SDX/MPX already in place with proper configuration. In this demo we will use VPX as Tier 1 ADC. COE related configuration are being done manually for simplicity sake. Another option is to use Citrix Ingress Controller to automate this configuration. 
 
 Create service in NetScaler to create communication with COE from NetScaler. Execute below commands on VPX using CLI
 
@@ -50,6 +56,7 @@ Create service in NetScaler to create communication with COE from NetScaler. Exe
 add service coe_metric_collector_svc_192.168.1.102 COE_instance HTTP 5563
 set analytics profile ns_analytics_time_series_profile -collector coe_metric_collector_svc_192.168.1.102 -Metrics ENABLED -OutputMode Prometheus -serveMode push
 ```
+
 
 4. Monitor applications and NetScaker health on Prometheus
 
