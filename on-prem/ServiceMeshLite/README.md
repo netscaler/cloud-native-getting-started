@@ -166,9 +166,8 @@ Lets understand the Service Mesh lite topology where CPX is exposed as Ingress t
 
 ![SML-ingress](images/SML-ingress.PNG)
 
-We have three types of microservice applications (hotdrink, colddrink and guestbook beverages) deployed in K8s cluster. Each application is exposed on different protocol. In this demo you will learn how CPX load balances SSL, SSL-TCP and TCP type microservices.
-Each applications are deployed in different namespaces to isolate their workload from other k8s deployments.
-We deployed three CPXs to manage each application workload independently. Also we configured Tier 1 ADC - VPX to send ingress traffic to all microservices from individual CPXs.
+We have hotdrink beverage microservice applications deployed in K8s cluster exposed on SSL protocol. In this demo you will learn how CPX load balances SSL type microservices.
+We deployed one CPX to manage hotdrink application (combination of three microservices) workload. Also we configured Tier 1 ADC - VPX to send ingress traffic to CPX for hotdrink application.
 
 In this deployment, hotdrink application has three apps - frontend hotdrink, tea and coffee load balanced via single Citrix ADC CPX. Tea and coffee microservices apps do E-W communication via CPX. We have used ``headless service architecture`` to enable E-W communication b/w tea and coffee.
 
@@ -176,9 +175,8 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/namespace.yaml
     ```
-    ![namespace](images/namespace.PNG)
 
-2.	Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
+2.	Deploy the CPX for hotdrink beverages microservice apps
 
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
@@ -186,7 +184,6 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cpx_rbac.yaml
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cpx_hotdrink.yaml -n team-hotdrink
     ```
-    ![ingress-cpx](images/ingress-cpx.PNG)
 
 3.	Deploy Hotdrink beverage microservices application in team-hotdrink namespace
     Hotdrink beverage application has tea and coffee microserives having E-W communication enabled. Tea and Coffee beverage apps uses Citrix ADC CPX for E-W communication in ServiceMesh lite deployment. We create two service kinds for each tea and coffee services. One service will point to CPX where the FQDN of the microservice (for example, coffee) should point to the Citrix ADC CPX IP address instead of the Cluster IP of the target microservice (coffee). And another service as ``headless service`` to represent tea or coffee service. Detailed Service Mesh lite deployment using headless service is explained [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/deploy/service-mesh-lite.md)
@@ -199,30 +196,17 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     ```
     ![ingress-hotdrink](images/ingress-hotdrink.PNG)
 
-4.	Deploy the colddrink beverage microservice application in team-colddrink namespace
-
-    **Note:** Please upload your TLS certificate and TLS key into colddrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
-    ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_colddrink.yaml -n team-colddrink
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/colddrink-secret.yaml -n team-colddrink
-    ```
-    ![ingress-colddrink](images/ingress-colddrink.PNG)
-
-5.	Deploy the guestbook no SQL type microservice application in team-guestbook namespace
-    ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/team_guestbook.yaml -n team-guestbook
-    ```
-    ![ingress-guestbook](images/ingress-guestbook.PNG)
-
-6.	(Optional) Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration present for K8s related workloads before automating the Tier 1 ADC configuration through Citrix Ingress Controller
+4.	(Optional) Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration present for K8s related workloads before automating the Tier 1 ADC configuration through Citrix Ingress Controller
     
     Note: If you do not have Tier 1 ADC already present in your setup then you can refer to [Citrix ADC VPX installation on XenCenter](https://github.com/citrix/cloud-native-getting-started/tree/master/VPX) for deploying Citrix ADC VPX as Tier 1 ADC.
 
-7.	Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
+5.	Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
     
     Create K8s secret for VPX login credentials used in CIC yaml file.
     ```
     kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password' -n tier-2-adc
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cic_rbac.yaml
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n tier-2-adc
     ```
     Download ingress_vpx and cic_vpx yaml files to update Tier 1 ADC configurations
     ```
@@ -231,7 +215,7 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     ```
     ![ingress-cic](images/ingress-cic.PNG)
 
-    Update  ingress_vpx.yaml and cic_vpx.yaml with following configuration
+    Update ingress_vpx.yaml and cic_vpx.yaml with following configuration
 
     Go to ``ingress_vpx.yaml`` and change the IP address of ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver for accessing microservices.
     e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.160"``
@@ -240,16 +224,16 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     1.  ``- name: "NS_IP"
         value: "x.x.x.x"``
     2.  Update VPX crednetails in cic_vpx.yaml file 
+
     Now execute the following commands after the above change.
+    
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cic_rbac.yaml
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n tier-2-adc
     kubectl create -f ingress_vpx.yaml -n tier-2-adc
     kubectl create -f cic_vpx.yaml -n tier-2-adc
     ```
     ![ingress-cic-config](images/ingress-cic-config.PNG)
 
-8.	Yeah!!! Your application is successfully deployed and ready to access from Internet
+6.	Yeah!!! Your application is successfully deployed and ready to access from Internet
 
     Add the DNS entries in your local machine host files for accessing microservices though Internet
     Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
@@ -257,15 +241,11 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
 
     ```
     <frontend-ip from ingress_vpx.yaml> hotdrink.beverages.com
-    <frontend-ip from ingress_vpx.yaml> colddrink.beverages.com
-    <frontend-ip from ingress_vpx.yaml> guestbook.beverages.com
     ```
 
     Lets access microservice app from local machine browser
     ```
     https://hotdrink.beverages.com
-    https://colddrink.beverages.com
-    https://guestbook.beverages.com
     ```
     ![hotbeverage_webpage](https://user-images.githubusercontent.com/42699135/50677394-987efb00-101f-11e9-87d1-6523b7fbe95a.png)
 
