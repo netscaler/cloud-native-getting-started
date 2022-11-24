@@ -183,9 +183,8 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
 
     ```
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/rbac.yaml
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cpx.yaml -n tier-2-adc
-    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n tier-2-adc
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cpx_rbac.yaml
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cpx_hotdrink.yaml -n team-hotdrink
     ```
     ![ingress-cpx](images/ingress-cpx.PNG)
 
@@ -243,6 +242,8 @@ In this deployment, hotdrink application has three apps - frontend hotdrink, tea
     2.  Update VPX crednetails in cic_vpx.yaml file 
     Now execute the following commands after the above change.
     ```
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/cic_rbac.yaml
+    kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/ServiceMeshLite/manifest/ingress/hotdrink-secret.yaml -n tier-2-adc
     kubectl create -f ingress_vpx.yaml -n tier-2-adc
     kubectl create -f cic_vpx.yaml -n tier-2-adc
     ```
