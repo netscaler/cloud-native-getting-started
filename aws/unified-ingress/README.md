@@ -16,6 +16,7 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	* To bring EKS follow EKS guide
 	* To bring VPX follow VPX guide
 	* Install [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) on your machine to access VPX and EKS locally.
+	* Create Security policies (inbound rules) for VPX and EKS to enable the traffic flow (Add EKS security group details in VPX inbound security rules and vice versa)
 
 2. Access EKS cluster from AWS CLI
 
@@ -41,16 +42,28 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	Note: Update username and password which is used while instantiating the VPX.
 
 	Install CIC
-	```
-	helm install cic citrix/citrix-ingress-controller --set nsIP=10.0.6.37,license.accept=yes,adcCredentialSecret=nsvpxlogin,crds.install=true,cic.ingressClass[0]=vpx
-	```
 
-	Note: From MAC terminal use below command
+	Copy below snipped into values.yaml file
 	```
-	helm install cic citrix/citrix-ingress-controller --set nsIP=10.0.6.37,license.accept=yes,adcCredentialSecret=nsvpxlogin,crds.install=true,cic.ingressClass\[0\]=vpx
+	cic:
+     enabled: True
+     nsIP: x.x.x.x
+     adcCredentialSecret: nsvpxlogin
+     license:
+       accept: yes
+     ingressClass: ["vpx"]
 	```
-
 	nsIP = Use primary private IP associated to VPX NIC (Goto to EC2 -> Instances -> Cloud-Native-vpx instance ID -> Check for Private IPv4 addresses in instance summary)
+
+	```
+	helm install cic citrix/citrix-cloud-native -f values.yaml
+	```
+
+	Install SSL certificate on VPX using K8s secret.
+	```
+	kubectl create -f cloudnative-secret.yaml
+	```
+	note: Due to security reasons secret file is not present on GitHub repo, you can create your own secret or contact NetScaler cloud native team for dummy secret file.
 
 	![cic](images/cic.png)
 
@@ -63,6 +76,13 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 4. Expose application using Ingress
 
 	```
-	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-demoapp-ingress.yaml
+	wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-demoapp-ingress.yaml
 	```
+
+	Update ingress.citrix.com/frontend-ip: "x.x.x.x" with private IP associated with VIP EIP.
+
+	```
+	kubectl create -f cloudnative-demoapp-ingress.yaml
+	```
+	![demoapp-ingress](images/demoapp-ingress.png)
 
