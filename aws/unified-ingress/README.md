@@ -5,7 +5,7 @@ In this guide you will learn:
 * How to deploy a microservice application exposed as NodePort type service.
 * How to configure NetScaler VPX (Tier 1 ADC) using Citrix Ingress Controller to load balance applications.
 
-NetScaler supports Unified Ingress architecture to load balance an enterprise grade applications deployed as microservices in AWS kubernetes service - EKS. NetScaler VPX acts as high scale North-South proxy. Lets understand the Unified Ingress topology using below diagram.
+NetScaler supports Unified Ingress architecture to load balance an enterprise grade applications deployed as microservices in AWS kubernetes service - EKS. NetScaler VPX acts as high scale, secure North-South proxy. Lets understand the Unified Ingress topology using below diagram.
 
 
 ##### Deployment steps:
@@ -15,7 +15,7 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	* Ensure that you have VPX and EKS running on AWS.
 	* To bring EKS follow EKS guide
 	* To bring VPX follow VPX guide
-	* Install [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) on your machine to access VPX and EKS locally.
+	* Install [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) on your machine to access EKS locally.
 	* Create Security policies (inbound rules) for VPX and EKS to enable the traffic flow (Add EKS security group details in VPX inbound security rules and vice versa)
 
 2. Access EKS cluster from AWS CLI
@@ -28,20 +28,20 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 
 2. Deploy Citrix Ingress controller using HELM
 
-	Lets add the citrix helm repo
+	* Lets add the citrix helm repo
 	```
 	helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 	```
-	Note: In case you do not have HELM installed on terminal, please install HELM from https://helm.sh/docs/intro/install/ 
+	*Note:* In case you do not have HELM installed on your machine, please install HELM from https://helm.sh/docs/intro/install/ 
 
 	
-	Create VPX login secret
+	* Create VPX login secret
 	```
 	kubectl create secret generic nsvpxlogin --from-literal=username='nsroot' --from-literal=password='mypassword'
 	```
-	Note: Update username and password which is used while instantiating the VPX.
+	*Note:* Update username and password which is used while instantiating the VPX.
 
-	Install CIC
+	* Install CIC
 
 	Copy below snipped into values.yaml file
 	```
@@ -60,11 +60,11 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	helm install cic citrix/citrix-cloud-native -f values.yaml
 	```
 
-	Install SSL certificate on VPX using K8s secret.
+	* Install SSL certificate on VPX using K8s secret.
 	```
 	kubectl create -f cloudnative-secret.yaml
 	```
-	note: Due to security reasons secret file is not present on GitHub repo, you can create your own secret or contact NetScaler cloud native team for dummy secret file.
+	*Note:* Due to security reasons secret file is not present on GitHub repo, you can create your own secret or contact NetScaler cloud native team for dummy secret file.
 
 	![cic](images/cic.png)
 
