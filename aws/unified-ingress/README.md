@@ -52,6 +52,7 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
      license:
        accept: yes
      ingressClass: ["vpx"]
+     ignoreNodeExternalIP: True
 	```
 	nsIP = Use primary private IP associated to VPX NIC (Goto to EC2 -> Instances -> Cloud-Native-vpx instance ID -> Check for Private IPv4 addresses in instance summary)
 
@@ -85,4 +86,11 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	kubectl create -f cloudnative-demoapp-ingress.yaml
 	```
 	![demoapp-ingress](images/demoapp-ingress.png)
+
+5. Deployment successful
+
+	Try accessing your application now
+	```
+	curl -H "Host: cloudnative.netscalerdemo.com" https://EIP for VIP -kv
+	```
 
