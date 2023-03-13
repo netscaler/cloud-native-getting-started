@@ -64,7 +64,7 @@ You can create cluster either using Azure portal GUI or Azure CLI. Choose one op
 
 1. Install Azure CLI and Kubectl in local machine
 	Install Azure CLI from [here](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-	Install Kubectl from [here](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+	Install Kubectl from [here](https://kubernetes.io/docs/tasks/tools/#kubectl)
 
 	Check the status for successful installation,
 	```
