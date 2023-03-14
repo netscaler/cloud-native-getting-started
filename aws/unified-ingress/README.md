@@ -17,9 +17,9 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	* To bring VPX follow [VPX guide](https://github.com/citrix/cloud-native-getting-started/blob/master/aws/aws-vpx/README.md)
 	* Install [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) on your machine to access EKS locally.
 	* Create Security policies (inbound rules) for VPX and EKS to enable the traffic flow (Add EKS security group details in VPX inbound security rules and vice versa)
+	
 
-2. Access EKS cluster from AWS CLI
-
+	Access EKS cluster from AWS CLI
 	```
 	aws eks --region ap-south-1 update-kubeconfig --name cloud-native-eks
 	```

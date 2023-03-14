@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ns-cpx-demo-app-ingress
+  annotations:
+spec:
+  ingressClassName: cpx
+  tls:
+  - secretName: cloudnative-secret
+  rules:
+  - host:  cloudnative.netscalerdemo.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: ns-cpx-demo-app
+            port: 
+              number: 80

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ns-cpx-demo-app
+  labels:
+      name: ns-cpx-demo-app
+      app: ns-cpx-demo-app
+spec:
+  selector:
+    matchLabels:
+       app: ns-cpx-demo-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        name: ns-cpx-demo-app
+        app: ns-cpx-demo-app
+    spec:
+      containers:
+      - name: ns-cpx-demo-app
+        image: quay.io/sample-apps/cnn-website:v1.0.0
+        ports:
+        - name: http-80
+          containerPort: 80
+        - name: https-443
+          containerPort: 443
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ns-cpx-demo-app
+  labels:
+    app: ns-cpx-demo-app
+spec:
+  ports:
+  - name: http-80
+    port: 80
+    targetPort: 80
+  - name: https-443
+    port: 443
+    targetPort: 443
+  selector:
+    name: ns-cpx-demo-app
