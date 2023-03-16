@@ -5,6 +5,7 @@ metadata:
   annotations:
    ingress.citrix.com/insecure-termination: "redirect"
    ingress.citrix.com/frontend-ip: "x.x.x.x"
+   ingress.citrix.com/secure_backend: '{"cpx-cpx-service": "True"}'
 spec:
   ingressClassName: vpx
   tls:
@@ -19,4 +20,4 @@ spec:
           service: 
             name: cpx-cpx-service
             port: 
-              number: 80
+              number: 443

@@ -7,6 +7,7 @@ In this guide you will learn:
 
 NetScaler supports Unified Ingress architecture to load balance an enterprise grade applications deployed as microservices in AWS kubernetes service - EKS. NetScaler VPX acts as high scale, secure North-South proxy. Lets understand the Unified Ingress topology using below diagram.
 
+![unified-ingress-aws](images/unified-ingress-aws.png)
 
 ##### Deployment steps:
 

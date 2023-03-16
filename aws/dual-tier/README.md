@@ -8,6 +8,9 @@ In this guide you will learn:
 
 NetScaler supports Dual tier architecture to load balance an enterprise grade applications deployed as microservices in AWS kubernetes service - EKS. NetScaler VPX acts as high scale, secure North-South proxy infront of EKS cluster and NetScaler CPX acts as layer 2 proxy inside EKS. Lets understand the Dual tier topology using below diagram.
 
+![dualtier-topology-aws](images/dualtier-topology-aws.png)
+
+
 ##### Deployment steps:
 
 1. Pre-requisite
@@ -22,7 +25,7 @@ NetScaler supports Dual tier architecture to load balance an enterprise grade ap
 	```
 	aws eks --region ap-south-1 update-kubeconfig --name cloud-native-eks
 	```
-	![eks](images/eks.png)
+	![eks](https://github.com/citrix/cloud-native-getting-started/blob/master/aws/unified-ingress/images/eks.png)
 
 
 2. Deploy Citrix Ingress controller using HELM
@@ -59,13 +62,13 @@ NetScaler supports Dual tier architecture to load balance an enterprise grade ap
 	helm install cic citrix/citrix-cloud-native -f values.yaml
 	```
 
-	* Install SSL certificate on VPX using K8s secret.
+	* Install SSL certificates on VPX using K8s secret.
 	```
 	kubectl create -f cloudnative-secret.yaml
 	```
 	*Note:* Due to security reasons secret file is not present on GitHub repo, you can create your own secret or contact NetScaler cloud native team for dummy secret file.
 
-	![cic](images/cic.png)
+	![cic](https://github.com/citrix/cloud-native-getting-started/blob/master/aws/unified-ingress/images/cic.png)
 
 3. Deploy NetScaler CPX exposed as NodePort service to VPX
 
@@ -87,15 +90,15 @@ NetScaler supports Dual tier architecture to load balance an enterprise grade ap
     ```
     helm install cpx citrix/citrix-cloud-native -f cpx-values.yaml
     ```
-	
+	![cpx](images/cpx.png)
 
 4. Deploy sample application exposed as Ingress type service
 
 	```
 	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-cpx-demoapp.yaml
 	```
-
-5. Expose sample application to CPX
+	
+	Expose sample application to CPX using Ingress kind
 
 	```
 	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-cpx-demoapp-ingress.yaml
@@ -108,7 +111,9 @@ NetScaler supports Dual tier architecture to load balance an enterprise grade ap
 	cli_script.sh "sh lbvs"
 	```
 
-6. Expose CPX services to VPX as backend application
+	![demo-app](images/demo-app.png)
+
+5. Expose CPX services to VPX as backend application
 
 	Download Ingress manifest file
 	```
@@ -116,3 +121,29 @@ NetScaler supports Dual tier architecture to load balance an enterprise grade ap
 	```
 
 	* Update ingress.citrix.com/frontend-ip: "x.x.x.x" with private IP associated with VIP EIP.
+
+	```
+	kubectl create -f cloudnative-vpx-ingress.yaml
+	kubectl get ing
+	```
+
+	![vpx-ingress](images/vpx-ingress.png)
+
+6. Verify the VPX configuration
+
+	Citrix Ingress controller would have configured your VPX for cloudnative apps. You can verify the VPX configuration. Login to VPX and check the status
+	```
+	sh csvs <k8s-...>
+	sh lbvs <k8s...>
+	sh servicegroup <k8s...>
+	```
+
+	You should see the service memeber status UP. In case you find servicegroup member status DOWN or not able to find config on VPX, check for CIC logs.
+
+7. Access your application
+
+	Note the VIP Elastic IP named as `cloud-native-vip` and try accessing the app
+
+	```
+	curl -H"Host:cloudnative.netscalerdemo.com" https://<vip-eip> -kv
+	```
