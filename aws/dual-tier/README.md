@@ -1,12 +1,12 @@
-# Load balance microserviced based applications using NetScaler VPX (Tier 1 ADC as NetScaler VPX, Tier 2 as microservice applications in EKS)
+# Load balance microserviced based applications using NetScaler (Tier 1 ADC as NetScaler VPX, Tier 2 ADC as NetScaler CPX inside EKS)
 
 In this guide you will learn:
 
-* How to deploy a microservice application exposed as NodePort type service.
-* How to configure NetScaler VPX (Tier 1 ADC) using Citrix Ingress Controller to load balance applications.
+* How to deploy a microservice application exposed as Ingress type service.
+* How to deploy a microservice based proxy - NetScaler CPX 
+* How to configure NetScaler VPX (Tier 1 ADC) using Citrix Ingress Controller to frontend CPX.
 
-NetScaler supports Unified Ingress architecture to load balance an enterprise grade applications deployed as microservices in AWS kubernetes service - EKS. NetScaler VPX acts as high scale, secure North-South proxy. Lets understand the Unified Ingress topology using below diagram.
-
+NetScaler supports Dual tier architecture to load balance an enterprise grade applications deployed as microservices in AWS kubernetes service - EKS. NetScaler VPX acts as high scale, secure North-South proxy infront of EKS cluster and NetScaler CPX acts as layer 2 proxy inside EKS. Lets understand the Dual tier topology using below diagram.
 
 ##### Deployment steps:
 
@@ -17,7 +17,6 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	* To bring VPX follow [VPX guide](https://github.com/citrix/cloud-native-getting-started/blob/master/aws/aws-vpx/README.md)
 	* Install [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) on your machine to access EKS locally.
 	* Create Security policies (inbound rules) for VPX and EKS to enable the traffic flow (Add EKS security group details in VPX inbound security rules and vice versa)
-	
 
 	Access EKS cluster from AWS CLI
 	```
@@ -68,29 +67,52 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 
 	![cic](images/cic.png)
 
-3. Deploy sample application exposed as NodePort
+3. Deploy NetScaler CPX exposed as NodePort service to VPX
+
+	Copy below snipped and create cpx-values.yaml file on your machine	
+	```
+	cpx:
+      enabled: True
+      serviceType:
+        nodePort:
+          enabled: True
+    cic:
+      license:
+        accept: Yes
+      ingressClass: ["cpx"]
+    ```
+
+    Deploy CPX using HELM chart
+    
+    ```
+    helm install cpx citrix/citrix-cloud-native -f cpx-values.yaml
+    ```
+	
+
+4. Deploy sample application exposed as Ingress type service
 
 	```
-	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-demoapp.yaml
+	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-cpx-demoapp.yaml
 	```
 
-4. Expose application using Ingress
+5. Expose sample application to CPX
 
 	```
-	wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-demoapp-ingress.yaml
+	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-cpx-demoapp-ingress.yaml
 	```
 
-	Update ingress.citrix.com/frontend-ip: "x.x.x.x" with private IP associated with VIP EIP.
-
+	Verify the CPX configuration:
 	```
-	kubectl create -f cloudnative-demoapp-ingress.yaml
-	```
-	![demoapp-ingress](images/demoapp-ingress.png)
-
-5. Deployment successful
-
-	Try accessing your application now
-	```
-	curl -H "Host: cloudnative.netscalerdemo.com" https://EIP for VIP -kv
+	kubectl exec -it <cpx pod name> bash
+	cli_script.sh "sh csvs"
+	cli_script.sh "sh lbvs"
 	```
 
+6. Expose CPX services to VPX as backend application
+
+	Download Ingress manifest file
+	```
+	wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-vpx-ingress.yaml
+	```
+
+	* Update ingress.citrix.com/frontend-ip: "x.x.x.x" with private IP associated with VIP EIP.

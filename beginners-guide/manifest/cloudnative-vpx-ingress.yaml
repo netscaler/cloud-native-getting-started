@@ -1,10 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ns-cpx-demo-app-ingress
+  name: ns-vpx-ingress
   annotations:
+   ingress.citrix.com/insecure-termination: "redirect"
+   ingress.citrix.com/frontend-ip: "x.x.x.x"
 spec:
-  ingressClassName: cpx
+  ingressClassName: vpx
   tls:
   - secretName: cloudnative-secret
   rules:
@@ -15,6 +17,6 @@ spec:
         pathType: Prefix
         backend:
           service: 
-            name: ns-cpx-demo-app
+            name: cpx-cpx-service
             port: 
               number: 80
