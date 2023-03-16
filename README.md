@@ -25,6 +25,9 @@ Here are very cool hands-on guides for you to understand Citrix Cloud Native por
   * [Deploy Citrix Observability exporter in K8s for sending metrics to Prometheus](/beginners-guide/tier1-prometheus-coe.md)
 
 * Citrix Cloud Native Advanced Guides
+  * AWS
+    * [NetScaler VPX as Ingress Proxy for AWS Kubernetes Service](/aws/unified-ingress)
+    * [NetScaler VPX as Ingress proxy and CPX as k8s proxy for AWS Kubernetes Service](/aws/dual-tier)
   * Azure
     * [Citrix ADC VPX & Ingress Controller as External LoadBalancer/Ingress for Azure Kubernetes Service](/azure/unified-ingress/README.md)
     * [Citrix ADC CPX & Ingress Controller for Azure Kubernetes Service](/azure/marketplace-cpx/README.md)
