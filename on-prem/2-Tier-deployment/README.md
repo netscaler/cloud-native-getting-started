@@ -1,6 +1,7 @@
-# Deploy Citrix Cloud native solution for 2- Tier Ingress Topology in on-prem Kubernetes cluster (Tier 1 ADC as Citrix ADC VPX, Tier 2 ADC as Citrix ADC CPX)
+# NetScaler load balancing microservices from on-prem Kubernetes cluster (Tier 1 ADC as VPX, Tier 2 ADC as CPX) using Role base access
 
 In this guide you will learn:
+* How to limit the scope of Citrix Ingress controller for namespace using Role based RBAC
 * How to deploy a microservice application exposed as Ingress type service.
 * How to deploy a Citrix ADC CPX to Load Balancer microservice applications.
 * How to isolate two team workload (microservice apps, CPX, CIC, Ingress) using K8s namespace.
@@ -52,6 +53,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
 2. Deploy microservice application for each team
     
     Deploy k8s secret for frontend developer and mobile developer team to configure TLS certificate in Tier 1 ADC - VPX and Tier 2 ADC - CPX. Ingress kind for VPX and CPX configuration of each team specifies these secret names for TLS communication.
+    
     **Note:** Please upload your TLS certificate and TLS key into frontend-developers-secret.yaml & mobile-developers-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
     
     ```
@@ -81,11 +83,7 @@ Team 'Frontend-developers' will not have visibility for Team 'Mobile-developers'
 
 4. Deploy Citrix ADC CPX to Load Balance N-S traffic for individual teams
     
-    You can directly pass the user name and password as environment variables to the Citrix ingress controller or use K8s secrets (recommended). If you want to use K8s secrets, create a secret for the user name and password using the following command:
-    ```
-    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n frontend-developers
-    kubectl create secret generic nslogin --from-literal=username='nsroot' --from-literal=password='nsroot' -n mobile-developers
-    ```
+    
     Deploy Citrix ADC CPX for Frontend-developers team
     ```
     kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/on-prem/2-Tier-deployment/manifest/frontend-developers-cpx.yaml -n frontend-developers

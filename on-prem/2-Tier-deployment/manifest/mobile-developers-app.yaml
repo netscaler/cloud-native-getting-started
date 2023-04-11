@@ -3,6 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mobile
+  labels:
+    app: mobile
 spec:
   selector:
     matchLabels:
@@ -26,7 +28,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mobile
+  name: mobile-developers
 spec:
   ports:
   - name: hotdrinks-80
@@ -40,21 +42,18 @@ spec:
 
 ---
 
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: mobile-ingress
   annotations:
-   kubernetes.io/ingress.class: "mobile"
+   kubernetes.io/ingress.class: "vpx-mobile"
 spec:
   tls:
   - secretName: mobile-secret
-  rules:
-  - host:  mobile.agiledevelopers.com
-    http:
-      paths:
-      - path: 
-        backend:
-          serviceName: mobile
-          servicePort: 80
+  defaultBackend:
+    service:
+       name: mobile-developers
+       port: 
+         number: 80
 ---

@@ -1,9 +1,9 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-vpx
   annotations:
-   kubernetes.io/ingress.class: "vpx-frontend"
+   kubernetes.io/ingress.class: "cic-vpx-frontend"
    ingress.citrix.com/insecure-termination: "disallow"
    ingress.citrix.com/frontend-ip: "10.105.158.196"
    ingress.citrix.com/secure_backend: '{"lb-service-frontend": "True"}'
@@ -14,7 +14,10 @@ spec:
   - host:  frontend.agiledevelopers.com
     http:
       paths:
-      - path: 
+      - path: /
+        pathType: Prefix
         backend:
-          serviceName: lb-service-frontend
-          servicePort: 443
+          service:
+            name: lb-service-frontend
+            port:
+              number: 443

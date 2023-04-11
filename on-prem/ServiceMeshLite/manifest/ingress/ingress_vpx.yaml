@@ -28,23 +28,3 @@ spec:
             name: lb-service-hotdrinks
             port: 
               number: 443
-  - host:  guestbook.beverages.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service: 
-            name: lb-service-guestbook
-            port: 
-              number: 80
-  - host:  colddrink.beverages.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service: 
-            name: lb-service-colddrinks
-            port: 
-              number: 443
