@@ -4,7 +4,7 @@ In this guide you will learn:
 * How to limit the scope of Citrix Ingress controller for namespace using Role based RBAC
 * How to deploy a microservice application exposed as Ingress type service.
 * How to deploy a Citrix ADC CPX to Load Balancer microservice applications.
-* How to isolate two team workload (microservice apps, CPX, CIC, Ingress) using K8s namespace.
+* How to isolate two teams workload (microservice apps, CPX, CIC, Ingress) using K8s namespace.
 * How to configure same Citrix ADC VPX (Tier 1 ADC) using two different Citrix Ingress Controller to load balance north-South ingress traffic for each team
 
 Citrix ADC supports 2-Tier Ingress architecture to load balance an enterprise grade applications deployed as microservices. Citrix load balancers can be VPX/SDX/MPX/BLX, or CPX (containerized Citrix ADC) to manage high scale north-south traffic. Lets understand the 2-Tier Ingress topology using below diagram.
