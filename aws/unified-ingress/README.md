@@ -33,14 +33,14 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	```
 	helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 	```
-	*Note:* In case you do not have HELM installed on your machine, please install HELM from https://helm.sh/docs/intro/install/ 
+	> *Note:* In case you do not have HELM installed on your machine, please install HELM from https://helm.sh/docs/intro/install/ 
 
 	
 	* Create VPX login secret
 	```
 	kubectl create secret generic nsvpxlogin --from-literal=username='nsroot' --from-literal=password='mypassword'
 	```
-	*Note:* Update username and password which is used while instantiating the VPX.
+	> *Note:* Update username and password which is used while instantiating the VPX.
 
 	* Install CIC
 
@@ -65,7 +65,7 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	```
 	kubectl create -f cloudnative-secret.yaml
 	```
-	*Note:* Due to security reasons secret file is not present on GitHub repo, you can create your own secret or contact NetScaler cloud native team for dummy secret file.
+	> *Note:* Due to security reasons secret file is not present on GitHub repo, you can create your own secret or contact NetScaler cloud native team for dummy secret file.
 
 	![cic](images/cic.png)
 
@@ -74,6 +74,9 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	```
 	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-demoapp.yaml
 	```
+
+        > *Note:*
+        > In case the application service is of type NodePort, Citrix Ingress Controller will only add the IP of Node(s) having application pods as a backend server in NetScaler.
 
 4. Expose application using Ingress
 
