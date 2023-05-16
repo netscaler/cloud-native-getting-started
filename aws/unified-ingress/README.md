@@ -74,7 +74,6 @@ NetScaler supports Unified Ingress architecture to load balance an enterprise gr
 	```
 	kubectl create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/beginners-guide/manifest/cloudnative-demoapp.yaml
 	```
-
         > **Note:** In case the application service is of type NodePort, Citrix Ingress Controller will only add the IP of Node(s) having application pods as a backend server in NetScaler.
 
 4. Expose application using Ingress
