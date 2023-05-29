@@ -73,17 +73,18 @@ NetScaler supports Dual tier architecture to load balance an enterprise grade ap
 3. Deploy NetScaler CPX exposed as NodePort service to VPX
 
 	Copy below snipped and create cpx-values.yaml file on your machine	
-	```
-	cpx:
+
+```
+cpx:
+  enabled: True
+  serviceType:
+    nodePort:
       enabled: True
-      serviceType:
-        nodePort:
-          enabled: True
-    cic:
-      license:
-        accept: Yes
-      ingressClass: ["cpx"]
-    ```
+  cic:
+  license:
+    accept: Yes
+  ingressClass: ["cpx"]
+```
 
     Deploy CPX using HELM chart
     
