@@ -1,4 +1,4 @@
-# Load balance microserviced based applications using NetScaler (Tier 1 ADC as NetScaler VPX, Tier 2 ADC as NetScaler CPX inside EKS)
+# Load balance microservices based applications using NetScaler (Tier 1 ADC as NetScaler VPX, Tier 2 ADC as NetScaler CPX inside EKS)
 
 In this guide you will learn:
 
