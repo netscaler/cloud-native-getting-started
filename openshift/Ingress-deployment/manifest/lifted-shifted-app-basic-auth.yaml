@@ -1,0 +1,17 @@
+apiVersion: citrix.com/v1beta1
+kind: authpolicy
+metadata:
+  name: liftshiftappauthpolicy
+spec:
+    servicenames:
+    - lift-and-shift-app
+    authentication_providers:
+    - name: "local-auth-provider"
+      basic_local_db:
+        use_local_auth: 'YES'
+    authentication_policies:
+    - resource:
+        path:
+        - '/'
+        method: [GET, POST]
+      provider: ["local-auth-provider"]
