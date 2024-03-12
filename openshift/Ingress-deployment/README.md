@@ -1,182 +1,252 @@
 
-# Learn how to deploy Citrix ADC & microservices on OpenShift on-prem cluster (Tier 1 ADC as Citrix ADC VPX, Tier 2 ADC as Citrix ADC CPX)
+# NetScaler for OpenShift microservice application delivery (NetScaler RedHat certified Ingress BLX, CPX for OpenShift applications)
 
 In this guide you will learn:
-* What is service mesh lite deployment?
-* How to deploy microservice applications listening on different protocols
-* How to deploy a CPX in OpenShift cluster exposed as Ingress type service.
-* How does a Citrix ADC CPX Load Balance microservice applications.
-  * How does CPX Load balance North-South traffic received from Tier 1 ADC
-  * How does CPX Load balance East-West traffic without sidecar proxy deployment. 
-* How to isolate microservice application workload (microservice apps, CPX, CIC) using K8s namespace.
-* How to configure Citrix ADC VPX (Tier 1 ADC) using Citrix Ingress Controller to load balance north-south ingress traffic for each team
+* Why NetScaler for RedHat OpenShift deployments?
+* What are the NetScaler recommended Cloud Native deployments for OpenShift applications (Unified Ingress, Two tier Ingress topology)
+* How do you load balance microservice application lifted and shifted from monolithic environment (HTTP application with SSL offload)
+* How do you secure your microservice application end to end with NetScaler (SSL application)
+* How do you protect your OpenShift application from security attacks with NetScaler security use cases
 
 
+## Why NetScaler for RedHat OpenShift deployments?
 
-Lets understand the Service Mesh lite topology where CPX is exposed as Ingress type service
-
-![SML-ingress](images/SML-ingress.PNG)
-
-We have a microservice based application called hotdrink beverages deployed in OpenShift cluster. This application is exposed on SSL protocol. In this demo you will learn how CPX load balances SSL type microservices.
-This  applications is deployed in different namespace than proxy namespace to showcase namespace based deployment.
-We will deploy one CPX to manage hotdrink beverage application workload. Also we configured Tier 1 ADC - VPX to send ingress traffic to CPX microservice for hotdrink app.
-
-In this deployment, hotdrink application has three apps - frontend hotdrink, tea and coffee load balanced via single Citrix ADC CPX. Tea and coffee microservices apps do E-W communication via CPX. We have used ``headless service architecture`` to enable E-W communication b/w tea and coffee.
+OpenShift, a robust and secure hybrid cloud Kubernetes platform backed by Red Hat. Applications hosted within the OpenShift environment require a secure method for external access, facilitated by an enterprise-grade ingress proxy solution. NetScaler, a widely recognized and battle-tested enterprise proxy, works seamlessly with OpenShift for optimizing, securing, and directing ingress traffic to single or multiple OpenShift clusters. Learn more about [NetScaler ISV partnership with and RedHat](https://www.netscaler.com/platform/integrations/red-hat-netscaler).
 
 
-1.	Bring your own nodes (BYON)
+## What are the NetScaler recommended Cloud Native deployments for OpenShift applications (Unified Ingress, Two tier Ingress topology)
 
-Red Hat OpenShift is an container application platform based on the Kubernetes container orchestrator for enterprise application development and deployment. Please install and configure OpenShift cluster with one master node and at least one worker node deployment.
-
-Recommended OS: Red Hat Enterprise Linux 7.6 and above
-
-Visit: https://docs.openshift.com/container-platform/3.11/install/running_install.html for OpenShift cluster deployment guide.
-Once OpenShift cluster is up and running, execute the below command on master node to get the node status.
-``` 
-oc get nodes
-```
-![oc-nodes](images/get-nodes.PNG)
- 
-(Screenshot above has OpenShift cluster with one master and two worker node).
+Customer moving to microservices need Ingress proxy for load balancing OpenShift applications with existing NetScalers. NetScaler form factors MPX, SDX, BLX or VPX can be used with or without CPX for securing OpenShift deployments. NetScaler recommends few topologies for Cloud Native deployments however NetScaler offers flexibility for choosing customer preferred topology. Know more about[NetScaler deployment topologies](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/deployment-topologies)
 
 
-2. Add OpenShift hostsubnets in Tier 1 ADC to reach OpenShift pod network from NetScaler
+## Getting started (How to guide)
 
-Make sure that route configuration is present in Tier 1 ADC so that Ingress NetScaler should be able to reach Kubernetes pod network for seamless connectivity. Please refer to https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md#manually-configure-route-on-the-citrix-adc-instance for Network configuration.
+In this section you will learn how to secure OpenShift applications with scalable NetScaler ingress proxy. In this section you will deploy below use cases.
 
-If you have K8s cluster and Tier 1 Citrix ADC in same subnet then you do not have to do anything, below example will take care of route info using ``feature-node-watch`` argument variable used in Citrix Ingress Controller manifest.
+* [How do you load balance microservice application with NetScaler RHEL BLX lifted and shifted from monolithic environment (Unified Ingress topology: HTTP application with SSL offload, secured client access using basic authentication)]()
+* [How do you secure your microservice application end to end with NetScaler RHEL BLX and RedHat Operator certified CPX (Two tier Ingress topology: SSL application secured with BLX, CPX end to end TLS, protect blacklisted clients access using NetScaler responder policy)]()
 
-You need Citrix Node Controller configuration only when K8s cluster and Tier 1 ADC are in different subnet. Please refer to https://github.com/citrix/citrix-k8s-node-controller for Network configuration.
+Lets understand the demo use cases from the belowdeployment topology.
+
+![demo topology](/images/demo-topology.png)
+
+NetScaler BLX is RHEL certified proxy deployed infront of OpenShift clusters acting as Ingress proxy. The is a HTTP application (lifted-shifted-app) migrated to OpenShift from monolithic deployment. Since this application is insecure, BLX provides SSL offload and protect it from internet security attacks.
+There is another DevOps team building the SSL based microservice application from scratch (NS-CN app) who need a proxy inside OpenShift (NetScaler CPX) for better control. However NetScaler BLX still be required infront of NetScaler BLX for unified internet access.
 
 
-3. Create K8s namespaces to manage team beverages workload independently
+### Pre-requisite
+* OpenShift cluster running on AWS (e.g. Mumbai ap-south-1 region).
+* NetScaler RHEL BLX running on AWS (e.g. BLX on EC2 instance m5.2large hosted in Mumbai ap-south-1 region). 
+* Create Kubernetes secret inside OpenShift clusters for BLX login. e.g. ``kubectl create secret generic nslogin --from-literal=username=<username> --from-literal=password=<password>``
+* Ensure connectivity/routing is enabled between BLX and OpenShift nodes. You need VPX peering if BLX and OpenShift are deployed in different VPC. In this demo BLX and OpenShift clusters are running in same VPC.
+* AWS CLI, OpenShift CLI in case you prefer ssh access.
+
+### Use case 1: How do you load balance microservice application with NetScaler RHEL BLX lifted and shifted from monolithic environment (Unified Ingress topology: HTTP application with SSL offload, secured client access using basic authentication)
+
+1.  Create a new project 'demonamespace'from OpenShift console
+
+    Refer to [OpenShift document](https://docs.openshift.com/container-platform/4.8/applications/projects/working-with-projects.html) for creating/selecting new project - demonamespace.
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/namespace.yaml
-    ```
-    ![namespace](images/namespace.PNG)
-
-4. Deploy the CPXs for hotdrink, colddrink and guestbook beverages microservice apps
-
-    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
-
-
-    ```
-    oc adm policy add-scc-to-group anyuid system:authenticated
-    oc adm policy add-scc-to-user privileged system:serviceaccount:tier-2-adc:cpx
+    oc project demonamespace
     ```
 
+2.  Deploy HTTP application into OpenShift cluster
+
+    Using OpenShift console:
+    You can goto OpenShift console, Navitage to Workloads -> Deployments and click on Create Deployment buttom. Copy the Deployment object from [lifted-shifted-app.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/lifted-shifted-app.yaml) and click on create buttom to deploy Deployment.
+
+    Navitage to Networking -> Services and click on Create Service buttom. Copy the Service object from [lifted-shifted-app.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/lifted-shifted-app.yaml) and click on create buttom to deploy Service.
+
+    Using SSH/ OC CLI:
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/rbac.yaml
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/cpx.yaml -n tier-2-adc
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/hotdrink-secret.yaml -n tier-2-adc
+    kubectl create -f https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/lifted-shifted-app.yaml
     ```
-    ![ingress-cpx](images/ingress-cpx.PNG)
 
-5. Deploy Hotdrink beverage microservices application in team-hotdrink namespace
-    Hotdrink beverage application has tea and coffee microserives having E-W communication enabled. Tea and Coffee beverage apps uses Citrix ADC CPX for E-W communication in ServiceMesh lite deployment. We create two service kinds for each tea and coffee services. One service will point to CPX where the FQDN of the microservice (for example, coffee) should point to the Citrix ADC CPX IP address instead of the Cluster IP of the target microservice (coffee). And another service as ``headless service`` to represent tea or coffee service. Detailed Service Mesh lite deployment using headless service is explained [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/deploy/service-mesh-lite.md)
+3.  Deploy NetScaler Ingress controller using OpenShift operator
 
-    **Note:** Please upload your TLS certificate and TLS key into hotdrink-secret.yaml. We have updated our security policies and removed SSL certificate from guides.
+    Follow to below steps from OpenShift console to deploy NetScaler Ingress controller.
+    * Login to OpenShift console - https://console-openshift-console.apps.x.x.x/dashboards
+    * Navigate to Operators -> OperatorHub, Select demonamespace project from left top corner and search for ``NetScaler Operator`` in the searchbar and click on NetScaler certified Operator
+    ![operatorHub](/images/operatorHub.png)
+    * Follow the steps from the screen and NetScaler Operator will be installed. Refer [NetScaler operator how to](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/deploy/deploy-ns-operator.md#installing-netscaler-operator) for detailed steps.
+    * Navigate to Operators -> Installed Operators to locate NetScaler Operator. Click on NetScaler Operator and goto NetScaler Ingress controller tab and click on Create NetScalerIngressController button. Update YAML file with BLX nsIP (BLX private IP assigned to elasticIP of NSIP), license.accept to Yes and adcCredentialSecret -> nslogin (mentioned in Pre-requisite) and click on Create buttom. Refer [How to deploy NSIC using NetScaler Operator](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/deploy/deploy-ns-operator.md#installing-netscaler-operator) guide.
+    ![nsic](/images/nsic.png)
+
+    You can view NetScaler Ingress controller pod deployment status from OC CLI also.
+    ```
+    oc get pods 
+    ```
+    ![nsic-pod](/images/nsic-pod.png)
+
+4.  Configure SSL certificate on BLX
+
+    For this demo we will create a new SSL certificate using Kubernetes secrete in OpenShift cluster and refer it in Ingress object. Know more about [TLS certificate management](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/tls-certificates) for OpenShift applications. You may use existing SSL certificate from NetScaler.
 
     ```
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/team_hotdrink.yaml -n team-hotdrink
-    oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/hotdrink-secret.yaml -n team-hotdrink
+    openssl genrsa -out cloudnative_key.pem 2048
+
+    openssl req -new -key cloudnative_key.pem -out cloudnative_csr.pem -subj "/CN=*.cloupst.net/O=Citrix Systems Inc/C=IN"
+
+    openssl x509 -req -in cloudnative_csr.pem -sha256 -days 365 -extensions v3_ca -signkey cloudnative_key.pem -CAcreateserial -out cloudnative_cert.pem
+
+    kubectl create secret tls wildcard-vpx-cert --key cloudnative_key.pem --cert cloudnative_cert.pem
     ```
-    ![ingress-hotdrink](images/ingress-hotdrink.PNG)
 
+5.  Deploy Ingress obejct to route HTTP applicaton from the internet
 
-6. (Optional) Login to Tier 1 ADC (VPX/SDX/MPX appliance) to verify no configuration present for K8s related workloads before automating the Tier 1 ADC configuration through Citrix Ingress Controller
-    
-    Note: If you do not have Tier 1 ADC already present in your setup then you can refer to [Citrix ADC VPX installation on XenCenter](https://github.com/citrix/cloud-native-getting-started/tree/master/VPX) for deploying Citrix ADC VPX as Tier 1 ADC.
+    Using OpenShift console:
+    You can goto OpenShift console, Navitage to Networking -> Ingresses and click on Create Ingress buttom. Copy the Ingress object from [lifted-shifted-app-ingress.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/lifted-shifted-app-ingress.yaml) and change the ingress.citrix.com/frontend-ip with BLX VIP and click on create buttom to deploy Ingress.
 
-7. Deploy the VPX ingress and Citrix ingress controller to configure tier 1 ADC VPX automatically
-    
-    Create K8s secret for VPX login credentials used in CIC yaml file.
+    Using SSH/ OC CLI:
+
     ```
-    kubectl create secret generic nsvpxlogin --from-literal=username='username' --from-literal=password='password' -n tier-2-adc
+    wget https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/lifted-shifted-app-ingress.yaml
     ```
-    Download ingress_vpx and cic_vpx yaml files to update Tier 1 ADC configurations
+
+    Update "ingress.citrix.com/frontend-ip:" to BLX VIP IP (private IP associated with EIP of VIP) and deploy ingress object.
+
     ```
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/ingress_vpx.yaml
-    wget https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/cic_vpx.yaml
+    kubectl create -f lifted-shifted-app-ingress.yaml
     ```
-    ![ingress-cic](images/ingress-cic.PNG)
+    ![unified-app-ingress](/images/unified-app-ingress.png)
 
-    Update  ingress_vpx.yaml and cic_vpx.yaml with following configuration
+6.  Access your HTTP application from internet
 
-    Go to ``ingress_vpx.yaml`` and change the IP address of ``ingress.citrix.com/frontend-ip: "x.x.x.x"`` annotation to one of the free IP which will act as content switching vserver for accessing microservices.
-    e.g. ``ingress.citrix.com/frontend-ip: "10.105.158.160"``
+    Add the DNS entries in your local machine host files for accessing microservices though Internet.
 
-    Go to ``cic_vpx.yaml`` and change the NS_IP value to your VPX NS_IP.         
-    1.  ``- name: "NS_IP"
-        value: "x.x.x.x"``
-    2.  Update VPX crednetails in cic_vpx.yaml file 
-    Now execute the following commands after the above change.
-    ```
-    oc create -f ingress_vpx.yaml -n tier-2-adc
-    oc create -f cic_vpx.yaml -n tier-2-adc
-    ```
-    ![ingress-cic-config](images/ingress-cic-config.PNG)
-
-8. Yeah!!! Your application is successfully deployed and ready to access from Internet
-
-    Add the DNS entries in your local machine host files for accessing microservices though Internet
     Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
     Add below entries in hosts file and save the file
 
     ```
-    <frontend-ip from ingress_vpx.yaml> hotdrink.beverages.com
+    <EIP associated with frontend-IP from lifted-shifted-app-ingress.yaml> lift-and-shift-httpapp.cloudpst.net
+    ```
+    Access your application from broswer - ``https://lift-and-shift-httpapp.cloudpst.net/``
+    ![app-access](/images/app-access.png)
+
+7.  Secured HTTP application access using NetScaler auth
+
+    NetScaler configures authentication policies for OpenShift application using [Auth CRDs](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/crd/auth/README.md). We will use NetScaler BLX as local authentication provider for demonstrating basic auth use case.
+
+    Note: Auth CRD is already installed with NSIC operator. In case Auth CRD is not installed then deploy [Auth CRD instance](https://raw.githubusercontent.com/citrix/citrix-k8s-ingress-controller/master/crd/auth/auth-crd.yaml) using kubectl create command.
+
+    Lets deploy Auth policy
+    ```
+    kubectl create -f https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/lifted-shifted-app-basic-auth.yaml
     ```
 
-    Lets access microservice app from local machine browser
+    Login to BLX and configure below two commands to make BLX as local auth provider.
     ```
-    https://hotdrink.beverages.com
+    add aaa user blxuser -password blxuser
+    set tmsessionparameter -defaultAuthorizationAction Allow
     ```
-    ![hotbeverage_webpage](https://user-images.githubusercontent.com/42699135/50677394-987efb00-101f-11e9-87d1-6523b7fbe95a.png)
 
-    You can access the application from command line using CURL
+    Try accessing ``https://lift-and-shift-httpapp.cloudpst.net/``, you will see signin page to provide the BLX user credentials.
+    ![auth-singin-popup](/images/auth-singin-popup.png) 
+
+
+
+### Use case 2: How do you secure your microservice application end to end with NetScaler RHEL BLX and RedHat Operator certified CPX (Two tier Ingress topology: SSL application secured with BLX, CPX end to end TLS, protect blacklisted clients access using NetScaler responder policy)
+
+In case you have skiped the Use Case 1 and directly starting from use case 2 in that case, follow the Step 1, 3, 4 from Use Case 1 first later continue here.
+
+1.  Deploy sample SSL application into OpenShift cluster
+
+    Using OpenShift console:
+    You can goto OpenShift console, Navitage to Workloads -> Deployments and click on Create Deployment buttom. Copy the Deployment object from [cloudnative-demoapp.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cloudnative-demoapp.yaml) and click on create buttom to deploy Deployment.
+
+    Navitage to Networking -> Services and click on Create Service buttom. Copy the Service object from [cloudnative-demoapp.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cloudnative-demoapp.yaml) and click on create buttom to deploy Service.
+
+    Using SSH/ OC CLI:
     ```
-    curl https://<frontend-ip>  -H "Host: hotdrink.beverages.com" -ik
-    curl https://<frontend-ip>/coffee  -H "Host: hotdrink.beverages.com" -ik
-    curl https://<frontend-ip>/tea  -H "Host: hotdrink.beverages.com" -ik
+     kubectl create -f https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cloudnative-demoapp.yaml
     ```
-    ![curl-hotdrink-tea](images/curl-hotdrink-tea.PNG)
-    ![curl-hotdrink-coffee](images/curl-hotdrink-coffee.PNG)
 
-## Configure Rewrite and Responder policies in Citrix ADC using Kubernetes CRD deployment
+2.  Deploy NetScaler CPX from OpenShift OperatorHub
 
-Now it's time to push the Rewrite and Responder policies on Tier1 ADC (VPX) using the custom resource definition (CRD).
+    Follow to below steps from OpenShift console to deploy NetScaler CPX.
+    * Login to OpenShift console - https://console-openshift-console.apps.x.x.x/dashboards
+    * Navigate to Operators -> OperatorHub, Select demonamespace project from left top corner and search for ``NetScaler Operator`` in the searchbar and click on NetScaler certified Operator
+    ![operatorHub](/images/operatorHub.png)
+    * Follow the steps from the screen and NetScaler Operator will be installed. Refer [NetScaler operator how to](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/deploy/deploy-ns-operator.md#installing-netscaler-operator) for detailed steps.
+    * Navigate to Operators -> Installed Operators to locate NetScaler Operator. Click on NetScaler Operator and goto NetScaler CPX with Ingress Controller tab and click on Create NetScalerCpxWithIngressController button. Update YAML file with license.accept to Yes and click on Create button. Refer [How to deploy NetScaler CPX using NetScaler Operator](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/deploy/deploy-ns-operator.md#deploy-netscaler-ingress-controller-as-a-sidecar-with-netscaler-cpx-using-netscaler-operator) guide.
+    ![cpx-operator](/images/cpx-operator.png)
 
-###### Deploy Rewrite and Responder policies in Tier 1 ADC
+    You can view NetScaler CPX pod deployment status from OC CLI also.
+    ```
+    oc get pods 
+    ```
 
-1. Deploy the CRD to push the Rewrite and Responder policies in to tier-1-adc in default namespace.
+3.  Configure SSL certificate on CPX
 
-   ```
-   oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/crd_rewrite_responder.yaml
-   ```
+    For this demo we will create a new SSL certificate using Kubernetes secrete in OpenShift cluster and refer it in Ingress object. Know more about [TLS certificate management](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/tls-certificates) for OpenShift applications.
 
-2. **Blacklist URLs** Configure the Responder policy on `hotdrink.beverages.com` to block access to the coffee beverage microservice.
+    ```
+    openssl genrsa -out cloudnative_key.pem 2048
 
-   ```
-   oc create -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/responderpolicy_hotdrink.yaml -n tier-2-adc
-   ```
-   ![ingress-rewrite-responder-policy](images/ingress-rewrite-responder-policy.PNG)
+    openssl req -new -key cloudnative_key.pem -out cloudnative_csr.pem -subj "/CN=netscaler-cloudnative.cloudpst.net/O=Citrix Systems Inc/C=IN"
 
-   After you deploy the Responder policy, access the coffee page on `https://hotdrink.beverages.com/coffee.php`. Then you receive the following message.
-   
-   ![ingress-rewrite-responder-policy-output](images/ingress-rewrite-responder-policy-output.PNG)
+    openssl x509 -req -in cloudnative_csr.pem -sha256 -days 365 -extensions v3_ca -signkey cloudnative_key.pem -CAcreateserial -out cloudnative_cert.pem
 
-
-## Clean up the deployment
-```
-oc delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/namespace.yaml
-oc delete -f https://raw.githubusercontent.com/citrix/cloud-native-getting-started/master/openshift/Ingress-deployment/crd_rewrite_responder.yaml
-```
+    kubectl create secret tls cpx-cert --key cloudnative_key.pem --cert cloudnative_cert.pem
+    ```
 
 
-### Packet Flow Diagrams
---------------------
+4.  Deploy Ingress Object for CPX
 
-Citrix ADC solution supports the load balancing of various protocol layer traffic such as SSL,  SSL_TCP, HTTP, TCP. In above example we have deployed hotdrink application over SSL where you can see from the below screnshot that client will access hotdrink app over end to end SSL protocol.
+    Using OpenShift console:
+    You can goto OpenShift console, Navitage to Networking -> Ingresses and click on Create Ingress buttom. Copy the Ingress object from [cpx-ingress.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cpx-ingress.yaml) and click on create buttom to deploy CPX Ingress object.
 
-![traffic_flow](https://user-images.githubusercontent.com/42699135/50677397-99179180-101f-11e9-8a40-26ba7d0d54e0.png)
+    Using SSH/ OC CLI:
+
+    ```
+    kubectl create -f https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cpx-ingress.yaml
+    ```
+
+4.  Deploy Ingress Object for VPX
+
+    Using OpenShift console:
+    You can goto OpenShift console, Navitage to Networking -> Ingresses and click on Create Ingress buttom. Copy the Ingress object from [vpx-ingress.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/vpx-ingress.yaml) and change the ingress.citrix.com/frontend-ip with BLX VIP and click on create buttom to deploy Ingress.
+
+    Using SSH/ OC CLI:
+
+    ```
+    wget https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/vpx-ingress.yaml
+    ```
+
+    Update "ingress.citrix.com/frontend-ip:" to BLX VIP IP (private IP associated with EIP of VIP) and deploy ingress object.
+
+    ```
+    kubectl create -f vpx-ingress.yaml
+    ```
+
+5.  Access your SSL application from internet
+
+    Add the DNS entries in your local machine host files for accessing microservices though Internet.
+
+    Path for host file:[Windows] ``C:\Windows\System32\drivers\etc\hosts`` [Macbook] ``/etc/hosts``
+    Add below entries in hosts file and save the file
+
+    ```
+    <EIP associated with frontend-IP from vpx-ingress.yaml> netscaler-cloudnative.cloudpst.net
+    ```
+    Access your application from broswer - ``https://netscaler-cloudnative.cloudpst.net/``
+    ![ns-cn-app](/images/ns-cn-app.png)
+
+6.  Protect SSL application access from blaclisted clients.
+    
+    NetScaler responder policy provides ability to secure application access by allowing whitelisted clients and denying blacklisted clients. NetScaler provides L7 policy enforcement for OpenShift application using [Rewrite Responder CRDs](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/crds/rewrite-responder.md)
+
+    Note: Rewrite Responder policies CRD is already installed with NSIC operator. In case Auth CRD is not installed then deploy [Auth CRD instance](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/crd/rewrite-policy/rewrite-responder-policies-deployment.yaml) using kubectl create command. 
+
+    Lets deploy Responder policy for blacklisting few clients. Update your machine IP in the patset values to test the use case.
+    ```
+    kubectl create -f https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/blacklist-client-IP.yaml
+    ``` 
+
+
+## Contact NetScaler team for POC, trails
+    
+    You can reach out for any questions via our email: **netscaler-appmodernization@cloud.com** or fill [this form](https://podio.com/webforms/22979270/1633242).
+
+   For NetScaler team to better understand your Kubernetes / micro-services application deployment architecture. Please fill [this form](https://docs.google.com/forms/d/e/1FAIpQLSd9ueKkfgk-oy8TR1G5cp5HexFwU03kkwx_CvDyOFVFweuXOw/viewform) to enable us serve you better by offering latest NetScaler capabilities.
 
