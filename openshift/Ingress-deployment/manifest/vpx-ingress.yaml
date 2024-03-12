@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ns-vpx-ingress
+  annotations:
+   ingress.citrix.com/frontend-ip: "10.0.19.57"
+   ingress.citrix.com/secure-backend: "true"
+spec:
+  ingressClassName: vpx
+  tls:
+  - secretName: wildcard-vpx-cert
+  rules:
+  - host:  '*.cloudpst.net'
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nscpx-cpx-service
+            port:
+              number: 443
