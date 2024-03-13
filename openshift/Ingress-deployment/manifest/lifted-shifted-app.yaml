@@ -1,0 +1,149 @@
+# SOURCE: https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-leader
+  labels:
+    app: redis
+    role: leader
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: leader
+        tier: backend
+    spec:
+      containers:
+      - name: leader
+        image: "docker.io/redis:6.0.5"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+---
+# SOURCE: https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-leader
+  labels:
+    app: redis
+    role: leader
+    tier: backend
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    role: leader
+    tier: backend
+---
+# SOURCE: https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-follower
+  labels:
+    app: redis
+    role: follower
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: follower
+        tier: backend
+    spec:
+      containers:
+      - name: follower
+        image: us-docker.pkg.dev/google-samples/containers/gke/gb-redis-follower:v2
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+---
+# SOURCE: https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-follower
+  labels:
+    app: redis
+    role: follower
+    tier: backend
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 6379
+  selector:
+    app: redis
+    role: follower
+    tier: backend
+---
+# SOURCE: https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lift-and-shift-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+        app: guestbook
+        tier: frontend
+  template:
+    metadata:
+      labels:
+        app: guestbook
+        tier: frontend
+    spec:
+      containers:
+      - name: php-redis
+        image: us-docker.pkg.dev/google-samples/containers/gke/gb-frontend:v5
+        env:
+        - name: GET_HOSTS_FROM
+          value: "dns"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 80
+---
+# SOURCE: https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook
+apiVersion: v1
+kind: Service
+metadata:
+  name: lift-and-shift-app
+  labels:
+    app: guestbook
+    tier: frontend
+spec:
+  # if your cluster supports it, uncomment the following to automatically create
+  # an external load-balanced IP for the frontend service.
+  # type: LoadBalancer
+  #type: LoadBalancer
+  ports:
+    # the port that this service should serve on
+  - port: 80
+    targetPort: 80
+  selector:
+    app: guestbook
+    tier: frontend
+---
