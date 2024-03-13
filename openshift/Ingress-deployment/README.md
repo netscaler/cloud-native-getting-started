@@ -28,7 +28,7 @@ In this section you will learn how to secure OpenShift applications with scalabl
 
 Lets understand the demo use cases from the belowdeployment topology.
 
-![demo topology](/images/demo-topology.png)
+![demo topology](images/demo-topology.png)
 
 NetScaler BLX is RHEL certified proxy deployed infront of OpenShift clusters acting as Ingress proxy. The is a HTTP application (lifted-shifted-app) migrated to OpenShift from monolithic deployment. Since this application is insecure, BLX provides SSL offload and protect it from internet security attacks.
 There is another DevOps team building the SSL based microservice application from scratch (NS-CN app) who need a proxy inside OpenShift (NetScaler CPX) for better control. However NetScaler BLX still be required infront of NetScaler BLX for unified internet access.
@@ -67,16 +67,16 @@ There is another DevOps team building the SSL based microservice application fro
     Follow to below steps from OpenShift console to deploy NetScaler Ingress controller.
     * Login to OpenShift console - https://console-openshift-console.apps.x.x.x/dashboards
     * Navigate to Operators -> OperatorHub, Select demonamespace project from left top corner and search for ``NetScaler Operator`` in the searchbar and click on NetScaler certified Operator
-    ![operatorHub](/images/operatorHub.png)
+    ![operatorHub](images/operatorHub.png)
     * Follow the steps from the screen and NetScaler Operator will be installed. Refer [NetScaler operator how to](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/deploy/deploy-ns-operator.md#installing-netscaler-operator) for detailed steps.
     * Navigate to Operators -> Installed Operators to locate NetScaler Operator. Click on NetScaler Operator and goto NetScaler Ingress controller tab and click on Create NetScalerIngressController button. Update YAML file with BLX nsIP (BLX private IP assigned to elasticIP of NSIP), license.accept to Yes and adcCredentialSecret -> nslogin (mentioned in Pre-requisite) and click on Create buttom. Refer [How to deploy NSIC using NetScaler Operator](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/deploy/deploy-ns-operator.md#installing-netscaler-operator) guide.
-    ![nsic](/images/nsic.png)
+    ![nsic](images/nsic.png)
 
     You can view NetScaler Ingress controller pod deployment status from OC CLI also.
     ```
     oc get pods 
     ```
-    ![nsic-pod](/images/nsic-pod.png)
+    ![nsic-pod](images/nsic-pod.png)
 
 4.  Configure SSL certificate on BLX
 
@@ -108,7 +108,7 @@ There is another DevOps team building the SSL based microservice application fro
     ```
     kubectl create -f lifted-shifted-app-ingress.yaml
     ```
-    ![unified-app-ingress](/images/unified-app-ingress.png)
+    ![unified-app-ingress](images/unified-app-ingress.png)
 
 6.  Access your HTTP application from internet
 
@@ -121,7 +121,7 @@ There is another DevOps team building the SSL based microservice application fro
     <EIP associated with frontend-IP from lifted-shifted-app-ingress.yaml> lift-and-shift-httpapp.cloudpst.net
     ```
     Access your application from broswer - ``https://lift-and-shift-httpapp.cloudpst.net/``
-    ![app-access](/images/app-access.png)
+    ![app-access](images/app-access.png)
 
 7.  Secured HTTP application access using NetScaler auth
 
@@ -141,7 +141,7 @@ There is another DevOps team building the SSL based microservice application fro
     ```
 
     Try accessing ``https://lift-and-shift-httpapp.cloudpst.net/``, you will see signin page to provide the BLX user credentials.
-    ![auth-singin-popup](/images/auth-singin-popup.png) 
+    ![auth-singin-popup](images/auth-singin-popup.png) 
 
 
 
@@ -166,10 +166,10 @@ In case you have skiped the Use Case 1 and directly starting from use case 2 in 
     Follow to below steps from OpenShift console to deploy NetScaler CPX.
     * Login to OpenShift console - https://console-openshift-console.apps.x.x.x/dashboards
     * Navigate to Operators -> OperatorHub, Select demonamespace project from left top corner and search for ``NetScaler Operator`` in the searchbar and click on NetScaler certified Operator
-    ![operatorHub](/images/operatorHub.png)
+    ![operatorHub](images/operatorHub.png)
     * Follow the steps from the screen and NetScaler Operator will be installed. Refer [NetScaler operator how to](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/deploy/deploy-ns-operator.md#installing-netscaler-operator) for detailed steps.
     * Navigate to Operators -> Installed Operators to locate NetScaler Operator. Click on NetScaler Operator and goto NetScaler CPX with Ingress Controller tab and click on Create NetScalerCpxWithIngressController button. Update YAML file with license.accept to Yes and click on Create button. Refer [How to deploy NetScaler CPX using NetScaler Operator](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/deploy/deploy-ns-operator.md#deploy-netscaler-ingress-controller-as-a-sidecar-with-netscaler-cpx-using-netscaler-operator) guide.
-    ![cpx-operator](/images/cpx-operator.png)
+    ![cpx-operator](images/cpx-operator.png)
 
     You can view NetScaler CPX pod deployment status from OC CLI also.
     ```
@@ -230,7 +230,7 @@ In case you have skiped the Use Case 1 and directly starting from use case 2 in 
     <EIP associated with frontend-IP from vpx-ingress.yaml> netscaler-cloudnative.cloudpst.net
     ```
     Access your application from broswer - ``https://netscaler-cloudnative.cloudpst.net/``
-    ![ns-cn-app](/images/ns-cn-app.png)
+    ![ns-cn-app](images/ns-cn-app.png)
 
 6.  Protect SSL application access from blaclisted clients.
     
