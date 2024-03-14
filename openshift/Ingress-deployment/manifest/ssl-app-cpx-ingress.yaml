@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ns-cpx-demo-app-ingress
+  name: ssl-app-cpxingress
   annotations:
    ingress.citrix.com/secure-backend: "true"
 spec:
@@ -16,6 +16,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: ns-cn-demo-app
+            name: ssl-app
             port:
               number: 443

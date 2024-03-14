@@ -9,7 +9,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: lift-and-shift-ingress
+  name: containerized-monolithic-app-ingress
   annotations:
    ingress.citrix.com/insecure-termination: "redirect"
    ingress.citrix.com/frontend-ip: "10.0.19.57"
@@ -18,13 +18,13 @@ spec:
   tls:
   - secretName: wildcard-vpx-cert
   rules:
-  - host:  lift-and-shift-httpapp.cloudpst.net
+  - host:  containerized-httpapp.cloudpst.net
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: lift-and-shift-app
+            name: containerized-monolithic-app
             port:
               number: 80

@@ -100,7 +100,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lift-and-shift-app
+  name: containerized-monolithic-app
 spec:
   replicas: 3
   selector:
@@ -130,7 +130,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: lift-and-shift-app
+  name: containerized-monolithic-app
   labels:
     app: guestbook
     tier: frontend

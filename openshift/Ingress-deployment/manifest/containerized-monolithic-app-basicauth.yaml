@@ -1,10 +1,10 @@
 apiVersion: citrix.com/v1beta1
 kind: authpolicy
 metadata:
-  name: liftshiftappauthpolicy
+  name: httpappauthpolicy
 spec:
     servicenames:
-    - lift-and-shift-app
+    - containerized-monolithic-app
     authentication_providers:
     - name: "local-auth-provider"
       basic_local_db:

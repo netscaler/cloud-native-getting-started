@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ns-vpx-ingress
+  name: ssl-app-vpx-ingress
   annotations:
    ingress.citrix.com/frontend-ip: "10.0.19.57"
    ingress.citrix.com/secure-backend: "true"
