@@ -171,7 +171,7 @@ In case you have skipped the Use Case 1 and directly starting from use case 2 in
 
     Navitage to Networking -> Services and click on Create Service. Copy the Service object from [cloudnative-demoapp.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cloudnative-demoapp.yaml) and click on Create.
 
-    <u>Steps for SSH/ OC CLI:</u>>
+    <u> Steps for SSH/ OC CLI: </u>>
     ```
      oc create -f https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cloudnative-demoapp.yaml
     ```
