@@ -16,7 +16,7 @@ OpenShift, a robust and secure hybrid cloud Kubernetes platform backed by Red Ha
 
 ## What are the NetScaler recommended Cloud Native deployments for OpenShift applications (Unified Ingress, Two tier Ingress topology)
 
-Customers moving to microservices need an Ingress proxy for load balancing OpenShift applications with existing NetScalers. NetScaler form factors MPX, SDX, BLX or VPX can be used with or without CPX for securing OpenShift deployments. NetScaler recommends few topologies for Cloud Native deployments however NetScaler offers flexibility for choosing customer preferred topology. Learn more about [NetScaler deployment topologies](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/deployment-topologies)
+Customers moving to microservices need an Ingress proxy for load balancing OpenShift applications with existing NetScalers. NetScaler form factors MPX, SDX, BLX or VPX can be used with or without CPX for securing OpenShift deployments. NetScaler recommends few topologies for Cloud Native deployments however NetScaler offers flexibility for choosing customer preferred topology. Learn more about [NetScaler deployment topologies](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/deployment-topologies).
 
 
 ## Getting started (How to guide)
@@ -52,13 +52,13 @@ The SSL application managed by different DevOps team which needs a proxy close t
 
 2.  Deploy HTTP application in OpenShift cluster
 
-    Steps for OpenShift Console:
+    <u>Steps for OpenShift Console:</u>
 
     Navitage to Workloads -> Deployments and click on Create Deployment. Copy the Deployment object from [containerized-monolithic-app.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/containerized-monolithic-app.yaml) and click on Create.
 
     Navitage to Networking -> Services and click on Create Service. Copy the Service object from [containerized-monolithic-app.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/containerized-monolithic-app.yaml) and click on Create.
 
-    Steps for SSH/ OC CLI:
+    <u>Steps for SSH/ OC CLI:</u>>
     ```
     oc create -f https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/containerized-monolithic-app.yaml
     ```
@@ -85,7 +85,7 @@ The SSL application managed by different DevOps team which needs a proxy close t
 
     For this demo we will create a new SSL certificate using Kubernetes secret in OpenShift cluster and refer it in Ingress object. Know more about [TLS certificate management](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/tls-certificates) for OpenShift applications. 
 
-    **Note:**You can also use existing NetScaler SSL certificate using [Ingress annotation](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/configure/annotations.html).
+    **Note:** You can also use existing NetScaler SSL certificate using [Ingress annotation](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/configure/annotations.html).
 
     Steps for creating sample SSL certificate
 
@@ -101,11 +101,11 @@ The SSL application managed by different DevOps team which needs a proxy close t
 
 5.  Deploy Ingress object to access the HTTP application from the internet
 
-    Steps for OpenShift Console:
+    <u>Steps for OpenShift Console:</u>>
 
     Navitage to Networking -> Ingresses and click on Create Ingress. Copy the Ingress object from [containerized-monolithic-app-ingress.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/containerized-monolithic-app-ingress.yaml) and change the ingress.citrix.com/frontend-ip with BLX VIP and click on Create.
 
-    Steps for SSH/ OC CLI:
+    <u>Steps for SSH/ OC CLI:</u>>
 
     ```
     wget https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/containerized-monolithic-app-ingress.yaml
@@ -165,13 +165,13 @@ In case you have skipped the Use Case 1 and directly starting from use case 2 in
 
 1.  Deploy sample SSL application into OpenShift cluster
 
-    Steps for OpenShift Console:
+    <u>Steps for OpenShift Console:</u>>
 
     Navitage to Workloads -> Deployments and click on Create Deployment. Copy the Deployment object from [cloudnative-demoapp.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cloudnative-demoapp.yaml) and click on Create.
 
     Navitage to Networking -> Services and click on Create Service. Copy the Service object from [cloudnative-demoapp.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cloudnative-demoapp.yaml) and click on Create.
 
-    Steps for SSH/ OC CLI:
+    <u>Steps for SSH/ OC CLI:</u>>
     ```
      oc create -f https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/cloudnative-demoapp.yaml
     ```
@@ -196,7 +196,7 @@ In case you have skipped the Use Case 1 and directly starting from use case 2 in
 
     For this demo we will create a new SSL certificate using Kubernetes secret in OpenShift cluster and refer it in the Ingress object. Know more about [TLS certificate management](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/tls-certificates) for OpenShift applications.
 
-    **Note:**You can also use existing NetScaler SSL certificate using [Ingress annotation](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/configure/annotations.html).
+    **Note:** You can also use existing NetScaler SSL certificate using [Ingress annotation](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/configure/annotations.html).
 
     Steps for creating sample SSL certificate
 
@@ -213,11 +213,11 @@ In case you have skipped the Use Case 1 and directly starting from use case 2 in
 
 4.  Deploy Ingress Object for NetScaler CPX
 
-    Steps for OpenShift Console:
+    <u>Steps for OpenShift Console:</u>>
 
     Navigate to Networking -> Ingresses and click on the Create Ingress. Copy the Ingress object from [ssl-app-cpx-ingress.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/ssl-app-cpx-ingress.yaml) and click on Create.
 
-    Steps for SSH/ OC CLI:
+    <u>Steps for SSH/ OC CLI:</u>>
 
     ```
     oc create -f https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/ssl-app-cpx-ingress.yaml
@@ -225,11 +225,11 @@ In case you have skipped the Use Case 1 and directly starting from use case 2 in
 
 4.  Deploy Ingress Object for NetScaler BLX
 
-    Steps for OpenShift Console:
+    <u>Steps for OpenShift Console:</u>>
 
     Navigate to Networking -> Ingresses and click on the Create Ingress. Copy the Ingress object from [ssl-app-vpx-ingress.yaml](https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/ssl-app-vpx-ingress.yaml) and change the ingress.citrix.com/frontend-ip with BLX VIP and click on create to deploy Ingress.
 
-    Steps for SSH/ OC CLI:
+    <u>Steps for SSH/ OC CLI:</u>>
 
     ```
     wget https://raw.githubusercontent.com/netscaler/cloud-native-getting-started/master/openshift/Ingress-deployment/manifest/ssl-app-vpx-ingress.yaml
