@@ -23,8 +23,8 @@ Customers moving to microservices need an Ingress proxy for load-balancing OpenS
 
 Learn how to secure OpenShift applications with a scalable NetScaler ingress proxy. In this section, you will deploy the following use cases.
 
-* [SSL offload and Basic Authentication for containerized HTTP application with NetScaler RHEL BLX (Topology: Unified Ingress)](https://github.com/netscaler/cloud-native-getting-started/tree/master/openshift/Ingress-deployment#use-case-1-how-do-you-load-balance-microservice-application-with-netscaler-rhel-blx-lifted-and-shifted-from-monolithic-environment-unified-ingress-topology-http-application-with-ssl-offload-secured-client-access-using-basic-authentication)
-* [End-to-end TLS and  secure client access for HTTPS application with NetScaler RHEL BLX and NetScaler CPX (Topology: Two-tier Ingress)](https://github.com/netscaler/cloud-native-getting-started/tree/master/openshift/Ingress-deployment#use-case-2-how-do-you-secure-your-microservice-application-end-to-end-with-netscaler-rhel-blx-and-redhat-operator-certified-cpx-two-tier-ingress-topology-ssl-application-secured-with-blx-cpx-end-to-end-tls-protect-blacklisted-clients-access-using-netscaler-responder-policy)
+* SSL offload and Basic Authentication for containerized HTTP application with NetScaler RHEL BLX (Topology: Unified Ingress)
+* End-to-end TLS and  secure client access for HTTPS application with NetScaler RHEL BLX and NetScaler CPX (Topology: Two-tier Ingress)
 
 Let's understand the demo use cases from the below deployment topology.
 
@@ -161,7 +161,7 @@ The SSL application is managed by different DevOps teams which needs a proxy clo
 
 ### Use case 2: End-to-end TLS and  secure client access for HTTPS application with NetScaler RHEL BLX and NetScaler CPX (Topology: Two-tier Ingress)
 
-In case you have skipped Use Case 1 and directly started from Use Case 2 in that case, follow Steps 1, 3, and 4 from [Use Case 1]() first and later continue here.
+In case you have skipped Use Case 1 and directly started from Use Case 2 in that case, follow Steps 1, 3, and 4 from [Use Case 1](https://github.com/netscaler/cloud-native-getting-started/blob/master/openshift/Ingress-deployment/README.md#use-case-1-ssl-offload-and-basic-authentication-for-containerized-http-application-with-netscaler-rhel-blx-topology-unified-ingress) first and later continue here.
 
 1.  Deploy sample SSL application into OpenShift cluster
 
@@ -262,7 +262,7 @@ In case you have skipped Use Case 1 and directly started from Use Case 2 in that
     
     NetScaler responder policy provides the ability to secure application access by allowing trusted clients and denying non-trusted clients (Allow/Deny client access). NetScaler provides L7 policy enforcement for OpenShift applications using [Rewrite Responder CRDs](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/crds/rewrite-responder.md)
 
-    **Note:** Rewrite Responder policies CRD is already installed with NSIC operator. In case Auth CRD is not installed then deploy [Auth CRD instance](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/crd/rewrite-policy/rewrite-responder-policies-deployment.yaml) using kubectl create command. 
+    **Note:** Rewrite Responder policies CRD is already installed with NSIC operator. In case Rewrite Responder CRD is not installed then deploy [Rewrite-Responder CRD instance](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/crd/rewrite-policy/rewrite-responder-policies-deployment.yaml) using kubectl create command. 
 
     Let's deploy a Responder policy for Denylist client IPs. Update your appliance IP in ``denylist-client-IP.yaml`` in patset section for the demo.
 
