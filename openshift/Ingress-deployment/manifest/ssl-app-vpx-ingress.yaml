@@ -6,7 +6,7 @@ metadata:
    ingress.citrix.com/frontend-ip: "10.0.19.57"
    ingress.citrix.com/secure-backend: "true"
 spec:
-  ingressClassName: vpx
+  ingressClassName: netscaler
   tls:
   - secretName: wildcard-vpx-cert
   rules:
