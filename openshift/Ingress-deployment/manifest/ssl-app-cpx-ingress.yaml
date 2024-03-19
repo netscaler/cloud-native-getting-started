@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ssl-app-cpxingress
+  name: ssl-app-cpx-ingress
   annotations:
    ingress.citrix.com/secure-backend: "true"
 spec:
